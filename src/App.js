@@ -1,17 +1,22 @@
 import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import "./App.css";
 import Routes from "./Routes";
+import TopMenu from "./components/TopMenu";
+import "./App.css";
 
 class App extends Component {
   constructor(props) {
     super(props);
   
     this.state = {
-      isAuthenticated: false
+      isAuthenticated: false,
+      redirectTo: null,
+      season: Date.now.year
     };
+
+    this.handleMenuSelect = this.handleMenuSelect.bind(this);
   }
   
   userHasAuthenticated = authenticated => {
@@ -20,6 +25,15 @@ class App extends Component {
 
   handleLogout = event => {
     this.userHasAuthenticated(false);
+  }
+
+  handleMenuSelect(path) {
+    if (path) {
+      console.debug('New path: ' + path);
+      const season = path.match('(?<=/season/)[0-9]{4}');
+      console.debug('Selected season: ' + season);
+      this.setState({ redirectTo: path, season: season ? season : this.state });
+    }
   }
 
   render() {
@@ -56,6 +70,9 @@ class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
+
+        <TopMenu onMenuSelect={this.handleMenuSelect} />
+        { this.state.redirectTo ? <Redirect push to={this.state.redirectTo} /> : "" }
         <Routes childProps={childProps} />
       </div>
     );

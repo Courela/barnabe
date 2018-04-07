@@ -13,12 +13,9 @@ export default class LeftMenu extends Component {
         this.handleSelect = this.handleSelect.bind(this);
     }
 
-    componentDidMount() {
-        //this.setState({ season: this.props.match.params.year });
-    }
-
     handleSelect(selectedKey) {
-        console.log(`LeftMenu selected ${selectedKey}`);
+        //console.log(`LeftMenu selected ${selectedKey}`);
+        this.props.history.push(selectedKey);
     }
 
     render() {
@@ -34,6 +31,7 @@ export default class LeftMenu extends Component {
                     <LinkContainer to={"/season/" + this.state.season + "/team"}>
                         <NavItem>Equipas</NavItem>
                     </LinkContainer>
+                    <NavItem eventKey={"/season/" + this.state.season + "/team/1"}>Teste</NavItem>
                 </Nav>
             </div>);
     }

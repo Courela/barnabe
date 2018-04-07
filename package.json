@@ -13,7 +13,7 @@
     "react-table": "^6.8.0"
   },
   "scripts": {
-    "start": "PORT=8080 react-scripts start",
+    "start": "PORT=8080 react-scripts start --production",
     "start-pc": "SET PORT=8080&& react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

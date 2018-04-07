@@ -14,7 +14,6 @@ export default class LeftMenu extends Component {
     }
 
     handleSelect(selectedKey) {
-        //console.log(`LeftMenu selected ${selectedKey}`);
         this.props.history.push(selectedKey);
     }
 

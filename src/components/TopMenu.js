@@ -1,43 +1,73 @@
-import React, { Component } from 'react';
-import Menu, { SubMenu, Item as MenuItem } from 'rc-menu';
-import 'rc-menu/assets/index.css';
-
-function onOpenChange(value) {
-    console.debug('onOpenChange', value);
-}
+import React, { Component, Fragment } from 'react';
+import { Link } from "react-router-dom";
+import { Nav, Navbar, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default class TopMenu extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            isAuthenticated: false
+        };
+
         this.handleSelect = this.handleSelect.bind(this);
-        this.onMenuSelect = props.onMenuSelect;
     }
 
-    handleSelect(info) {
-        //console.log(info);
-        //console.log(`selected ${info.key}`);
-        if (this.onMenuSelect) {
-            console.log('TopMenu selected:' + info.key);
-            this.onMenuSelect(info.key);
-        }
+    componentDidMount() {
+        console.log('State: ' + this.state.isAuthenticated + ' | Props: ' + this.props.isAuthenticated);
+        this.setState({ isAuthenticated: this.props.isAuthenticated });
+    }
+
+    handleLogout = event => {
+        this.props.userHasAuthenticated(false);
+    }
+
+    handleSelect(eventKey) {
+        //event.preventDefault();
+        //alert(`selected ${eventKey}`);
     }
 
     render() {
         return (
             <div>
-                <div style={{ width: '100%' }}>
-                    <Menu onSelect={this.handleSelect} onOpenChange={onOpenChange} mode="horizontal" openAnimation="slide-up">
-                        <SubMenu title={<span>Época</span>} key="1">
-                            <MenuItem key="/season/2017">2017</MenuItem>
-                            <MenuItem key="/season/2018">2018</MenuItem>
-                        </SubMenu>
-                        {/* {nestSubMenu} */}
-                        <MenuItem disabled>disabled</MenuItem>
-                        <MenuItem key="/torneio">Torneio</MenuItem>
-                        <MenuItem key="/login">Login</MenuItem>
-                    </Menu>
-                </div>
+                <Navbar fluid collapseOnSelect>
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <Link to="/">Taça Barnabé</Link>
+                        </Navbar.Brand>
+                        <Navbar.Toggle />
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <Nav onSelect={this.handleSelect}>
+                            <NavDropdown eventKey={3} title="Época" id="basic-nav-dropdown">
+                                <LinkContainer to="/season/2018">
+                                    <MenuItem>2018</MenuItem>
+                                </LinkContainer>
+                                <MenuItem divider />
+                                <LinkContainer to="/season/2017">
+                                    <MenuItem>2017</MenuItem>
+                                </LinkContainer>
+                            </NavDropdown>
+                        </Nav>
+                        <Nav pullRight>
+                            <LinkContainer to="/about">
+                                <NavItem>Sobre</NavItem>
+                            </LinkContainer>
+                            <LinkContainer to="/torneio">
+                                <NavItem>Torneio</NavItem>
+                            </LinkContainer>
+                            {this.state.isAuthenticated
+                                ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                                : <Fragment>
+                                    <LinkContainer to="/login">
+                                        <NavItem>Login</NavItem>
+                                    </LinkContainer>
+                                </Fragment>
+                            }
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
             </div>);
     }
 }

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import { Link } from 'react-router-dom';
-import Breadcrumbs from '../components/Breadcrumbs';
 import 'react-table/react-table.css'
 
 export default class Team extends Component {
@@ -9,7 +8,7 @@ export default class Team extends Component {
         super(props);
 
         this.state = {
-            season: props.match.params.year ? props.match.params.year : Date.now.year,
+            season: props.match.params.year ? props.match.params.year : Date.now().year,
             teamId: props.match.params.teamId,
             data: []
         };
@@ -43,7 +42,6 @@ export default class Team extends Component {
     render() {
         return (
             <div>
-                <Breadcrumbs />
                 <div>
                     <ReactTable 
                         columns={[

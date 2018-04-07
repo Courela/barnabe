@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Breadcrumbs from '../components/Breadcrumbs';
+//import Breadcrumb from 'react-bootstrap';
 
 export default class Results extends Component {
     render() {
         return (
             <div>
-                <Breadcrumbs />
+                
             </div>
         );
     }

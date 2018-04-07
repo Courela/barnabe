@@ -1,82 +1,49 @@
-import React, { Component, Fragment } from "react";
-import { Link, Redirect } from "react-router-dom";
-import { Nav, Navbar, NavItem } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import React, { Component } from "react";
+import { Route } from 'react-router-dom';
 import Routes from "./Routes";
 import TopMenu from "./components/TopMenu";
 import "./App.css";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-  
-    this.state = {
-      isAuthenticated: false,
-      redirectTo: null,
-      season: Date.now.year
-    };
+    constructor(props) {
+        super(props);
 
-    this.handleMenuSelect = this.handleMenuSelect.bind(this);
-  }
-  
-  userHasAuthenticated = authenticated => {
-    this.setState({ isAuthenticated: authenticated });
-  }
+        this.state = {
+            isAuthenticated: false,
+            redirectTo: null,
+            season: Date.now.year
+        };
 
-  handleLogout = event => {
-    this.userHasAuthenticated(false);
-  }
-
-  handleMenuSelect(path) {
-    if (path) {
-      console.debug('New path: ' + path);
-      const season = path.match('(?<=/season/)[0-9]{4}');
-      console.debug('Selected season: ' + season);
-      this.setState({ redirectTo: path, season: season ? season : this.state });
+        this.handleMenuSelect = this.handleMenuSelect.bind(this);
     }
-  }
 
-  render() {
-    const childProps = {
-      isAuthenticated: this.state.isAuthenticated,
-      userHasAuthenticated: this.userHasAuthenticated
-    };
+    handleMenuSelect(path) {
+        if (path) {
+            console.debug('New path: ' + path);
+            const season = path.match('(?<=/season/)[0-9]{4}');
+            console.debug('Selected season: ' + season);
+            this.setState({ redirectTo: path, season: season ? season : this.state });
+        }
+    }
 
-    return (
-      <div className="App container">
-        <Navbar fluid collapseOnSelect>
-          <Navbar.Header>
-            <Navbar.Brand>
-              <Link to="/">Taça Barnabé</Link>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-            <Nav pullRight>
-              <LinkContainer to="/about">
-                <NavItem>Sobre</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/torneio">
-                <NavItem>Torneio</NavItem>
-              </LinkContainer>
-              {this.state.isAuthenticated
-                ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
-                : <Fragment>
-                    <LinkContainer to="/login">
-                      <NavItem>Login</NavItem>
-                    </LinkContainer>
-                  </Fragment>
-              }
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
+    userHasAuthenticated = authenticated => {
+        console.log('App authenticate: ' + authenticated);
+        this.setState({ isAuthenticated: authenticated });
+    }
 
-        <TopMenu onMenuSelect={this.handleMenuSelect} />
-        { this.state.redirectTo ? <Redirect push to={this.state.redirectTo} /> : "" }
-        <Routes childProps={childProps} />
-      </div>
-    );
-  }
+    render() {
+        const childProps = {
+            isAuthenticated: this.state.isAuthenticated,
+            userHasAuthenticated: this.userHasAuthenticated
+        };
+
+        return (
+            <div className="App container">
+                <Route path="/" render={(props) => <TopMenu {...props} isAuthenticated={this.state.isAuthenticated} /> } />
+                <Routes childProps={childProps} />
+            </div>
+        );
+    }
 }
 
 export default App;

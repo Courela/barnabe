@@ -6,6 +6,7 @@ import NotFound from '../containers/NotFound';
 import Results from '../containers/Results';
 import Standings from '../containers/Standings';
 import StepTeam from '../containers/StepTeam';
+import Documents from '../containers/Documents';
 
 export default class MainContent extends Component {
     render() {
@@ -28,7 +29,8 @@ export default class MainContent extends Component {
             <Route key="4" path="/season/:year/player/:playerId" exact component={Player} />,
             <Route key="5" path="/season/:year" exact render={(props) => <div>Época {props.match.params.year}</div>} />,
             <Route key="6" path="/season/:year/team/:teamId/step" render={(props) => <Redirect push to="/login" />} />,
-            <Route key="7" component={NotFound} />
+            <Route key="6" path="/season/:year/team/:teamId/documents" component={Documents} />,
+            <Route key="99" component={NotFound} />
         ];
 
         return (

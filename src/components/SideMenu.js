@@ -1,7 +1,7 @@
 /* eslint no-console:0 */
 
 import React from 'react';
-import Menu, { SubMenu, Item as MenuItem, Divider } from 'rc-menu';
+import Menu, { SubMenu, Item as MenuItem } from 'rc-menu';
 import 'rc-menu/assets/index.css';
 import animate from 'css-animation';
 

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from 'react-router';
 import Routes from "./Routes";
 import TopMenu from "./components/TopMenu";
-import "./App.css";
+import "./styles/App.css";
 
 class App extends Component {
     constructor(props) {

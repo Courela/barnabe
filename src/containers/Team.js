@@ -23,12 +23,12 @@ export default class Team extends Component {
 
     getData() {
         return [
-            { id: 1, name: 'Teste 1', birthdate: new Date(2000, 1, 1).toString() },
-            { id: 2, name: 'Teste 2', birthdate: new Date(2000, 1, 2).toString() },
-            { id: 3, name: 'Teste 3', birthdate: new Date(2000, 1, 1).toString() },
-            { id: 4, name: 'Teste 4', birthdate: new Date(2000, 1, 2).toString() },
-            { id: 5, name: 'Teste 5', birthdate: new Date(2000, 1, 1).toString() },
-            { id: 6, name: 'Teste 6', birthdate: new Date(2000, 1, 2).toString() }
+            { id: 1, name: 'Jogador 1', birthdate: new Date(2000, 1, 1).toString() },
+            { id: 2, name: 'Jogador 2', birthdate: new Date(2000, 1, 2).toString() },
+            { id: 3, name: 'Jogador 3', birthdate: new Date(2000, 1, 1).toString() },
+            { id: 4, name: 'Jogador 4', birthdate: new Date(2000, 1, 2).toString() },
+            { id: 5, name: 'Jogador 5', birthdate: new Date(2000, 1, 1).toString() },
+            { id: 6, name: 'Jogador 6', birthdate: new Date(2000, 1, 2).toString() }
         ];
     }
 
@@ -42,6 +42,7 @@ export default class Team extends Component {
     render() {
         return (
             <div>
+                <h2>Equipa {this.props.match.params.teamId}</h2>
                 <div>
                     <ReactTable 
                         columns={[

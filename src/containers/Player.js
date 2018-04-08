@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { ButtonToolbar, Button } from 'react-bootstrap';
 
 export default class Player extends Component {
     constructor(props) {
@@ -15,7 +16,9 @@ export default class Player extends Component {
         return (
         <div>
             <h1>Ficha de jogador {this.props.match.params.playerId}</h1>
-            <a href="#" onClick={this.handleGoBack}>Voltar</a>
+            <ButtonToolbar>
+                <Button bsStyle="primary" onClick={this.handleGoBack}>Voltar</Button>
+            </ButtonToolbar>
         </div>);
     }
 }

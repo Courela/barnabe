@@ -27,7 +27,7 @@ export default class Login extends Component {
 
     try {
 			if (this.state.username === 'test' && this.state.password === 'test') {
-				this.props.userHasAuthenticated(true);
+        this.props.userHasAuthenticated(true, this.state.username);
 			}
 		}
 		catch (e) {

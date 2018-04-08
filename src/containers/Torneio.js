@@ -4,8 +4,7 @@ export default class Torneio extends Component {
     render() {
         return (
             <div>
-                <div>Torneio</div>
-                
+                <h1>Torneio</h1>
             </div>
         );
     }

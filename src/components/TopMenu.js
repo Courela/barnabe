@@ -7,20 +7,15 @@ export default class TopMenu extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            isAuthenticated: false
-        };
-
         this.handleSelect = this.handleSelect.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
     }
 
-    componentDidMount() {
-        console.log('State: ' + this.state.isAuthenticated + ' | Props: ' + this.props.isAuthenticated);
-        this.setState({ isAuthenticated: this.props.isAuthenticated });
-    }
-
-    handleLogout = event => {
-        this.props.userHasAuthenticated(false);
+    handleLogout(event) {
+        //console.log('State: ' + this.state.isAuthenticated + ' | Props: ' + this.props.isAuthenticated);
+        if (this.props.userHasAuthenticated) {
+            this.props.userHasAuthenticated(false, null);
+        }
     }
 
     handleSelect(eventKey) {
@@ -29,6 +24,28 @@ export default class TopMenu extends Component {
     }
 
     render() {
+        const authenticatedOptions = <NavItem onClick={this.handleLogout}>Logout</NavItem>;
+        const anonymousOptions =
+            <Fragment>
+                <LinkContainer to="/about">
+                    <NavItem>Sobre</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/torneio">
+                    <NavItem>Torneio</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/login">
+                    <NavItem>Login</NavItem>
+                </LinkContainer>
+            </Fragment>;
+
+        const menuOptions =
+            <Nav pullRight>
+                {this.props.isAuthenticated
+                    ? authenticatedOptions
+                    : anonymousOptions
+                }
+            </Nav>;
+            
         return (
             <div>
                 <Navbar fluid collapseOnSelect>
@@ -50,22 +67,7 @@ export default class TopMenu extends Component {
                                 </LinkContainer>
                             </NavDropdown>
                         </Nav>
-                        <Nav pullRight>
-                            <LinkContainer to="/about">
-                                <NavItem>Sobre</NavItem>
-                            </LinkContainer>
-                            <LinkContainer to="/torneio">
-                                <NavItem>Torneio</NavItem>
-                            </LinkContainer>
-                            {this.state.isAuthenticated
-                                ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
-                                : <Fragment>
-                                    <LinkContainer to="/login">
-                                        <NavItem>Login</NavItem>
-                                    </LinkContainer>
-                                </Fragment>
-                            }
-                        </Nav>
+                        {menuOptions}
                     </Navbar.Collapse>
                 </Navbar>
             </div>);

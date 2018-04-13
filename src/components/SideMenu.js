@@ -43,12 +43,12 @@ export default class SideMenu extends React.Component {
         const authenticatedMenu = (
             <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
                 mode="inline" openAnimation={animation}>
-                <MenuItem key={"/season/" + this.state.season + "/team/1/addstep"}>Inscrever escalão</MenuItem>
+                <MenuItem key={"/season/" + this.state.season + "/addstep"}>Inscrever escalão</MenuItem>
                 <SubMenu title={<span>Escalões</span>} key="1">
-                    <MenuItem key={"/season/" + this.state.season + "/team/1/step/1"}>Escolinhas</MenuItem>
-                    <MenuItem key={"/season/" + this.state.season + "/team/1/step/2"}>III Escalão</MenuItem>
+                    <MenuItem key={"/season/" + this.state.season + "/step/1"}>Escolinhas</MenuItem>
+                    <MenuItem key={"/season/" + this.state.season + "/step/2"}>III Escalão</MenuItem>
                 </SubMenu>
-                <MenuItem key={"/season/" + this.state.season + "/team/1/documents"}>Documentos</MenuItem>
+                <MenuItem key={"/season/" + this.state.season + "/documents"}>Documentos</MenuItem>
             </Menu>);
 
         const menu = this.props.isAuthenticated ? authenticatedMenu : anonymousMenu;

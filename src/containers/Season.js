@@ -6,8 +6,7 @@ import SideMenu from '../components/SideMenu';
 
 export default class Season extends Component {
     render() {
-        //const leftMenu = <Route path="/season/:year" component={LeftMenu} />;
-
+        //console.log('Render Season');
         return (
             <div>
                 <div style={{ float: 'left' }}>

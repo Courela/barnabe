@@ -16,12 +16,17 @@ class App extends Component {
         this.userHasAuthenticated = this.userHasAuthenticated.bind(this);
     }
 
-    userHasAuthenticated = (authenticated, username) => {
-        //console.log('App authenticate: ' + authenticated);
+    userHasAuthenticated = (authenticated, username, redirectTo) => {
         this.setState({ isAuthenticated: authenticated, username: username });
 
-        //console.log('Date: ' + Date.now().getFullYear());
-        this.props.history.push("/season/" + Date.now());
+        if (authenticated) {
+            //console.log('Authenticated: ' + JSON.stringify(this.props))
+            //console.log('Date: ' + Date.now().getFullYear());
+            //console.log('Redirect: ' + redirectTo);
+            const url = redirectTo ? redirectTo : "/season/" + Date.now();
+            this.props.history.push(url);
+            this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
+        }
     }
 
     render() {

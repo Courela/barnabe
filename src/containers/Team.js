@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import { Link } from 'react-router-dom';
+
 import 'react-table/react-table.css'
 
 export default class Team extends Component {
@@ -34,9 +35,8 @@ export default class Team extends Component {
 
     linkToPlayer(row, edit) {
         const season = this.state.season;
-        const queryString = edit ? '?edit' : '';
-        const text = edit ? "Editar" : row.original.name;
-        return (<Link to={'/season/' + season + '/player/' + row.value + queryString}>{text}</Link>);
+        const text = row.original.name;
+        return (<Link to={'/season/' + season + '/player/' + row.original.id}>{text}</Link>);
     }
 
     render() {
@@ -44,17 +44,16 @@ export default class Team extends Component {
             <div>
                 <h2>Equipa {this.props.match.params.teamId}</h2>
                 <div>
-                    <ReactTable 
+                    <ReactTable
                         columns={[
                             { Header: "Nome", id: 'id', Cell: (row) => this.linkToPlayer(row, false) },
-                            { Header: "Data Nascimento", accessor: "birthdate" },
-                            { Header: "", accessor: 'id', Cell: (row) => this.linkToPlayer(row, true) } 
+                            { Header: "Data Nascimento", accessor: "birthdate" }
                         ]}
                         data={this.state.data}
                         minRows={Math.max(Math.min(this.state.data.length, 5), 1)}
-                        onFetchData={this.getData} 
+                        onFetchData={this.getData}
                         defaultPageSize={5}
-                        className="-striped"/>
+                        className="-striped" />
                 </div>
             </div>);
     }

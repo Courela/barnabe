@@ -14,7 +14,7 @@ export default class TopMenu extends Component {
     handleLogout(event) {
         //console.log('State: ' + this.state.isAuthenticated + ' | Props: ' + this.props.isAuthenticated);
         if (this.props.userHasAuthenticated) {
-            this.props.userHasAuthenticated(false, null);
+            this.props.userHasAuthenticated(false, null, null);
         }
     }
 

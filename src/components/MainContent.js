@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Team from '../containers/Team';
 import Player from '../containers/Player';
 import NotFound from '../containers/NotFound';

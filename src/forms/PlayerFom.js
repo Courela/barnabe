@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     FormGroup, FormControl, ControlLabel, HelpBlock,
-    ButtonToolbar, DropdownButton, MenuItem, Button
+    Button
 } from 'react-bootstrap';
 
 export default class PlayerForm extends Component {
@@ -47,15 +47,7 @@ export default class PlayerForm extends Component {
     render() {
         const steps = ['Escolinhas', 'I Escalão', 'II Escalão', 'III Escalão', 'Feminino'];
         const selectSteps = steps.map((step, idx) => <option key={idx} value={idx + 1}>{step}</option>);
-        const dropdownSteps = steps.map((step, idx) => <MenuItem key={idx} eventKey={step} onSelect={this.handleStepSelect}>{step}</MenuItem>);
-
-        const dropdownControl = <ButtonToolbar>
-            <DropdownButton bsStyle="default" bsSize="large" title={this.state.step} title=""
-                key={1} id={`split-button-basic-${1}`}>
-                {dropdownSteps}
-            </DropdownButton>
-        </ButtonToolbar>
-
+        
         return (
             <div>
                 <div style={{ width: '80%', float: 'right' }}>

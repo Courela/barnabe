@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import { ButtonToolbar, Button, Image } from 'react-bootstrap';
 
 export default class Player extends Component {
     constructor(props) {
@@ -16,6 +16,7 @@ export default class Player extends Component {
         return (
         <div>
             <h1>Ficha de jogador {this.props.match.params.playerId}</h1>
+            <div><Image src="/public/logo.png" thumbnail /></div>
             <ButtonToolbar>
                 <Button bsStyle="primary" onClick={this.handleGoBack}>Voltar</Button>
             </ButtonToolbar>

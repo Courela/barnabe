@@ -10,20 +10,17 @@ class App extends Component {
 
         this.state = {
             isAuthenticated: false,
-            username: null
+            user: null
         };
 
         this.userHasAuthenticated = this.userHasAuthenticated.bind(this);
     }
 
-    userHasAuthenticated = (authenticated, username, redirectTo) => {
-        this.setState({ isAuthenticated: authenticated, username: username });
+    userHasAuthenticated = (authenticated, user, redirectTo) => {
+        this.setState({ isAuthenticated: authenticated, user: user });
 
         if (authenticated) {
-            //console.log('Authenticated: ' + JSON.stringify(this.props))
-            //console.log('Date: ' + Date.now().getFullYear());
-            //console.log('Redirect: ' + redirectTo);
-            const url = redirectTo ? redirectTo : "/season/" + Date.now();
+            const url = redirectTo ? redirectTo : "/season/" + new Date(Date.now()).getFullYear();
             this.props.history.push(url);
             this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
         }
@@ -32,6 +29,7 @@ class App extends Component {
     render() {
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
+            user: this.state.user,
             userHasAuthenticated: this.userHasAuthenticated
         };
 

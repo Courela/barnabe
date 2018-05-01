@@ -17,7 +17,8 @@ export default class MainContent extends Component {
         const authenticatedRoutesArr = [{
             path: '/season/:year/addstep',
             exact: true,
-            component: AddStep,
+            //component: AddStep,
+            render: () => { return (<AddStep {...this.props} />) }
         }, {
             path: '/season/:year/step/:stepId/player/:playerId',
             exact: true,
@@ -35,14 +36,21 @@ export default class MainContent extends Component {
             component: Documents
         }];
 
-        const authenticatedRoutes = authenticatedRoutesArr.map(({path, exact, component}, key) => <Route exact={exact} path={path} component={component} key={key} />);
+        const authenticatedRoutes = authenticatedRoutesArr.map(
+            ({path, exact, component, render}, key) => { 
+                if (render) {
+                    return (<Route exact={exact} path={path} render={render} key={key} />);
+                } else {
+                    return (<Route exact={exact} path={path} component={component} key={key} />);
+                }
+            });
 
         const anonymousRoutes = [
             <Route key="1" path="/season/:year/results" exact component={Results} />,
             <Route key="2" path="/season/:year/standings" exact component={Standings} />,
             <Route key="3" path="/season/:year/team/:teamId" exact component={Team} />,
             <Route key="4" path="/season/:year/player/:playerId" exact component={Player} />,
-            <Route key="5" path="/season/:year" exact render={(props) => <div>Época {props.match.params.year}</div>} />,
+            <Route key="5" path="/season/:year" exact render={(props) => <div>Edição {props.match.params.year}</div>} />,
             //<Route key="6" path="/season/:year/team/:teamId/*step/:stepId?" render={(props) => <Redirect push to={'/login?redirect=' + props.match.url} />} />,
             <Route key="99" component={NotFound} />
         ];

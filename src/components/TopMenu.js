@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import axios from 'axios';
+import settings from '../settings';
 
 export default class TopMenu extends Component {
     constructor(props) {
@@ -12,9 +14,9 @@ export default class TopMenu extends Component {
     }
 
     handleLogout(event) {
-        //console.log('State: ' + this.state.isAuthenticated + ' | Props: ' + this.props.isAuthenticated);
         if (this.props.userHasAuthenticated) {
             this.props.userHasAuthenticated(false, null, null);
+            axios.post(settings.API_URL + '/api/logout');
         }
     }
 
@@ -57,7 +59,7 @@ export default class TopMenu extends Component {
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav onSelect={this.handleSelect}>
-                            <NavDropdown eventKey={3} title="Época" id="basic-nav-dropdown">
+                            <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
                                 <LinkContainer to="/season/2018">
                                     <MenuItem>2018</MenuItem>
                                 </LinkContainer>

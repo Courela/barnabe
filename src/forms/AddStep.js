@@ -3,6 +3,8 @@ import {
     FormGroup, FormControl, ControlLabel,
     ButtonToolbar, DropdownButton, MenuItem, Button
 } from 'react-bootstrap';
+import axios from 'axios';
+import settings from '../settings';
 
 export default class AddStep extends Component {
     constructor(props, context) {
@@ -13,20 +15,33 @@ export default class AddStep extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.state = {
-            step: 0
+            stepId: 0
         };
     }
 
     handleStepSelect(evt) {
-        this.setState({ step: evt.target.value });
+        this.setState({ stepId: evt.target.value });
     }
 
     validateStep() {
-        if (this.state.step <= 0) return 'error';
+        if (this.state.stepId <= 0) return 'error';
         return null;
     }
 
     handleSubmit(evt) {
+        // console.log('Params: ' + JSON.stringify(this.props.match.params));
+        // console.log('Props: ' + JSON.stringify(this.props));
+
+        const year = this.props.match.params.year;
+        const teamId = this.props.teamId;
+
+        const url = settings.API_URL + '/api/season/' + year + '/team/' + teamId + '/addstep';
+        const data = { stepId: this.state.stepId };
+        const result = axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).catch(err => console.error(err));
         evt.preventDefault();
     }
 
@@ -39,12 +54,12 @@ export default class AddStep extends Component {
     // }
 
     render() {
-        const steps = ['Escolinhas', 'I Escalão', 'II Escalão', 'III Escalão', 'Feminino'];
+        const steps = ['I Escalão', 'II Escalão', 'III Escalão', 'Escolinhas', 'Feminino'];
         const selectSteps = steps.map((step, idx) => <option key={idx} value={idx+1}>{step}</option>);
         const dropdownSteps = steps.map((step, idx) => <MenuItem key={idx} eventKey={step} onSelect={this.handleStepSelect}>{step}</MenuItem>);
 
         const dropdownControl = <ButtonToolbar>
-            <DropdownButton bsStyle="default" bsSize="large" title={this.state.step}
+            <DropdownButton bsStyle="default" bsSize="large" title={this.state.stepId}
                 key={1} id={`split-button-basic-${1}`}>
                 {dropdownSteps}
             </DropdownButton>

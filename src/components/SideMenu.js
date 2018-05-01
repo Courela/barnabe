@@ -4,17 +4,38 @@ import React from 'react';
 import Menu, { SubMenu, Item as MenuItem } from 'rc-menu';
 import 'rc-menu/assets/index.css';
 import animate from 'css-animation';
+import axios from 'axios';
+import settings from '../settings';
 
 export default class SideMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            season: props.match.params.year
+            season: props.match.params.year,
+            teams: [],
+            steps: []
         };
 
         this.handleSelect = this.handleSelect.bind(this);
-        this.onOpenChange = this.onOpenChange.bind(this);
+        //this.onOpenChange = this.onOpenChange.bind(this);
+        this.getTeams = this.getTeams.bind(this);
+        this.getTeamSteps = this.getTeamSteps.bind(this);
+        this.teamsMenu = this.teamsMenu.bind(this);
+        this.buildTeamsMenuItems = this.buildTeamsMenuItems.bind(this);
+        this.getTeamSteps = this.getTeamSteps.bind(this);
+
+        if (this.props.isAuthenticated && this.props.teamId) {
+            this.getTeamSteps();
+        } else {
+            this.getTeams();
+        }
+    }
+
+    getTeams() {
+        //console.log(settings.API_URL);
+        axios.get(settings.API_URL + '/api/team?season=' + this.state.season)
+            .then((res) => this.setState({ teams: res.data }));
     }
 
     handleSelect(info) {
@@ -24,30 +45,66 @@ export default class SideMenu extends React.Component {
     }
 
     onOpenChange(value) {
-        console.log('onOpenChange', value);
+        //console.log('onOpenChange', value);
+    }
+
+    teamsMenu() {
+        if (this.state.teams.length > 0) {
+            return (
+                <SubMenu title={<span>Equipas</span>} key="1">
+                    {this.buildTeamsMenuItems()}
+                </SubMenu>);
+        }
+        else {
+            return (
+                <SubMenu title={<span>Equipas</span>} key="1" disabled>
+                    {this.buildTeamsMenuItems()}
+                </SubMenu>);
+        }
+    }
+
+    buildTeamsMenuItems() {
+        let menuItems = [];
+        this.state.teams.forEach(element => {
+            menuItems.push(<MenuItem key={"/season/" + this.state.season + "/team/" + element.Id}>{element.ShortDescription}</MenuItem>);
+        });
+        return menuItems;
+    }
+
+    getTeamSteps() {
+        axios.get(settings.API_URL + '/api/season/' + this.state.season + '/team/' + this.props.teamId + '/steps')
+            .then((res) => this.setState({ steps: res.data }));
+    }
+
+    stepsMenu() {
+        let menuItems = [];
+        this.state.steps.forEach(el => {
+            menuItems.push(<MenuItem key={"/season/" + this.state.season + "/step/" + el.Id}>{el.Description}</MenuItem>);
+        });
+
+        if (menuItems.length > 0) {
+            return (<SubMenu title={<span>Escalões</span>} key="1">
+                {menuItems}
+            </SubMenu>);
+        }
+        else return "";
     }
 
     render() {
         const anonymousMenu = (
             <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
                 mode="inline" openAnimation={animation}>
-                <SubMenu title={<span>Equipas</span>} key="1">
-                    <MenuItem key={"/season/" + this.state.season + "/team/1"}>Aruil</MenuItem>
-                    <MenuItem key={"/season/" + this.state.season + "/team/2"}>Almargem</MenuItem>
-                </SubMenu>
+                {this.teamsMenu()}
                 <MenuItem key={"/season/" + this.state.season + "/results"}>Resultados</MenuItem>
                 <MenuItem key={"/season/" + this.state.season + "/standings"}>Classificação</MenuItem>
                 <MenuItem disabled>disabled</MenuItem>
             </Menu>);
-        
+
         const authenticatedMenu = (
             <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
                 mode="inline" openAnimation={animation}>
                 <MenuItem key={"/season/" + this.state.season + "/addstep"}>Inscrever escalão</MenuItem>
-                <SubMenu title={<span>Escalões</span>} key="1">
-                    <MenuItem key={"/season/" + this.state.season + "/step/1"}>Escolinhas</MenuItem>
-                    <MenuItem key={"/season/" + this.state.season + "/step/2"}>III Escalão</MenuItem>
-                </SubMenu>
+                {this.stepsMenu()}
                 <MenuItem key={"/season/" + this.state.season + "/documents"}>Documentos</MenuItem>
             </Menu>);
 

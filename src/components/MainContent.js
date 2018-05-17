@@ -18,7 +18,11 @@ export default class MainContent extends Component {
             path: '/season/:year/addstep',
             exact: true,
             //component: AddStep,
-            render: () => { return (<AddStep {...this.props} />) }
+            render: (props) => { return (<AddStep {...props} teamId={this.props.teamId} />) }
+        }, {
+            path: '/season/:year/step/:stepId',
+            exact: true,
+            render: (props) => <StepTeam {...props} teamId={this.props.teamId} />,
         }, {
             path: '/season/:year/step/:stepId/player/:playerId',
             exact: true,
@@ -26,11 +30,7 @@ export default class MainContent extends Component {
         }, {
             path: '/season/:year/step/:stepId/player',
             exact: true,
-            component: PlayerForm,
-        }, {
-            path: '/season/:year/step/:stepId',
-            exact: false,
-            component: StepTeam,
+            render: (props) => { return <PlayerForm {...props} teamId={this.props.teamId} /> }
         }, {
             path: "/season/:year/documents",
             component: Documents

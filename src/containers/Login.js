@@ -3,6 +3,7 @@ import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import axios from 'axios';
 import settings from '../settings';
 import "../styles/Login.css";
+import errors from '../components/Errors';
 
 export default class Login extends Component {
     constructor(props) {
@@ -27,22 +28,18 @@ export default class Login extends Component {
     handleSubmit = async event => {
         event.preventDefault();
 
-        try {
-            const user = await validateUser(this.state.username, this.state.password);
-            console.log('Logged User: ' + user);
-            if (user) {
-                console.log('Login sucess!');
-                const redirectTo = this.props.location.search ? this.props.location.search.match('(?<=redirect=)/.+') : null;
-                //console.log(redirectTo);
-                this.props.userHasAuthenticated(true, user, redirectTo);
-            }
-            else {
-                console.log('Login failed!'); 
-                this.props.userHasAuthenticated(false, user, '') 
-            }
+        const user = await validateUser(this.state.username, this.state.password);
+        console.log('Logged User: ' + user);
+        if (user) {
+            console.log('Login sucess!');
+            const redirectTo = this.props.location.search ? this.props.location.search.match('(?<=redirect=)/.+') : null;
+            //console.log(redirectTo);
+            this.props.userHasAuthenticated(true, user, redirectTo);
         }
-        catch (e) {
-            alert(e.message);
+        else {
+            console.log('Login failed!');
+            this.props.userHasAuthenticated(false, user, '');
+            alert('Login falhou!');
         }
     }
 
@@ -83,7 +80,7 @@ export default class Login extends Component {
 
 async function validateUser(username, password) {
     const promise = axios.post(
-        settings.API_URL + '/api/authenticate', 
+        settings.API_URL + '/api/authenticate',
         { username: username, password: password },
         {
             headers: {
@@ -95,8 +92,5 @@ async function validateUser(username, password) {
         console.log(response);
         return response.data;
     })
-    .catch(err => {
-        console.log(err);
-        return null;
-    });
+        .catch(() => null);
 }

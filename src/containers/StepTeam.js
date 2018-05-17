@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import { Link } from 'react-router-dom';
 import { ButtonToolbar, Button } from 'react-bootstrap';
+import axios from 'axios';
+import settings from '../settings';
+import errors from '../components/Errors';
 
 export default class StepTeam extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            season: props.match.params.year ? props.match.params.year : Date.now().year,
+            season: props.match.params.year,
             teamId: props.teamId,
             stepId: props.match.params.stepId,
             data: []
@@ -20,25 +23,34 @@ export default class StepTeam extends Component {
     }
 
     componentDidMount() {
-        this.setState({ data: this.getData() });
+        this.getData();
     }
 
     getData() {
-        return [
-            { id: 1, name: 'Jogador 1', birthdate: new Date(2000, 1, 1).toString() },
-            { id: 2, name: 'Jogador 2', birthdate: new Date(2000, 1, 2).toString() },
-            { id: 3, name: 'Jogador 3', birthdate: new Date(2000, 1, 1).toString() },
-            { id: 4, name: 'Jogador 4', birthdate: new Date(2000, 1, 2).toString() },
-            { id: 5, name: 'Jogador 5', birthdate: new Date(2000, 1, 1).toString() },
-            { id: 6, name: 'Jogador 6', birthdate: new Date(2000, 1, 2).toString() }
-        ];
+        const { season, teamId, stepId } = this.state;
+        axios.get(settings.API_URL + '/api/season/' + season + '/team/' + teamId + '/step/' + stepId + '/player')
+            .then(result => {
+                console.log(result);
+                if (result.data && result.data.length > 0) {
+                    this.setState({ data: result.data });
+                }
+            })
+            .catch(errors.handleError);
+        // return [
+        //     { id: 1, name: 'Jogador 1', birthdate: new Date(2000, 1, 1).toString() },
+        //     { id: 2, name: 'Jogador 2', birthdate: new Date(2000, 1, 2).toString() },
+        //     { id: 3, name: 'Jogador 3', birthdate: new Date(2000, 1, 1).toString() },
+        //     { id: 4, name: 'Jogador 4', birthdate: new Date(2000, 1, 2).toString() },
+        //     { id: 5, name: 'Jogador 5', birthdate: new Date(2000, 1, 1).toString() },
+        //     { id: 6, name: 'Jogador 6', birthdate: new Date(2000, 1, 2).toString() }
+        // ];
     }
 
     linkToPlayer(row, edit) {
         const { season, stepId } = this.state;
         const queryString = edit ? '?edit' : '';
-        const text = edit ? "Editar" : row.original.name;
-        return (<Link to={'/season/' + season + '/step/' + stepId + '/player/' + row.original.id + queryString}>{text}</Link>);
+        const text = edit ? "Editar" : row.original.Name;
+        return (<Link to={'/season/' + season + '/step/' + stepId + '/player/' + row.original.Id + queryString}>{text}</Link>);
     }
 
     handleNewPlayer() {
@@ -61,9 +73,10 @@ export default class StepTeam extends Component {
                     <div>
                         <ReactTable
                             columns={[
-                                { Header: "Nome", id: 'id', Cell: (row) => this.linkToPlayer(row, false) },
-                                { Header: "Data Nascimento", accessor: "birthdate" },
-                                { Header: "", accessor: 'id', Cell: (row) => this.linkToPlayer(row, true) } 
+                                { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row, false) },
+                                { Header: "Data Nascimento", accessor: "Birthdate" },
+                                { Header: "Cartão Cidadão", accessor: "IdCardNr" },
+                                { Header: "", accessor: 'Id', Cell: (row) => this.linkToPlayer(row, true) } 
                             ]}
                             data={this.state.data}
                             minRows={Math.max(Math.min(this.state.data.length, 5), 1)}

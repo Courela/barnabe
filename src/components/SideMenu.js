@@ -6,13 +6,14 @@ import 'rc-menu/assets/index.css';
 import animate from 'css-animation';
 import axios from 'axios';
 import settings from '../settings';
+import errors from '../components/Errors';
 
 export default class SideMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            season: props.match.params.year,
+            season: props.season,
             teams: [],
             steps: []
         };
@@ -35,12 +36,14 @@ export default class SideMenu extends React.Component {
     getTeams() {
         //console.log(settings.API_URL);
         axios.get(settings.API_URL + '/api/team?season=' + this.state.season)
-            .then((res) => this.setState({ teams: res.data }));
+            .then((res) => this.setState({ teams: res.data })
+            .catch(errors.handleError));
     }
 
     handleSelect(info) {
         if (info.key) {
-            this.props.history.push(info.key);
+            this.props.navigate(info.key);
+            //this.props.history.push(info.key);
         }
     }
 
@@ -73,13 +76,14 @@ export default class SideMenu extends React.Component {
 
     getTeamSteps() {
         axios.get(settings.API_URL + '/api/season/' + this.state.season + '/team/' + this.props.teamId + '/steps')
-            .then((res) => this.setState({ steps: res.data }));
+            .then((res) => this.setState({ steps: res.data }))
+            .catch(errors.handleError);
     }
 
     stepsMenu() {
         let menuItems = [];
         this.state.steps.forEach(el => {
-            menuItems.push(<MenuItem key={"/season/" + this.state.season + "/step/" + el.Id}>{el.Description}</MenuItem>);
+            menuItems.push(<MenuItem key={"/season/" + this.state.season + "/step/" + el.StepId}>{el.Description}</MenuItem>);
         });
 
         if (menuItems.length > 0) {

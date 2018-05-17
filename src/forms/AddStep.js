@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import settings from '../settings';
+import errors from '../components/Errors';
 
 export default class AddStep extends Component {
     constructor(props, context) {
@@ -15,8 +16,21 @@ export default class AddStep extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.state = {
+            steps: [],
             stepId: 0
         };
+    }
+
+    componentDidMount() {
+        const year = this.props.match.params.year;
+        const teamId = this.props.teamId;
+
+        const url = settings.API_URL + '/api/season/' + year + '/team/' + teamId + '/signsteps';
+        axios.get(url)
+            .then(results => {
+                this.setState({ steps: results.data.map(s => ({ id: s.Id, descr: s.Description })) });
+            })
+            .catch(errors.handleError);
     }
 
     handleStepSelect(evt) {
@@ -41,7 +55,7 @@ export default class AddStep extends Component {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).catch(err => console.error(err));
+        }).catch(errors.handleError);
         evt.preventDefault();
     }
 
@@ -54,16 +68,18 @@ export default class AddStep extends Component {
     // }
 
     render() {
-        const steps = ['I Escalão', 'II Escalão', 'III Escalão', 'Escolinhas', 'Feminino'];
-        const selectSteps = steps.map((step, idx) => <option key={idx} value={idx+1}>{step}</option>);
-        const dropdownSteps = steps.map((step, idx) => <MenuItem key={idx} eventKey={step} onSelect={this.handleStepSelect}>{step}</MenuItem>);
+        const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.descr}</option>);
 
-        const dropdownControl = <ButtonToolbar>
-            <DropdownButton bsStyle="default" bsSize="large" title={this.state.stepId}
-                key={1} id={`split-button-basic-${1}`}>
-                {dropdownSteps}
-            </DropdownButton>
-        </ButtonToolbar>
+        //const steps = ['I Escalão', 'II Escalão', 'III Escalão', 'Escolinhas', 'Feminino'];
+        //const selectSteps = steps.map((step, idx) => <option key={idx} value={idx+1}>{step}</option>);
+        //const dropdownSteps = steps.map((step, idx) => <MenuItem key={idx} eventKey={step} onSelect={this.handleStepSelect}>{step}</MenuItem>);
+
+        // const dropdownControl = <ButtonToolbar>
+        //     <DropdownButton bsStyle="default" bsSize="large" title={this.state.stepId}
+        //         key={1} id={`split-button-basic-${1}`}>
+        //         {dropdownSteps}
+        //     </DropdownButton>
+        // </ButtonToolbar>
 
         return (
             <div>

@@ -41,9 +41,9 @@ export default class Team extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <h2>Equipa {this.props.match.params.teamId}</h2>
-                <div>
+                <div style={{ display: 'inline-flex', margin: 'auto' }}>
                     <ReactTable
                         columns={[
                             { Header: "Nome", id: 'id', Cell: (row) => this.linkToPlayer(row, false) },

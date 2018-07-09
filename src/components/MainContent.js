@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import SeasonMain from '../containers/SeasonMain';
 import Team from '../containers/Team';
 import Player from '../containers/Player';
 import NotFound from '../containers/NotFound';
@@ -22,18 +23,26 @@ export default class MainContent extends Component {
         }, {
             path: '/season/:year/step/:stepId',
             exact: true,
-            render: (props) => <StepTeam {...props} teamId={this.props.teamId} />,
+            render: (props) => <StepTeam {...props} teamId={this.props.teamId} refresh={this.props.refresh}/>,
         }, {
             path: '/season/:year/step/:stepId/player/:playerId',
             exact: true,
-            component: Player,
+            render: (props) => <Player {...props} teamId={this.props.teamId} />,
         }, {
             path: '/season/:year/step/:stepId/player',
+            exact: true,
+            render: (props) => { return <PlayerForm {...props} teamId={this.props.teamId} roleId="1" /> }
+        }, {
+            path: '/season/:year/step/:stepId/staff',
             exact: true,
             render: (props) => { return <PlayerForm {...props} teamId={this.props.teamId} /> }
         }, {
             path: "/season/:year/documents",
             component: Documents
+        }, {
+            path: '/season/:year',
+            exact: true,
+            render: (props) => <SeasonMain {...props} teamId={this.props.teamId} />
         }];
 
         const authenticatedRoutes = authenticatedRoutesArr.map(
@@ -56,10 +65,8 @@ export default class MainContent extends Component {
         ];
         
         return (
-            <div>
-                <Switch>
-                    {this.props.isAuthenticated ? authenticatedRoutes : anonymousRoutes }
-                </Switch>
-            </div>);
+            <Switch>
+                {this.props.isAuthenticated ? authenticatedRoutes : anonymousRoutes }
+            </Switch>);
     }
 }

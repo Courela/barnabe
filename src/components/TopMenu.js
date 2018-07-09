@@ -15,6 +15,7 @@ export default class TopMenu extends Component {
 
     handleLogout(event) {
         if (this.props.userHasAuthenticated) {
+            sessionStorage.clear();
             this.props.userHasAuthenticated(false, null, null);
             axios.post(settings.API_URL + '/api/logout');
         }
@@ -26,12 +27,13 @@ export default class TopMenu extends Component {
     }
 
     render() {
-        const authenticatedOptions = <NavItem onClick={this.handleLogout}>Logout</NavItem>;
+        const authenticatedOptions = 
+            <Fragment>
+                <NavItem disabled>User: {this.props.username}</NavItem>
+                <NavItem onClick={this.handleLogout}>Logout</NavItem>
+            </Fragment>;
         const anonymousOptions =
             <Fragment>
-                <LinkContainer to="/about">
-                    <NavItem>Sobre</NavItem>
-                </LinkContainer>
                 <LinkContainer to="/torneio">
                     <NavItem>Torneio</NavItem>
                 </LinkContainer>

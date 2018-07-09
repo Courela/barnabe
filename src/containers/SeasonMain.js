@@ -1,0 +1,20 @@
+import React, { Component } from 'react';
+import { ButtonToolbar, Button } from 'react-bootstrap';
+
+export default class SeasonMain extends Component {
+    handleNewPlayer() {
+        this.props.history.push('/season/' + this.props.match.params.year + '/step/0/player');
+    }
+
+    handleAddStep() {
+        this.props.history.push("/season/" + this.props.match.params.year + "/addstep");
+    }
+
+    render() {
+        return (
+            <ButtonToolbar>
+                <Button bsStyle="primary" onClick={this.handleAddStep.bind(this)}>Inscrever escalão</Button>
+                <Button bsStyle="primary" onClick={this.handleNewPlayer.bind(this)}>Adicionar Jogador</Button>
+            </ButtonToolbar>);
+    }
+} 

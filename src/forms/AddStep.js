@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     FormGroup, FormControl, ControlLabel,
-    ButtonToolbar, DropdownButton, MenuItem, Button
+    Button
 } from 'react-bootstrap';
 import axios from 'axios';
 import settings from '../settings';
@@ -25,7 +25,7 @@ export default class AddStep extends Component {
         const year = this.props.match.params.year;
         const teamId = this.props.teamId;
 
-        const url = settings.API_URL + '/api/season/' + year + '/team/' + teamId + '/signsteps';
+        const url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/signsteps';
         axios.get(url)
             .then(results => {
                 this.setState({ steps: results.data.map(s => ({ id: s.Id, descr: s.Description })) });
@@ -49,13 +49,15 @@ export default class AddStep extends Component {
         const year = this.props.match.params.year;
         const teamId = this.props.teamId;
 
-        const url = settings.API_URL + '/api/season/' + year + '/team/' + teamId + '/addstep';
+        const url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
         const data = { stepId: this.state.stepId };
-        const result = axios.post(url, data, {
+        axios.put(url, data, {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).catch(errors.handleError);
+        })
+        .then(res => { this.props.history.push('/season/' + year); })
+        .catch(errors.handleError);
         evt.preventDefault();
     }
 

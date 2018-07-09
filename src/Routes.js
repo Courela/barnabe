@@ -5,8 +5,8 @@ import NotFound from "./containers/NotFound";
 import Login from "./containers/Login";
 import Torneio from "./containers/Torneio";
 import Season from "./containers/Season";
-
 import AppliedRoute from "./components/AppliedRoute";
+import GoogleApiForm from "./forms/GoogleApiForm";
 
 export default ({ childProps }) => {
     //console.log('Render Routes: ' + childProps.isAuthenticated + " " + JSON.stringify(childProps));
@@ -16,7 +16,8 @@ export default ({ childProps }) => {
         <AppliedRoute key="1" path="/season/:year" component={Season} props={childProps} />,
         <AppliedRoute key="2" path="/torneio" exact component={Torneio} props={childProps} />,
         <AppliedRoute key="3" path="/login" exact component={Login} props={childProps} />,
-        <AppliedRoute key="4" path="/" exact component={Home} props={childProps} />,
+        <AppliedRoute key="4" path="/admin" exact component={GoogleApiForm} props={childProps} />,
+        <AppliedRoute key="5" path="/" exact component={Home} props={childProps} />,
         <Route key="99" component={NotFound} />,
     ];
 

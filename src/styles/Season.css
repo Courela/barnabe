@@ -1,0 +1,8 @@
+.display-area {
+    display: flex;
+}
+
+.main-content {
+    flex: 9999 1 auto;
+    margin-left: 10px;
+}

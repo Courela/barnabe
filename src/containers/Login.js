@@ -3,7 +3,7 @@ import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import axios from 'axios';
 import settings from '../settings';
 import "../styles/Login.css";
-import errors from '../components/Errors';
+//import errors from '../components/Errors';
 
 export default class Login extends Component {
     constructor(props) {

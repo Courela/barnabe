@@ -26,6 +26,7 @@ export default class SideMenu extends React.Component {
         this.buildTeamsMenuItems = this.buildTeamsMenuItems.bind(this);
         this.getTeamSteps = this.getTeamSteps.bind(this);
 
+        console.log('SideMenu: ' + this.props.isAuthenticated +';' +  this.props.teamId);
         if (this.props.isAuthenticated && this.props.teamId) {
             this.getTeamSteps();
         } else {
@@ -35,9 +36,9 @@ export default class SideMenu extends React.Component {
 
     getTeams() {
         //console.log(settings.API_URL);
-        axios.get(settings.API_URL + '/api/team?season=' + this.state.season)
-            .then((res) => this.setState({ teams: res.data })
-            .catch(errors.handleError));
+        axios.get(settings.API_URL + '/api/teams?season=' + this.state.season)
+            .then((res) => this.setState({ teams: res.data }))
+            .catch(errors.handleError);
     }
 
     handleSelect(info) {
@@ -75,7 +76,7 @@ export default class SideMenu extends React.Component {
     }
 
     getTeamSteps() {
-        axios.get(settings.API_URL + '/api/season/' + this.state.season + '/team/' + this.props.teamId + '/steps')
+        axios.get(settings.API_URL + '/api/seasons/' + this.state.season + '/teams/' + this.props.teamId + '/steps')
             .then((res) => this.setState({ steps: res.data }))
             .catch(errors.handleError);
     }
@@ -101,7 +102,6 @@ export default class SideMenu extends React.Component {
                 {this.teamsMenu()}
                 <MenuItem key={"/season/" + this.state.season + "/results"}>Resultados</MenuItem>
                 <MenuItem key={"/season/" + this.state.season + "/standings"}>Classificação</MenuItem>
-                <MenuItem disabled>disabled</MenuItem>
             </Menu>);
 
         const authenticatedMenu = (

@@ -3,11 +3,11 @@ import { ButtonToolbar, Button } from 'react-bootstrap';
 
 export default class SeasonMain extends Component {
     handleNewPlayer() {
-        this.props.history.push('/season/' + this.props.match.params.year + '/step/0/player');
+        this.props.history.push('/seasons/' + this.props.match.params.year + '/steps/0/player');
     }
 
     handleAddStep() {
-        this.props.history.push("/season/" + this.props.match.params.year + "/addstep");
+        this.props.history.push("/seasons/" + this.props.match.params.year + "/addstep");
     }
 
     render() {

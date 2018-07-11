@@ -56,7 +56,7 @@ export default class AddStep extends Component {
                 'Content-Type': 'application/json'
             }
         })
-        .then(res => { this.props.history.push('/season/' + year); })
+        .then(res => { this.props.history.push('/seasons/' + year); })
         .catch(errors.handleError);
         evt.preventDefault();
     }

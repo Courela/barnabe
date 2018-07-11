@@ -30,7 +30,8 @@ class App extends Component {
             isAuthenticated: user != null,
             user: user,
             teamId: teamId,
-            username: username
+            username: username,
+            isAdmin: false 
         };
 
         this.userHasAuthenticated = this.userHasAuthenticated.bind(this);
@@ -41,13 +42,14 @@ class App extends Component {
             isAuthenticated: authenticated, 
             user: user, 
             teamId: user ? user.TeamId : null,
-            username: user ? user.Username : null
+            username: user ? user.Username : null,
+            isAdmin: user && !user.TeamId
         }, () => {
             if (this.state.isAuthenticated) {
                 sessionStorage.setItem('user', this.state.user);
                 sessionStorage.setItem('teamId', this.state.user ? this.state.user.TeamId : null);
                 sessionStorage.setItem('username', this.state.user ? this.state.user.Username : null);
-                const url = redirectTo ? redirectTo : "/season/" + new Date(Date.now()).getFullYear();
+                const url = redirectTo ? redirectTo : "/seasons/" + new Date(Date.now()).getFullYear();
                 this.props.history.push(url);
                 this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
             }
@@ -55,20 +57,23 @@ class App extends Component {
     }
 
     render() {
+        //console.log('App props: ', this.props);
+        const year = this.props.match.params.year ? this.props.match.params.year : 0;
+
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
             user: this.state.user,
             teamId: this.state.teamId,
             username: this.state.username,
             userHasAuthenticated: this.userHasAuthenticated,
-            refresh: this.refresh,
+            year: year
         };
 
         return (
             <div className="App container">
                 <TopMenu isAuthenticated={this.state.isAuthenticated} username={this.state.username}
                     userHasAuthenticated={this.userHasAuthenticated} />
-                <Routes childProps={childProps} />
+                <Routes {...this.props} childProps={childProps} />
             </div>
         );
     }

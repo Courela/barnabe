@@ -179,7 +179,7 @@ export default class PlayerForm extends Component {
                 .then(result => {
                     console.log(result);
                     const playerId = result.data.Id;
-                    this.props.history.push('/season/' + season + '/step/' + stepId + '/players/' + playerId + '?success');
+                    this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
                     // if (result.data && result.data.length > 0) {
                     //     this.setState({ data: result.data });
                     // }
@@ -227,8 +227,8 @@ export default class PlayerForm extends Component {
         var files = evt.target.files; // FileList object
 
         // Loop through the FileList and render image files as thumbnails.
-        for (var i = 0, f; f = files[i]; i++) {
-
+        for (var i = 0, f; i < files.length; i++) {
+            f = files[i]
             // Only process image files.
             if (!f.type.match('image.*')) {
                 continue;

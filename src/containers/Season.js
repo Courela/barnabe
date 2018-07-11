@@ -9,51 +9,50 @@ export default class Season extends Component {
     constructor(props) {
         super(props);
 
-        this.navigate = this.navigate.bind(this);
-        this.refresh = this.refresh.bind(this);
+        //this.navigate = this.navigate.bind(this);
 
         this.state = {
-            refresh: false
+            //refresh: false,
+            year: 0 
         }
     }
 
     componentDidMount() {
-        this.setState({ refresh: false });
+        //this.setState({ refresh: false });
     }
 
-    navigate(url) {
-        this.props.history.push(url);
-        this.refresh();
+    componentWillReceiveProps(newProps) {
+        this.setState({ year: newProps.match.params.year });
     }
 
-    refresh() {
-        console.log('Force update!');
-        //this.forceUpdate();
-        window.location.reload();
-    }
-    
+    // navigate(url) {
+    //     this.props.history.push(url);
+    // }
+
     render() {
         //console.log('Render Season');
         return (
             <div className="display-area">
                 <div>
-                    <Route path="/season/:year" 
+                    <Route key={this.state.year + 1} path="/seasons/:year" 
                         render={(props) => 
-                            <SideMenu season={props.match.params.year} 
+                            <SideMenu {...props} season={props.match.params.year} 
                                 isAuthenticated={this.props.isAuthenticated} 
                                 teamId={this.props.teamId} 
-                                navigate={this.navigate}/>} />
+                                /* navigate={this.navigate} */ />} />
                 </div>
                 <div className="main-content">
                     {/* <Switch>
-                        <Route path="/season/:year/step/:stepId" exact 
+                        <Route path="/seasons/:year/steps/:stepId" exact 
                             render={(props) => 
                                 <MainContent {...props} isAuthenticated={this.props.isAuthenticated} 
                                     teamId={this.props.user ? this.props.user.TeamId : null}  
                                     stepId={props.match.params.stepId} /> } /> */}
-                        <Route path="/season/:year" 
+                        <Route key={this.state.year + 2} path="/admin" exact render={(props) => 
+                                <MainContent {...props} isAuthenticated={this.props.isAuthenticated} /> } />
+                        <Route key={this.state.year + 3} path="/seasons/:year" 
                             render={(props) => 
-                                <MainContent {...props} isAuthenticated={this.props.isAuthenticated} teamId={this.props.teamId} refresh={this.state.refresh}/> } />
+                                <MainContent {...props} isAuthenticated={this.props.isAuthenticated} teamId={this.props.teamId} /> } />
                     {/* </Switch> */}
                 </div>
             </div>);

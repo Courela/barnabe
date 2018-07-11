@@ -36,7 +36,7 @@ export default class Team extends Component {
     linkToPlayer(row, edit) {
         const season = this.state.season;
         const text = row.original.name;
-        return (<Link to={'/season/' + season + '/player/' + row.original.id}>{text}</Link>);
+        return (<Link to={'/seasons/' + season + '/players/' + row.original.id}>{text}</Link>);
     }
 
     render() {

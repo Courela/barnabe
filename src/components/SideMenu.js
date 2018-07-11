@@ -25,13 +25,20 @@ export default class SideMenu extends React.Component {
         this.teamsMenu = this.teamsMenu.bind(this);
         this.buildTeamsMenuItems = this.buildTeamsMenuItems.bind(this);
         this.getTeamSteps = this.getTeamSteps.bind(this);
+    }
 
-        console.log('SideMenu: ' + this.props.isAuthenticated +';' +  this.props.teamId);
+    componentDidMount() {
+        //console.log('SideMenu: ' + this.props.isAuthenticated +';' +  this.props.teamId);
         if (this.props.isAuthenticated && this.props.teamId) {
             this.getTeamSteps();
         } else {
             this.getTeams();
         }
+    }
+
+    componentWillReceiveProps(newProps) {
+        //console.log('New season: ', newProps.match.params.year);
+        this.setState({ season: newProps.match.params.year });
     }
 
     getTeams() {
@@ -43,8 +50,7 @@ export default class SideMenu extends React.Component {
 
     handleSelect(info) {
         if (info.key) {
-            this.props.navigate(info.key);
-            //this.props.history.push(info.key);
+            this.props.history.push(info.key);
         }
     }
 
@@ -70,7 +76,7 @@ export default class SideMenu extends React.Component {
     buildTeamsMenuItems() {
         let menuItems = [];
         this.state.teams.forEach(element => {
-            menuItems.push(<MenuItem key={"/season/" + this.state.season + "/team/" + element.Id}>{element.ShortDescription}</MenuItem>);
+            menuItems.push(<MenuItem key={"/seasons/" + this.state.season + "/teams/" + element.Id}>{element.ShortDescription}</MenuItem>);
         });
         return menuItems;
     }
@@ -84,7 +90,7 @@ export default class SideMenu extends React.Component {
     stepsMenu() {
         let menuItems = [];
         this.state.steps.forEach(el => {
-            menuItems.push(<MenuItem key={"/season/" + this.state.season + "/step/" + el.StepId}>{el.Description}</MenuItem>);
+            menuItems.push(<MenuItem key={"/seasons/" + this.state.season + "/steps/" + el.StepId}>{el.Description}</MenuItem>);
         });
 
         if (menuItems.length > 0) {
@@ -100,16 +106,17 @@ export default class SideMenu extends React.Component {
             <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
                 mode="inline" openAnimation={animation}>
                 {this.teamsMenu()}
-                <MenuItem key={"/season/" + this.state.season + "/results"}>Resultados</MenuItem>
-                <MenuItem key={"/season/" + this.state.season + "/standings"}>Classificação</MenuItem>
+                <MenuItem key={"/seasons/" + this.state.season + "/results"}>Resultados</MenuItem>
+                <MenuItem key={"/seasons/" + this.state.season + "/standings"}>Classificação</MenuItem>
             </Menu>);
 
         const authenticatedMenu = (
             <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
                 mode="inline" openAnimation={animation}>
-                <MenuItem key={"/season/" + this.state.season + "/addstep"}>Inscrever escalão</MenuItem>
+                {this.props.isAuthenticated && !this.props.teamId ? <MenuItem key={"/admin"}>Admin</MenuItem> : ''}
+                <MenuItem key={"/seasons/" + this.state.season + "/addstep"}>Inscrever escalão</MenuItem>
                 {this.stepsMenu()}
-                <MenuItem key={"/season/" + this.state.season + "/documents"}>Documentos</MenuItem>
+                <MenuItem key={"/seasons/" + this.state.season + "/documents"}>Documentos</MenuItem>
             </Menu>);
 
         const menu = this.props.isAuthenticated ? authenticatedMenu : anonymousMenu;

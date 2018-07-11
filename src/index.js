@@ -23,7 +23,7 @@ ReactDOM.render(
 registerServiceWorker();
 
 function Api(props) {
-    console.log(props);
+    //console.log(props);
     let apiResponse = CallApi(settins.API_URL + props.location.pathname);
     console.log(apiResponse);
     return (<div>

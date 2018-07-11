@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import {
-    FormGroup, FormControl, ControlLabel, HelpBlock,
-    Button, Panel, Image
+    FormGroup, FormControl, ControlLabel, HelpBlock, Button
 } from 'react-bootstrap';
 import axios from 'axios';
 import settings from '../settings';
@@ -32,7 +31,7 @@ export default class GoogleApiForm extends Component {
                         return;
                     }
                     if (result.data.nextStep === 'token') {
-                        this.setState({ isAuthorized: result.data.success, url: result.data.url });    
+                        this.setState({ isAuthorized: result.data.success, url: result.data.url });
                     }
                 }
                 else {
@@ -85,7 +84,8 @@ export default class GoogleApiForm extends Component {
         var files = evt.target.files; // FileList object
 
         // Loop through the FileList and render image files as thumbnails.
-        for (var i = 0, f; f = files[i]; i++) {
+        for (var i = 0, f; i < files.length; i++) {
+            f = files[i];
             var reader = new FileReader();
             let self = this;
             // Closure to capture the file information.
@@ -128,7 +128,10 @@ export default class GoogleApiForm extends Component {
                         <p>Authorized</p>
                         <Button bsStyle="primary" onClick={this.handleReset}>Reset</Button>
                     </div>
-                    <BackupData />
+                    <BackupForm type='data' title='Backup Data to Google Drive'
+                        successMessage='Data was saved' failMessage='Fail to save data!' />
+                    <BackupForm type='users' title='Backup Users to Google Drive'
+                        successMessage='Users were saved' failMessage='Fail to save users!' />
                 </Fragment>
             );
         }
@@ -164,41 +167,94 @@ export default class GoogleApiForm extends Component {
     }
 }
 
-class BackupData extends Component {
+class BackupForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            success: false,
-            message: ''
+            successBackup: false,
+            successRestore: false,
+            message: '',
+            loadingBackup: false,
+            loadingRestore: false
         }
 
         this.handleBackup = this.handleBackup.bind(this);
+        this.handleRestore = this.handleRestore.bind(this);
     }
 
     handleBackup(evt) {
-        const url = settings.API_URL + '/api/admin/save-data';
-        axios.get(url)
-            .then(result => {
-                console.log(result);
-                if (result.data.isSuccess) {
-                    this.setState({ success: true, message: 'Data was saved.' });
-                }
-                else {
-                    this.setState({ success: false, message: 'Failed to save data!' });
-                }
-            })
-            .catch((err) => {
-                console.error(err);
+        this.setState({ loadingBackup: true }, () => {
+            const url = settings.API_URL + '/api/admin/save-' + this.props.type;
+            axios.get(url)
+                .then(result => {
+                    console.log(result);
+                    if (result.data.isSuccess) {
+                        this.setState({ 
+                            successBackup: true,
+                            successRestore: false, 
+                            message: this.props.successMessage, 
+                            loadingBackup: false });
+                    }
+                    else {
+                        this.setState({ 
+                            successBackup: false, 
+                            successRestore: false, 
+                            message: this.props.failMessage, 
+                            loadingBackup: false });
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        });
+        evt.preventDefault();
+    }
+
+    handleRestore(evt) {
+        if (window.confirm('About to restore ' + this.props.type + '! Are you sure?')) {
+            this.setState({ loadingRestore: true }, () => {
+                const url = settings.API_URL + '/api/admin/restore-' + this.props.type;
+                axios.get(url)
+                    .then(result => {
+                        console.log(result);
+                        if (result.data.isSuccess) {
+                            this.setState({ 
+                                successRestore: true, 
+                                successBackup: false, 
+                                message: this.props.successMessage, 
+                                loadingRestore: false });
+                        }
+                        else {
+                            this.setState({ 
+                                successRestore: false,
+                                successBackup: false,
+                                message: this.props.failMessage,
+                                loadingRestore: false });
+                        }
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
             });
+        }
+        evt.preventDefault();
     }
 
     render() {
         return (
             <div>
-                <h3>Backup Data to Google Drive</h3>
-                <Button bsStyle="primary" onClick={this.handleBackup}>Backup</Button>&nbsp;
-                <span style={{ color: this.state.success ? 'green' : 'red' }}>{this.state.message}</span>
+                <h3>{this.props.title}</h3>
+                <div style={{ margin: 2}}>
+                    <Button bsStyle="success" onClick={this.handleBackup}>Backup</Button>&nbsp;
+                    <span style={{ display: this.state.loadingBackup ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
+                    <span style={{ color: this.state.successBackup ? 'green' : 'red' }}>{this.state.message}</span>
+                </div>
+                <div style={{ margin: 2}}>
+                    <Button bsStyle="danger" onClick={this.handleRestore}>Restore</Button>&nbsp;
+                    <span style={{ display: this.state.loadingRestore ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
+                    <span style={{ color: this.state.successRestore ? 'green' : 'red' }}>{this.state.message}</span>
+                </div>
             </div>
         );
     }

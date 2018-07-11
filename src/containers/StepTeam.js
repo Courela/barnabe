@@ -32,6 +32,14 @@ export default class StepTeam extends Component {
         this.getStaff();
     }
 
+    componentWillReceiveProps(newProps) {
+        //console.log('New step: ', newProps.match.params.stepId);
+        this.setState({ stepId: newProps.match.params.stepId, stepName: null, data: [], staff: [] }, () => {
+            this.getData();
+            this.getStaff();
+        });
+    }
+
     getData() {
         if (this.state.data.length === 0) {
             const { season, teamId, stepId } = this.state;
@@ -47,7 +55,7 @@ export default class StepTeam extends Component {
         if (!this.state.stepName) {
             axios.get(settings.API_URL + '/api/steps/' + this.state.stepId)
                 .then(result => {
-                    console.log(result);
+                    //console.log(result);
                     if (result.data) {
                         this.setState({ stepName: result.data.Description });
                     }
@@ -80,7 +88,7 @@ export default class StepTeam extends Component {
     removePlayerLink(row) {
         return (
             <Fragment>
-                <a onClick={() => this.removePlayer(row.original.Id, row.original.Name)}>Remover</a>
+                <a onClick={() => this.removePlayer(row.original.Id, row.original.Name)} href="#">Remover</a>
             </Fragment>
         );
     }
@@ -98,12 +106,12 @@ export default class StepTeam extends Component {
 
     handleNewPlayer() {
         const { season, stepId } = this.state;
-        this.props.history.push('/season/' + season + '/step/' + stepId + '/player');
+        this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/player');
     };
 
     handleNewStaff() {
         const { season, stepId } = this.state;
-        this.props.history.push('/season/' + season + '/step/' + stepId + '/staff');
+        this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/staff');
     };
 
     render() {
@@ -146,7 +154,8 @@ export default class StepTeam extends Component {
                                 { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row, false) },
                                 { Header: "Data Nascimento", accessor: "Birthdate" },
                                 { Header: "Cartão Cidadão", accessor: "IdCardNr" },
-                                { Header: "", accessor: 'Id', Cell: (row) => this.linkToPlayer(row, true) }
+                                { Header: "", accessor: 'Id', Cell: (row) => this.linkToPlayer(row, true) },
+                                { Header: "", accessor: 'Id', Cell: (row) => this.removePlayerLink(row) }
                             ]}
                             data={this.state.staff}
                             minRows={Math.max(Math.min(this.state.staff.length, 5), 1)}

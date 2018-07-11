@@ -6,29 +6,32 @@ import Login from "./containers/Login";
 import Torneio from "./containers/Torneio";
 import Season from "./containers/Season";
 import AppliedRoute from "./components/AppliedRoute";
-import GoogleApiForm from "./forms/GoogleApiForm";
 
 export default ({ childProps }) => {
     //console.log('Render Routes: ' + childProps.isAuthenticated + " " + JSON.stringify(childProps));
 
-    let routes = [
-        <AppliedRoute key="0" path="/season/:year/step*" component={Season} props={childProps} />,
-        <AppliedRoute key="1" path="/season/:year" component={Season} props={childProps} />,
-        <AppliedRoute key="2" path="/torneio" exact component={Torneio} props={childProps} />,
-        <AppliedRoute key="3" path="/login" exact component={Login} props={childProps} />,
-        <AppliedRoute key="4" path="/admin" exact component={GoogleApiForm} props={childProps} />,
-        <AppliedRoute key="5" path="/" exact component={Home} props={childProps} />,
-        <Route key="99" component={NotFound} />,
-    ];
-
-    if (!childProps.isAuthenticated) {
+    let routes = [];
+    //console.log('Child props', childProps);
+    if (childProps.isAuthenticated) {
         routes = [
-            <Route key="0" path="/season/:year/*step/:stepId?*" render={(props) => <Redirect push to={'/login?redirect=' + props.match.url} />} />,
+            <AppliedRoute key={0 + childProps.year} path="/admin" exact component={Season} props={childProps} />,
+            <AppliedRoute key={1 + childProps.year} path="/seasons/:year/steps*" component={Season} props={childProps} />,
+            <AppliedRoute key={2 + childProps.year} path="/seasons/:year" component={Season} props={childProps} />,
+            <AppliedRoute key={3 + childProps.year} path="/torneio" exact component={Torneio} props={childProps} />,
+            <AppliedRoute key={4 + childProps.year} path="/login" exact component={Login} props={childProps} />,
+            <AppliedRoute key={5 + childProps.year} path="/" exact component={Home} props={childProps} />,
+            <Route key="99" component={NotFound} />,
+        ];
+    }
+    else {
+        routes = [
+            <Route key="0" path="/seasons/:year/*steps/:stepId?*" render={(props) => <Redirect push to={'/login?redirect=' + props.match.url} />} />,
+            <Route key="1" path="/admin" render={(props) => <Redirect push to={'/login?redirect=' + props.match.url} />} />
         ].concat(routes);
     }
 
     return (
-    <Switch>
-        {routes}
-    </Switch>);
+        <Switch>
+            {routes}
+        </Switch>);
 }

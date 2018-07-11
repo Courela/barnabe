@@ -62,11 +62,11 @@ export default class TopMenu extends Component {
                     <Navbar.Collapse>
                         <Nav onSelect={this.handleSelect}>
                             <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
-                                <LinkContainer to="/season/2018">
+                                <LinkContainer to="/seasons/2018">
                                     <MenuItem>2018</MenuItem>
                                 </LinkContainer>
                                 <MenuItem divider />
-                                <LinkContainer to="/season/2017">
+                                <LinkContainer to="/seasons/2017">
                                     <MenuItem>2017</MenuItem>
                                 </LinkContainer>
                             </NavDropdown>

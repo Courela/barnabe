@@ -1,5 +1,5 @@
 function handleError(errResponse, errorMsgs) {
-    console.log(JSON.stringify(errResponse));
+    console.log(errResponse);
     if (errResponse && errResponse.response && errResponse.response.status) {
         switch (errResponse.response.status) {
             case 400:

@@ -58,7 +58,7 @@ class App extends Component {
 
     render() {
         //console.log('App props: ', this.props);
-        const year = this.props.match.params.year ? this.props.match.params.year : 0;
+        const year = this.props.match && this.props.match.params && this.props.match.params.year ? this.props.match.params.year : 0;
 
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
@@ -73,7 +73,7 @@ class App extends Component {
             <div className="App container">
                 <TopMenu isAuthenticated={this.state.isAuthenticated} username={this.state.username}
                     userHasAuthenticated={this.userHasAuthenticated} />
-                <Routes {...this.props} childProps={childProps} />
+                <Routes /*{...this.props}*/ childProps={childProps} />
             </div>
         );
     }

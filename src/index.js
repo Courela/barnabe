@@ -35,5 +35,4 @@ async function CallApi(url) {
     let apiResponse;
     await axios.get(url).then(res => { apiResponse = res.data; return res.data; });
     return apiResponse;
-    //return apiResponse;
 }

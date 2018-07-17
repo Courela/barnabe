@@ -1,0 +1,9 @@
+.date-picker-form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.react-date-picker__button {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

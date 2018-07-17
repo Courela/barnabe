@@ -16,6 +16,7 @@ export default class GoogleApiForm extends Component {
             isAuthorized: false
         };
 
+        this.checkStatus = this.checkStatus.bind(this);
         this.handleFile = this.handleFile.bind(this);
         this.handleSubmitSecret = this.handleSubmitSecret.bind(this);
         this.handleSubmitCode = this.handleSubmitCode.bind(this);
@@ -23,6 +24,10 @@ export default class GoogleApiForm extends Component {
     }
 
     componentDidMount() {
+        this.checkStatus();
+    }
+
+    checkStatus() {
         const url = settings.API_URL + '/api/admin/drive';
         axios.get(url)
             .then(result => {
@@ -56,6 +61,9 @@ export default class GoogleApiForm extends Component {
         axios.post(url, data)
             .then(result => {
                 console.log(result);
+                this.setState({ fileContent: null }, () => {
+                    this.checkStatus();
+                });
             })
             .catch((err) => {
                 console.error(err);
@@ -72,6 +80,9 @@ export default class GoogleApiForm extends Component {
         axios.post(url, data)
             .then(result => {
                 console.log(result);
+                this.setState({ url: null }, () => {
+                    this.checkStatus();
+                });
             })
             .catch((err) => {
                 console.error(err);
@@ -132,6 +143,8 @@ export default class GoogleApiForm extends Component {
                         successMessage='Data was saved' failMessage='Fail to save data!' />
                     <BackupForm type='users' title='Backup Users to Google Drive'
                         successMessage='Users were saved' failMessage='Fail to save users!' />
+                    <BackupForm type='documents' title='Backup Documents to Google Drive'
+                        successMessage='Documents were saved' failMessage='Fail to save documents!' />
                 </Fragment>
             );
         }

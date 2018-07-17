@@ -11,13 +11,32 @@ export default class TopMenu extends Component {
 
         this.handleSelect = this.handleSelect.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
+
+        this.state = {
+            seasons: []
+        }
+    }
+
+    componentDidMount() {
+        if (this.state.seasons.length === 0) {
+            axios.get(settings.API_URL + '/api/seasons')
+                .then((result) => {
+                    if (result.data && result.data.length > 0) {
+                        this.setState({ seasons: result.data });
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
     }
 
     handleLogout(event) {
+        event.preventDefault();
         if (this.props.userHasAuthenticated) {
+            axios.post(settings.API_URL + '/api/logout');
             sessionStorage.clear();
             this.props.userHasAuthenticated(false, null, null);
-            axios.post(settings.API_URL + '/api/logout');
         }
     }
 
@@ -27,18 +46,24 @@ export default class TopMenu extends Component {
     }
 
     render() {
+        const seasons = this.state.seasons.map(s => 
+            <Fragment key={s.Year}>
+                <LinkContainer to={'/seasons/' + s.Year}>
+                    <MenuItem>{s.Year}</MenuItem>
+                </LinkContainer>
+                {s.IsActive ? <MenuItem divider /> : '' }
+            </Fragment>
+        );
+
         const authenticatedOptions = 
             <Fragment>
-                <NavItem disabled>User: {this.props.username}</NavItem>
-                <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                <NavItem disabled>Utilizador: {this.props.username}</NavItem>
+                <NavItem onClick={this.handleLogout}>Sair</NavItem>
             </Fragment>;
         const anonymousOptions =
             <Fragment>
-                <LinkContainer to="/torneio">
-                    <NavItem>Torneio</NavItem>
-                </LinkContainer>
                 <LinkContainer to="/login">
-                    <NavItem>Login</NavItem>
+                    <NavItem>Entrar</NavItem>
                 </LinkContainer>
             </Fragment>;
 
@@ -62,13 +87,14 @@ export default class TopMenu extends Component {
                     <Navbar.Collapse>
                         <Nav onSelect={this.handleSelect}>
                             <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
-                                <LinkContainer to="/seasons/2018">
+                                {seasons}
+                                {/* <LinkContainer to="/seasons/2018">
                                     <MenuItem>2018</MenuItem>
                                 </LinkContainer>
                                 <MenuItem divider />
                                 <LinkContainer to="/seasons/2017">
                                     <MenuItem>2017</MenuItem>
-                                </LinkContainer>
+                                </LinkContainer> */}
                             </NavDropdown>
                         </Nav>
                         {menuOptions}

@@ -11,6 +11,9 @@ import Documents from '../containers/Documents';
 import PlayerForm from '../forms/PlayerFom';
 import AddStep from '../forms/AddStep';
 import GoogleApiForm from '../forms/GoogleApiForm';
+import AddUser from '../forms/AddUser';
+import ImportPlayers from '../forms/ImportPlayers';
+import PlayerDetails from '../forms/PlayerDetails';
 
 export default class MainContent extends Component {
     render() {
@@ -18,26 +21,28 @@ export default class MainContent extends Component {
         let stepId = 0;
 
         const authenticatedRoutesArr = [{
-            path: '/admin',
-            exact: true,
-            //component: AddStep,
-            render: (props) => { return (<GoogleApiForm {...props} />) }
-        },{
             path: '/seasons/:year/addstep',
             exact: true,
             //component: AddStep,
             render: (props) => { return (<AddStep {...props} teamId={this.props.teamId} />) }
         }, {
+            path: '/seasons/:year/steps/:stepId/import',
+            exact: true,
+            render: (props) => {
+                stepId = props.match.params.stepId;
+                return (<ImportPlayers {...props} teamId={this.props.teamId} />);
+            }
+        }, {
             path: '/seasons/:year/steps/:stepId',
             exact: true,
-            render: (props) => { 
+            render: (props) => {
                 stepId = props.match.params.stepId;
                 return (<StepTeam {...props} teamId={this.props.teamId} />);
             }
         }, {
             path: '/seasons/:year/steps/:stepId/players/:playerId',
             exact: true,
-            render: (props) => <Player {...props} teamId={this.props.teamId} />,
+            render: (props) => <PlayerDetails {...props} teamId={this.props.teamId} />,
         }, {
             path: '/seasons/:year/steps/:stepId/player',
             exact: true,
@@ -55,8 +60,28 @@ export default class MainContent extends Component {
             render: (props) => <SeasonMain {...props} teamId={this.props.teamId} />
         }];
 
+        if (this.props.isAuthenticated && !this.props.teamId) {
+            authenticatedRoutesArr.push({
+                path: '/admin/drive',
+                exact: true,
+                //component: AddStep,
+                render: (props) => { return (<GoogleApiForm {...props} />) }
+            },{
+                path: '/admin/users',
+                exact: true,
+                //component: AddStep,
+                render: (props) => { return (<AddUser {...props} />) }
+            });
+        }
+
+        authenticatedRoutesArr.push({
+            path: '/',
+            exact: false,
+            render: (props) => { return (<NotFound {...props} />) }
+        });
+
         const authenticatedRoutes = authenticatedRoutesArr.map(
-            ({path, exact, component, render}, key) => { 
+            ({ path, exact, component, render }, key) => {
                 if (render) {
                     return (<Route exact={exact} path={path} render={render} key={key + stepId} />);
                 } else {
@@ -73,10 +98,10 @@ export default class MainContent extends Component {
             //<Route key="6" path="/seasons/:year/teams/:teamId/*steps/:stepId?" render={(props) => <Redirect push to={'/login?redirect=' + props.match.url} />} />,
             <Route key="99" component={NotFound} />
         ];
-        
+
         return (
             <Switch>
-                {this.props.isAuthenticated ? authenticatedRoutes : anonymousRoutes }
+                {this.props.isAuthenticated ? authenticatedRoutes : anonymousRoutes}
             </Switch>);
     }
 }

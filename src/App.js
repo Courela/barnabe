@@ -49,9 +49,15 @@ class App extends Component {
                 sessionStorage.setItem('user', this.state.user);
                 sessionStorage.setItem('teamId', this.state.user ? this.state.user.TeamId : null);
                 sessionStorage.setItem('username', this.state.user ? this.state.user.Username : null);
-                const url = redirectTo ? redirectTo : "/seasons/" + new Date(Date.now()).getFullYear();
+                const url = redirectTo ? 
+                    redirectTo : 
+                    this.state.isAdmin ? '/admin' : "/seasons/" + new Date(Date.now()).getFullYear();
+                //console.log('Will redirect to: ', url)
                 this.props.history.push(url);
-                this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
+                //this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
+            }
+            else {
+                this.props.history.push('/');
             }
         });
     }

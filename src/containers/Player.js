@@ -38,10 +38,11 @@ export default class Player extends Component {
     }
 
     render() {
+        const photo = this.state.photo ? this.state.photo : '/logo.png';
         return (
         <div>
-            <h1>Ficha de jogador {this.state.playerId}</h1>
-            <div><Image src={this.state.photo} thumbnail style={{ maxHeight: "200px" }}/></div>
+            <h1>Ficha de Jogador</h1>
+            <div><Image src={photo} thumbnail style={{ maxHeight: "200px" }} alt="Foto"/></div>
             <div><span>Nome: </span><span>{this.state.data.Name}</span></div>
             <div><span>CC: </span><span>{this.state.data.IdCardNr}</span></div>
             <div><span>Sexo: </span><span>{this.state.data.Gender}</span></div>

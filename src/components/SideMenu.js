@@ -23,33 +23,41 @@ export default class SideMenu extends React.Component {
         this.getTeams = this.getTeams.bind(this);
         this.getTeamSteps = this.getTeamSteps.bind(this);
         this.teamsMenu = this.teamsMenu.bind(this);
+        this.stepsMenu = this.stepsMenu.bind(this);
         this.buildTeamsMenuItems = this.buildTeamsMenuItems.bind(this);
         this.getTeamSteps = this.getTeamSteps.bind(this);
     }
 
     componentDidMount() {
         //console.log('SideMenu: ' + this.props.isAuthenticated +';' +  this.props.teamId);
-        if (this.props.isAuthenticated && this.props.teamId) {
-            this.getTeamSteps();
-        } else {
-            this.getTeams();
+        if (this.props.teamId) {
+            if (this.props.isAuthenticated) {
+                this.getTeamSteps();
+            } else {
+                this.getTeams();
+            }
         }
     }
 
     componentWillReceiveProps(newProps) {
         //console.log('New season: ', newProps.match.params.year);
-        this.setState({ season: newProps.match.params.year });
+        if (newProps.match.params.year) {
+            this.setState({ season: newProps.match.params.year });
+        }
     }
 
     getTeams() {
-        //console.log(settings.API_URL);
-        axios.get(settings.API_URL + '/api/teams?season=' + this.state.season)
-            .then((res) => this.setState({ teams: res.data }))
-            .catch(errors.handleError);
+        if (this.state.season > 0) {
+            //console.log(settings.API_URL);
+            axios.get(settings.API_URL + '/api/teams?season=' + this.state.season)
+                .then((res) => this.setState({ teams: res.data }))
+                .catch(errors.handleError);
+        }
     }
 
     handleSelect(info) {
         if (info.key) {
+            //console.log('Url to navigate: ', info.key)
             this.props.history.push(info.key);
         }
     }
@@ -103,26 +111,50 @@ export default class SideMenu extends React.Component {
 
     render() {
         const anonymousMenu = (
-            <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
-                mode="inline" openAnimation={animation}>
-                {this.teamsMenu()}
-                <MenuItem key={"/seasons/" + this.state.season + "/results"}>Resultados</MenuItem>
-                <MenuItem key={"/seasons/" + this.state.season + "/standings"}>Classificação</MenuItem>
-            </Menu>);
+            <AnonymousMenu handleSelect={this.handleSelect} onOpenChange={this.onOpenChange} 
+                teamsMenu={this.teamsMenu} season={this.state.season} />
+            );
 
         const authenticatedMenu = (
-            <Menu onSelect={this.handleSelect} onOpenChange={this.onOpenChange}
-                mode="inline" openAnimation={animation}>
-                {this.props.isAuthenticated && !this.props.teamId ? <MenuItem key={"/admin"}>Admin</MenuItem> : ''}
-                <MenuItem key={"/seasons/" + this.state.season + "/addstep"}>Inscrever escalão</MenuItem>
-                {this.stepsMenu()}
-                <MenuItem key={"/seasons/" + this.state.season + "/documents"}>Documentos</MenuItem>
-            </Menu>);
+            <AuthenticatedMenu handleSelect={this.handleSelect} onOpenChange={this.onOpenChange} 
+                stepsMenu={this.stepsMenu} season={this.state.season}/> 
+            );
 
-        const menu = this.props.isAuthenticated ? authenticatedMenu : anonymousMenu;
+        //console.log('Side menu teamdId: ', this.props.teamId);
+        const menu = this.props.isAuthenticated ?
+            (this.props.teamId > 0 ? authenticatedMenu : <AdminMenu handleSelect={this.handleSelect} />) :
+            anonymousMenu;
 
-        return (<div style={{ width: 150 }}>{menu}</div>);
+        return (
+            <div style={{ width: 150 }}>
+                {menu}
+            </div>);
     }
+}
+
+function AnonymousMenu(props) {
+    return (
+        <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
+            {props.teamsMenu()}
+            <MenuItem key={"/seasons/" + props.season + "/results"}>Resultados</MenuItem>
+            <MenuItem key={"/seasons/" + props.season + "/standings"}>Classificação</MenuItem>
+        </Menu>);
+}
+function AuthenticatedMenu(props) {
+    return (
+        <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
+            <MenuItem key={"/seasons/" + props.season + "/addstep"}>Inscrever escalão</MenuItem>
+            {props.stepsMenu()}
+            <MenuItem key={"/seasons/" + props.season + "/documents"}>Documentos</MenuItem>
+        </Menu>);
+}
+
+function AdminMenu(props) {
+    return (
+        <Menu onSelect={props.handleSelect}>
+            <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
+            <MenuItem key={"/admin/users"}>Crir Utilizador</MenuItem>
+        </Menu>);
 }
 
 const animation = {

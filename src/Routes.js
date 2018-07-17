@@ -13,7 +13,7 @@ export default ({ childProps }) => {
     let routes = [];
     //console.log('Child props', childProps);
     routes = [
-        <AppliedRoute key={2 + childProps.year} path="/admin" exact component={Season} props={childProps} />,
+        <AppliedRoute key={2 + childProps.year} path="/admin" component={Season} props={childProps} />,
         <AppliedRoute key={3 + childProps.year} path="/seasons/:year/steps*" component={Season} props={childProps} />,
         <AppliedRoute key={4 + childProps.year} path="/seasons/:year" component={Season} props={childProps} />,
         <AppliedRoute key={5 + childProps.year} path="/torneio" exact component={Torneio} props={childProps} />,

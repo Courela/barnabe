@@ -12,42 +12,44 @@ export default class StepTeam extends Component {
 
         this.state = {
             season: props.match.params.year,
+            isSeasonActive: false,
             teamId: props.teamId,
             stepId: props.match.params.stepId,
             stepName: null,
-            data: [],
+            players: [],
             staff: []
         };
 
-        this.getData = this.getData.bind(this);
+        this.getPlayers = this.getPlayers.bind(this);
         this.getStaff = this.getStaff.bind(this);
         this.linkToPlayer = this.linkToPlayer.bind(this);
+        this.playerActions = this.playerActions.bind(this);
         this.removePlayer = this.removePlayer.bind(this);
         this.handleNewPlayer = this.handleNewPlayer.bind(this);
         this.handleNewStaff = this.handleNewStaff.bind(this);
     }
 
     componentDidMount() {
-        this.getData();
+        this.getPlayers();
         this.getStaff();
     }
 
     componentWillReceiveProps(newProps) {
         //console.log('New step: ', newProps.match.params.stepId);
-        this.setState({ stepId: newProps.match.params.stepId, stepName: null, data: [], staff: [] }, () => {
-            this.getData();
+        this.setState({ stepId: newProps.match.params.stepId, stepName: null, players: [], staff: [] }, () => {
+            this.getPlayers();
             this.getStaff();
         });
     }
 
-    getData() {
-        if (this.state.data.length === 0) {
+    getPlayers() {
+        if (this.state.players.length === 0) {
             const { season, teamId, stepId } = this.state;
             axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players')
                 .then(result => {
                     //console.log(result);
                     if (result.data && result.data.length > 0) {
-                        this.setState({ data: result.data });
+                        this.setState({ players: result.data });
                     }
                 })
                 .catch(errors.handleError);
@@ -65,7 +67,7 @@ export default class StepTeam extends Component {
     }
 
     getStaff() {
-        if (this.state.data.length === 0) {
+        if (this.state.staff.length === 0) {
             const { season, teamId, stepId } = this.state;
             axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff')
                 .then(result => {
@@ -78,17 +80,19 @@ export default class StepTeam extends Component {
         }
     }
 
-    linkToPlayer(row, edit) {
+    linkToPlayer(row) {
         const { season, stepId } = this.state;
-        const queryString = edit ? '?edit' : '';
-        const text = edit ? "Editar" : row.original.Name;
-        return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + queryString}>{text}</Link>);
+        return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id}>{row.original.Name}</Link>);
     }
 
-    removePlayerLink(row) {
+    playerActions(row) {
+        const { season, stepId } = this.state;
+        const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + '?edit';
+        const removeFn = (evt) => this.removePlayer(row.original.Id, row.original.Name);
         return (
             <Fragment>
-                <a onClick={() => this.removePlayer(row.original.Id, row.original.Name)} href="#">Remover</a>
+                <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>
+                <Button bsStyle="link" bsSize="small" onClick={removeFn}>Remover</Button>
             </Fragment>
         );
     }
@@ -97,8 +101,8 @@ export default class StepTeam extends Component {
         const { season, teamId, stepId } = this.state;
         if (window.confirm('Tem a certeza que quer remover o jogador ' + name + '?')) {
             await axios.delete(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + id);
-            this.setState({ data: [], staff: [] }, () => { 
-                this.getData(); 
+            this.setState({ players: [], staff: [] }, () => { 
+                this.getPlayers(); 
                 this.getStaff(); 
             });
         }
@@ -121,25 +125,15 @@ export default class StepTeam extends Component {
                 <div style={{ float: 'right' }}>
                     <ButtonToolbar>
                         <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
+                        {this.state.isSeasonActive ? 
+                            <Button bsStyle="primary" href={'/seasons/' + (this.state.season - 1).toString() + '/steps/' + this.state.stepId + '/import'}>Importar Jogadores {this.state.season - 1}</Button> :
+                            ''}
                     </ButtonToolbar>
                 </div>
                 <div>
                     <h3>Jogadores</h3>
-                    <div>
-                        <ReactTable
-                            columns={[
-                                { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row, false) },
-                                { Header: "Data Nascimento", accessor: "Birthdate" },
-                                { Header: "Cartão Cidadão", accessor: "IdCardNr" },
-                                { Header: "", accessor: 'Id', Cell: (row) => this.linkToPlayer(row, true) },
-                                { Header: "", accessor: 'Id', Cell: (row) => this.removePlayerLink(row) }
-                            ]}
-                            data={this.state.data}
-                            minRows={Math.max(Math.min(this.state.data.length, 5), 1)}
-                            onFetchData={this.getData}
-                            defaultPageSize={5}
-                            className="-striped" />
-                    </div>
+                    <PlayersTable players={this.state.players} getPlayers={this.getPlayers}
+                        linkToPlayer={this.linkToPlayer} playerActions={this.playerActions}/>
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
@@ -151,11 +145,10 @@ export default class StepTeam extends Component {
                     <div>
                         <ReactTable
                             columns={[
-                                { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row, false) },
+                                { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row) },
                                 { Header: "Data Nascimento", accessor: "Birthdate" },
                                 { Header: "Cartão Cidadão", accessor: "IdCardNr" },
-                                { Header: "", accessor: 'Id', Cell: (row) => this.linkToPlayer(row, true) },
-                                { Header: "", accessor: 'Id', Cell: (row) => this.removePlayerLink(row) }
+                                { Header: "", accessor: 'Id', Cell: (row) => this.playerActions(row) }
                             ]}
                             data={this.state.staff}
                             minRows={Math.max(Math.min(this.state.staff.length, 5), 1)}
@@ -166,4 +159,21 @@ export default class StepTeam extends Component {
                 </div>
             </Fragment>);
     }
+}
+
+function PlayersTable(props) {
+    return (<div>
+        <ReactTable
+            columns={[
+                { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row) },
+                { Header: "Data Nascimento", accessor: "Birthdate" },
+                { Header: "Cartão Cidadão", accessor: "IdCardNr" },
+                { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row) }
+            ]}
+            data={props.players}
+            minRows={Math.max(Math.min(props.players.length, 5), 1)}
+            onFetchData={props.getPlayers}
+            defaultPageSize={5}
+            className="-striped" />
+    </div>);
 }

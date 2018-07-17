@@ -9,25 +9,25 @@ import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
 
-export default class PlayerForm extends Component {
+export default class PlayerDetails extends Component {
     constructor(props, context) {
         super(props, context);
 
-        //this.handleStepSelect = this.handleStepSelect.bind(this);
-        this.validateStep = this.validateStep.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        //this.getGender = this.getGender.bind(this);
-
+        this.handleCancel = this.handleCancel.bind(this);
+        this.fetchPlayer = this.fetchPlayer.bind(this);
+        
         const stepId = props.match.params.stepId;
+        const playerId = props.match.params.playerId
 
         this.state = {
-            steps: [],
-            roles: [],
             season: props.match.params.year,
             teamId: props.teamId,
             stepId: stepId,
+            stepDescr: '',
+            playerId: playerId,
             personId: null,
-            role: '',
+            roleId: null,
             name: '',
             gender: '',
             birth: null,
@@ -39,81 +39,42 @@ export default class PlayerForm extends Component {
             caretakerDocId: '',
             photoSrc: null,
             comments: '',
+            editable: null,
+            caretakerId: null
         };
     }
 
     componentDidMount() {
-        const year = this.props.match.params.year;
-        const teamId = this.props.teamId;
-
-        let url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
-        axios.get(url)
-            .then(results => {
-                if (this.state.stepId > 0) {
-                    const single = results.data.filter((s => s.Id == this.state.stepId));
-                    const steps = single.map(s => ({
-                        id: s.Id,
-                        descr: s.Description,
-                        gender: s.Gender,
-                        isCaretakerRequired: s.IsCaretakerRequired
-                    }));
-                    //console.log(single);
-                    this.setState({
-                        steps: steps,
-                        gender: steps[0].gender
-                    });
-                }
-                else {
-                    this.setState({
-                        steps: results.data.map(s => ({
-                            id: s.Id,
-                            descr: s.Description,
-                            gender: s.Gender,
-                            isCaretakerRequired: s.IsCaretakerRequired
-                        }))
-                    });
-                }
-            })
-            .catch(errors.handleError);
-
-        url = settings.API_URL + '/api/roles';
-        axios.get(url)
-            .then(results => {
-                //console.log('Roles: ');
-                //console.log(results);
-                if (this.props.roleId) {
-                    const single = results.data.filter((r => r.Id == this.props.roleId));
-                    const roles = single.map(r => ({
-                        id: r.Id,
-                        descr: r.Description
-                    }));
-                    //console.log(single);
-                    this.setState({
-                        roles: roles,
-                        role: roles[0].id
-                    });
-                }
-                else {
-                    const roles = results.data.map(r => ({
-                        id: r.Id,
-                        descr: r.Description
-                    }));
-                    this.setState({ roles: roles });
-                }
-            })
-            .catch(errors.handleError);
+        this.fetchPlayer();        
     }
 
-    handleStepSelect(evt) {
-        this.setState({ stepId: evt.target.value });
+    fetchPlayer() {
+        const { season, teamId, stepId, playerId } = this.state;
+
+        const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId;
+        axios.get(url)
+            .then(results => {
+                const { player, photo } = results.data;
+                this.setState({ 
+                    roleId: player.RoleId,
+                    name: player.Name,
+                    birth: new Date(player.person.Birthdate),
+                    docId: player.IdCardNr,
+                    gender: player.person.Gender,
+                    voterNr: player.VoterNr,
+                    phoneNr: player.Phone,
+                    email: player.Email,
+                    caretakerId: player.CaretakerId,
+                    stepDescr: player.step.Description,
+                    photoSrc: photo,
+                    editable: false
+                 });
+            })
+            .catch(errors.handleError);
     }
 
     handleGenderSelect(evt) {
         this.setState({ gender: evt.target.value });
-    }
-
-    handleRoleSelect(evt) {
-        this.setState({ role: evt.target.value });
     }
 
     handleControlChange(evt) {
@@ -123,19 +84,8 @@ export default class PlayerForm extends Component {
         this.setState({ [fieldName]: fieldVal });
     }
 
-    validateStep() {
-        if (this.state.stepId <= 0) return 'error';
-        return null;
-    }
-
-    validateGender() {
-        if (this.state.gender === null) return 'error';
-        return null;
-    }
-
-    validateRole() {
-        if (this.state.role === null || this.state.role === '') return 'error';
-        return null;
+    handleEdit() {
+        this.setState({ editable: true });
     }
 
     handleSubmit(evt) {
@@ -206,6 +156,11 @@ export default class PlayerForm extends Component {
         evt.preventDefault();
     }
 
+    handleCancel() {
+        this.fetchPlayer();
+        this.setState({ editable: false });
+    }
+
     handlePhoto(evt) {
         var files = evt.target.files; // FileList object
 
@@ -239,53 +194,36 @@ export default class PlayerForm extends Component {
     onChangeBirthdate = date => this.setState({ birth: date })
 
     render() {
-        const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.descr}</option>);
+        const title = this.state.editable ? "Editar Jogador" : "Ficha de Jogador"
 
-        const formDetails = this.state.personId !== null ?
-            <PlayerDetails {...this.state}
+        const formDetails = this.state.playerId ?
+            <FormPlayer {...this.state}
                 onChangeBirthdate={this.onChangeBirthdate}
                 handleControlChange={this.handleControlChange.bind(this)}
                 handleGenderSelect={this.handleGenderSelect.bind(this)}
-                handleRoleSelect={this.handleRoleSelect.bind(this)}
-                validateGender={this.validateGender.bind(this)}
-                validateRole={this.validateRole.bind(this)}
-                handlePhoto={this.handlePhoto.bind(this)} /> :
+                handlePhoto={this.handlePhoto.bind(this)}
+                handleEdit={this.handleEdit.bind(this)} /> :
             <div />;
-
-        const submitLabel = this.state.personId ? "Inscrever" : "Continuar"
 
         return (
             <div>
-                <h2>Adicionar</h2>
+                <h2>{title}</h2>
                 <form>
-                    <FormGroup controlId="selectStep" validationState={this.validateStep()}>
-                        <ControlLabel>Escalão</ControlLabel>
-                        <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                            onChange={this.handleStepSelect.bind(this)} value={this.state.stepId}
-                            disabled={this.state.steps.length <= 1 && this.state.stepId != 0}>
-                            <option value="0">Escolha...</option>
-                            {selectSteps}
-                        </FormControl>
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    <FieldGroup
-                        id="formIdCard"
-                        type="text"
-                        name="docId"
-                        label="Nr Cartão Cidadão do Jogador"
-                        placeholder="CC"
-                        onChange={this.handleControlChange.bind(this)}
-                    />
                     {formDetails}
-                    <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>{submitLabel}</Button>
+                    { this.state.editable ? 
+                        <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                            <Button bsStyle="primary" onClick={this.handleCancel} style={{ margin: '3px'}}>Cancelar</Button>
+                            <Button bsStyle="primary" type="submit" onClick={this.handleSubmit} style={{ margin: '3px'}}>Confirmar</Button>
+                        </div> :
+                        ''}
                 </form>
             </div>
         );
     }
 }
 
-function PlayerDetails(props) {
-    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId);
+function FormPlayer(props) {
+    const caretakerRequired = props.caretakerId ? true : false; //isCaretakerRequired(props.steps, props.stepId);
 
     const commonFields =
         <Fragment>
@@ -297,6 +235,7 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Email do Encarregado de Educação" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
+                readOnly={!props.editable}
             />
             <FieldGroup
                 id="formPhone"
@@ -306,6 +245,7 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Telefone do Encarregado de Educação" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
+                readOnly={!props.editable}
             />
             <FieldGroup
                 id="formVoterNr"
@@ -315,15 +255,7 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Nr do Eleitor do Encarregado de Educação" : "Nr de Eleitor"}
                 value={props.voterNr}
                 onChange={props.handleControlChange}
-            />
-            <FieldGroup
-                id="formComments"
-                type="text"
-                name="comments"
-                label="Notas Adicionais"
-                placeholder="Notas"
-                value={props.comments}
-                onChange={props.handleControlChange}
+                readOnly={!props.editable}
             />
         </Fragment>;
 
@@ -341,6 +273,7 @@ function PlayerDetails(props) {
                     placeholder="Nome da Mãe/Pai"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
+                    readOnly={!props.editable}
                 />
                 <FieldGroup
                     id="formCaretakerIdCard"
@@ -349,25 +282,29 @@ function PlayerDetails(props) {
                     label="Nr Cartão Cidadão da Mãe/Pai"
                     placeholder="Nr Cartão Cidadão da Mãe/Pai"
                     onChange={props.handleControlChange}
+                    readOnly={!props.editable}
                 />
                 {commonFields}
             </Panel.Body>
         </Panel> :
         <div />;
-    
-        const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
 
     return (<div>
-        <FormGroup controlId="selectRole" validationState={props.validateRole()}>
-            <ControlLabel>Função</ControlLabel>
-            <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleRoleSelect} value={props.role} 
-                disabled={props.roles.length <= 1 && props.role != ''}>
-                <option value="0">Escolha...</option>
-                {selectRoles}
-            </FormControl>
-            <FormControl.Feedback />
-        </FormGroup>
+        <div>
+            <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/logo.png'} 
+                style={{maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'inline' }}/>
+            { props.editable ? 
+                <FieldGroup
+                    id="formFoto"
+                    type="file"
+                    label="Fotografia"
+                    help="Digitalização de Fotografia do Jogador"
+                    onChange={props.handlePhoto}
+                    readOnly={!props.editable}
+                    accept="image/*"
+                /> : (props.editable === null ? '' :
+                    <Button bsStyle="primary" onClick={props.handleEdit} style={{ float: 'right' }}>Editar</Button>) }
+        </div>
         <FieldGroup
             id="formName"
             type="text"
@@ -376,37 +313,39 @@ function PlayerDetails(props) {
             placeholder="Nome do Jogador"
             value={props.name}
             onChange={props.handleControlChange}
+            readOnly={!props.editable}
         />
         <FormGroup controlId="formBirthdate">
             <ControlLabel>Data Nascimento do Jogador</ControlLabel>
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth} 
-                    required={true} locale="pt-PT" 
+                    required={true} locale="pt-PT" disabled={!props.editable}
                     calendarClassName="date-picker-form-control" />
             </div>
         </FormGroup>
         
-        <FormGroup controlId="selectGender" validationState={props.validateGender()}>
+        <FormGroup controlId="selectGender">
             <ControlLabel>Sexo</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleGenderSelect} value={props.gender}>
-                <option value="0">Escolha...</option>
+                onChange={props.handleGenderSelect} value={props.gender} 
+                readOnly={!props.editable}>
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>
             </FormControl>
             <FormControl.Feedback />
         </FormGroup>
-        <FieldGroup
-            id="formFoto"
-            type="file"
-            label="Fotografia"
-            help="Digitalização de Fotografia do Jogador"
-            onChange={props.handlePhoto}
-        />
-        <Image id="photoThumb" thumbnail src={props.photoSrc} 
-            style={{maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'block' }}/>
         {caretakerCtrls}
         {caretakerRequired ? <div /> : commonFields}
+        <FieldGroup
+            id="formComments"
+            type="text"
+            name="comments"
+            label="Notas Adicionais"
+            placeholder="Notas"
+            value={props.comments}
+            onChange={props.handleControlChange}
+            readOnly={!props.editable}
+        />
     </div>);
 }
 

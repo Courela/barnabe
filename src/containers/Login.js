@@ -27,19 +27,20 @@ export default class Login extends Component {
 
     handleSubmit = async event => {
         event.preventDefault();
-
+        
         const user = await validateUser(this.state.username, this.state.password);
         console.log('Logged User: ' + user);
         if (user) {
             console.log('Login sucess!');
-            const redirectTo = this.props.location.search ? this.props.location.search.match('(?<=redirect=)/.+') : null;
-            //console.log(redirectTo);
+            console.log('Location search: ', this.props.location.search);
+            const redirectTo = this.props.location.search ? this.props.location.search.match('(?<=redirect=)/.+')[0] : null;
+            console.log('Redirect to: ', redirectTo);
             this.props.userHasAuthenticated(true, user, redirectTo);
         }
         else {
             console.log('Login failed!');
             this.props.userHasAuthenticated(false, user, '');
-            alert('Login falhou!');
+            alert('Autenticação falhou!');
         }
     }
 
@@ -48,7 +49,7 @@ export default class Login extends Component {
             <div className="Login">
                 <form onSubmit={this.handleSubmit}>
                     <FormGroup controlId="username" bsSize="large">
-                        <ControlLabel>Username</ControlLabel>
+                        <ControlLabel>Nome de utilizador</ControlLabel>
                         <FormControl
                             autoFocus
                             type="text"
@@ -57,7 +58,7 @@ export default class Login extends Component {
                         />
                     </FormGroup>
                     <FormGroup controlId="password" bsSize="large">
-                        <ControlLabel>Password</ControlLabel>
+                        <ControlLabel>Palavra-passe</ControlLabel>
                         <FormControl
                             value={this.state.password}
                             onChange={this.handleChange}
@@ -68,10 +69,9 @@ export default class Login extends Component {
                         block
                         bsSize="large"
                         disabled={!this.validateForm()}
-                        type="submit"
-                    >
-                        Login
-          </Button>
+                        type="submit">
+                        Entrar
+                    </Button>
                 </form>
             </div>
         );

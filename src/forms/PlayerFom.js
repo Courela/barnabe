@@ -29,7 +29,7 @@ export default class PlayerForm extends Component {
             teamId: props.teamId,
             stepId: stepId,
             personId: null,
-            role: '',
+            roleId: '',
             name: '',
             gender: '',
             birth: null,
@@ -129,7 +129,7 @@ export default class PlayerForm extends Component {
                     //console.log(single);
                     this.setState({
                         roles: roles,
-                        role: roles[0].id
+                        roleId: roles[0].id
                     });
                 }
                 else {
@@ -152,7 +152,7 @@ export default class PlayerForm extends Component {
     }
 
     handleRoleSelect(evt) {
-        this.setState({ role: evt.target.value });
+        this.setState({ roleId: evt.target.value });
     }
 
     handleControlChange(evt) {
@@ -173,7 +173,7 @@ export default class PlayerForm extends Component {
     }
 
     validateRole() {
-        if (this.state.role === null || this.state.role === '') return 'error';
+        if (this.state.roleId === null || this.state.roleId === '') return 'error';
         return null;
     }
 
@@ -183,7 +183,7 @@ export default class PlayerForm extends Component {
         if (personId !== null) {
             console.log('Submitting player...');
             const data = {
-                role: this.state.role,
+                role: this.state.roleId,
                 person: {
                     id: this.state.personId,
                     name: this.state.name,
@@ -413,8 +413,8 @@ function PlayerDetails(props) {
         <FormGroup controlId="selectRole" validationState={props.validateRole()}>
             <ControlLabel>Função</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleRoleSelect} value={props.role}
-                disabled={props.roles.length <= 1 && props.role != ''}>
+                onChange={props.handleRoleSelect} value={props.roleId}
+                disabled={props.roles.length <= 1 && props.roleId != ''}>
                 <option value="0">Escolha...</option>
                 {selectRoles}
             </FormControl>

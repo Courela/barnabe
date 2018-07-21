@@ -165,7 +165,7 @@ export default class PlayerDetails extends Component {
                 const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
                 axios.patch(url, data)
                     .then(result => {
-                        console.log(result);
+                        //console.log(result);
                         this.fetchPlayer();
                         this.setState({ editable: false, isEditSuccess: true });
                         //this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
@@ -361,7 +361,29 @@ function FormPlayer(props) {
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>
         </div>;
 
+    const getStepDate = (prop, defaultDate) => {
+        //console.log('Date: ', prop, defaultDate);
+        let result = defaultDate;
+        const step = props.steps.find((s) => s.Id == props.stepId);
+        if (step) {
+            result = new Date(step[prop]);
+        }
+        return result;
+    };
+
+    const selectSteps = props.steps.map((s) => <option key={s.Id} value={s.Id}>{s.Description}</option>);
+
     return (<div>
+        <FormGroup controlId="selectStep">
+            <ControlLabel>Escalão</ControlLabel>
+            <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
+                value={props.stepId}
+                disabled={true}>
+                {selectSteps}
+            </FormControl>
+            <FormControl.Feedback />
+        </FormGroup>
+
         <div style={{ display: 'flex', maxHeight: '200px' }}>
             <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/no_image.jpg'}
                 className="column"
@@ -394,6 +416,8 @@ function FormPlayer(props) {
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
                     required={true} locale="pt-PT" disabled={!props.editable}
+                    minDate={getStepDate('MinDate', new Date('1900-01-01T00:00:00.000Z'))}
+                    maxDate={getStepDate('MaxDate', new Date())}
                     calendarClassName="date-picker-form-control" />
             </div>
         </FormGroup>

@@ -13,6 +13,8 @@ export default class PlayerForm extends Component {
     constructor(props, context) {
         super(props, context);
 
+        this.getSteps = this.getSteps.bind(this);
+        this.getRoles = this.getRoles.bind(this);
         //this.handleStepSelect = this.handleStepSelect.bind(this);
         this.validateStep = this.validateStep.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,44 +45,81 @@ export default class PlayerForm extends Component {
     }
 
     componentDidMount() {
+        this.getSteps();
+        this.getRoles();
+    }
+
+    getSteps() {
         const year = this.props.match.params.year;
         const teamId = this.props.teamId;
-
-        let url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
-        axios.get(url)
-            .then(results => {
-                if (this.state.stepId > 0) {
-                    const single = results.data.filter((s => s.Id == this.state.stepId));
-                    const steps = single.map(s => ({
+        
+        if (this.state.stepId > 0) {
+            const url = settings.API_URL + '/api/seasons/' + this.state.season + '/steps/' + this.state.stepId;
+            axios.get(url)
+                .then(results => {
+                    const single = results.data;
+                    //console.log(single);
+                    const steps = [single].map(s => ({
                         id: s.Id,
                         descr: s.Description,
                         gender: s.Gender,
-                        isCaretakerRequired: s.IsCaretakerRequired
+                        isCaretakerRequired: s.IsCaretakerRequired,
+                        minDate: s.MinDate,
+                        maxDate: s.MaxDate
                     }));
-                    //console.log(single);
                     this.setState({
                         steps: steps,
                         gender: steps[0].gender
                     });
-                }
-                else {
-                    this.setState({
-                        steps: results.data.map(s => ({
+                })
+                .catch(errors.handleError);
+        }
+        else {
+            const url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
+            axios.get(url)
+                .then(results => {
+                    if (this.state.stepId > 0) {
+                        const single = results.data.filter((s => s.Id == this.state.stepId));
+                        const steps = single.map(s => ({
                             id: s.Id,
                             descr: s.Description,
                             gender: s.Gender,
-                            isCaretakerRequired: s.IsCaretakerRequired
-                        }))
-                    });
-                }
-            })
-            .catch(errors.handleError);
+                            isCaretakerRequired: s.IsCaretakerRequired,
+                            minDate: s.MinDate,
+                            maxDate: s.maxDate
+                        }));
+                        //console.log(single);
+                        this.setState({
+                            steps: steps,
+                            gender: steps[0].gender
+                        });
+                    }
+                    else {
+                        this.setState({
+                            steps: results.data.map(s => ({
+                                id: s.Id,
+                                descr: s.Description,
+                                gender: s.Gender,
+                                isCaretakerRequired: s.IsCaretakerRequired
+                            }))
+                        });
+                    }
+                })
+                .catch(errors.handleError);
+        }
+    }
 
-        url = settings.API_URL + '/api/roles';
+    getRoles() {
+        const isStaff = this.props.location.pathname.includes('staff');
+        const url = settings.API_URL + '/api/roles';
         axios.get(url)
             .then(results => {
                 //console.log('Roles: ');
                 //console.log(results);
+                if (isStaff) {
+                    results.data.splice(results.data.indexOf(results.data.find(r => r.Id == 1)), 1);
+                }
+
                 if (this.props.roleId) {
                     const single = results.data.filter((r => r.Id == this.props.roleId));
                     const roles = single.map(r => ({
@@ -354,14 +393,27 @@ function PlayerDetails(props) {
             </Panel.Body>
         </Panel> :
         <div />;
-    
-        const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
+
+    const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
+
+    const getStepDate = (prop, defaultDate) => {
+        //console.log('Date: ', prop, defaultDate);
+        let result = defaultDate;
+        if (props.roleId == 1) {
+            const step = props.steps.find((s) => s.id == props.stepId);
+            if (step) {
+                result = new Date(step[prop]);
+            }
+        }
+        //console.log('Date result: ', result);
+        return result;
+    };
 
     return (<div>
         <FormGroup controlId="selectRole" validationState={props.validateRole()}>
             <ControlLabel>Função</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleRoleSelect} value={props.role} 
+                onChange={props.handleRoleSelect} value={props.role}
                 disabled={props.roles.length <= 1 && props.role != ''}>
                 <option value="0">Escolha...</option>
                 {selectRoles}
@@ -380,12 +432,14 @@ function PlayerDetails(props) {
         <FormGroup controlId="formBirthdate">
             <ControlLabel>Data Nascimento do Jogador</ControlLabel>
             <div>
-                <DatePicker onChange={props.onChangeBirthdate} value={props.birth} 
-                    required={true} locale="pt-PT" 
+                <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
+                    required={true} locale="pt-PT"
+                    minDate={getStepDate('minDate', new Date('1900-01-01T00:00:00.000Z'))}
+                    maxDate={getStepDate('maxDate', new Date())}
                     calendarClassName="date-picker-form-control" />
             </div>
         </FormGroup>
-        
+
         <FormGroup controlId="selectGender" validationState={props.validateGender()}>
             <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
@@ -403,8 +457,8 @@ function PlayerDetails(props) {
             help="Digitalização de Fotografia do Jogador"
             onChange={props.handlePhoto}
         />
-        <Image id="photoThumb" thumbnail src={props.photoSrc} 
-            style={{maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'block' }}/>
+        <Image id="photoThumb" thumbnail src={props.photoSrc}
+            style={{ maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'block' }} />
         {caretakerCtrls}
         {caretakerRequired ? <div /> : commonFields}
     </div>);

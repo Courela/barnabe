@@ -7,3 +7,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.column{
+    border: 5px solid transparent;
+  }

@@ -1,10 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import {
-    FormGroup, FormControl, ControlLabel, HelpBlock,
-    Button, Panel, Image
+    Alert, FormGroup, FormControl, ControlLabel, HelpBlock,
+    Button, Checkbox, Panel, Image
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 import axios from 'axios';
+import queryString from 'query-string';
 import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
@@ -16,59 +17,80 @@ export default class PlayerDetails extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
         this.fetchPlayer = this.fetchPlayer.bind(this);
-        
+        this.validateForm = this.validateForm.bind(this);
+
         const stepId = props.match.params.stepId;
-        const playerId = props.match.params.playerId
+        const playerId = props.match.params.playerId;
+
+        const queryStringValues = queryString.parse(this.props.location.search)
+        const edit = queryStringValues.edit ? true : false;
 
         this.state = {
             season: props.match.params.year,
             teamId: props.teamId,
             stepId: stepId,
-            stepDescr: '',
+            steps: [],
             playerId: playerId,
             personId: null,
             roleId: null,
-            name: '',
+            playerName: '',
             gender: '',
             birth: null,
             docId: '',
             phoneNr: '',
             email: '',
+            isResident: false,
             voterNr: '',
             caretakerName: '',
             caretakerDocId: '',
             photoSrc: null,
             comments: '',
-            editable: null,
-            caretakerId: null
+            editable: edit,
+            caretakerId: null,
+            isEditSuccess: null
         };
     }
 
     componentDidMount() {
-        this.fetchPlayer();        
+        this.fetchPlayer();
     }
+
+    // componentDidUpdate() {
+    //     if (this.state.isEditSuccess !== null) {
+    //         this.setState({ isEditSuccess: null });
+    //     }
+    // }
 
     fetchPlayer() {
         const { season, teamId, stepId, playerId } = this.state;
 
-        const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId;
+        const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
         axios.get(url)
             .then(results => {
+                //console.log('Player: ', results);
                 const { player, photo } = results.data;
-                this.setState({ 
+                const { person, caretaker } = player;
+                const voterNr = caretaker && caretaker.VoterNr ? caretaker.VoterNr : (person.VoterNr ? person.VoterNr : '');
+                this.setState({
+                    personId: person.Id,
                     roleId: player.RoleId,
-                    name: player.Name,
-                    birth: new Date(player.person.Birthdate),
-                    docId: player.IdCardNr,
-                    gender: player.person.Gender,
-                    voterNr: player.VoterNr,
-                    phoneNr: player.Phone,
-                    email: player.Email,
+                    playerName: person.Name,
+                    birth: new Date(person.Birthdate),
+                    docId: person.IdCardNr,
+                    gender: person.Gender,
+                    isResident: voterNr ? true : false,
+                    voterNr: voterNr,
+                    phoneNr: caretaker && caretaker.Phone ? caretaker.Phone : (person.Phone ? person.Phone : ''),
+                    email: caretaker && caretaker.Email ? caretaker.Email : (person.Email ? person.Email : ''),
                     caretakerId: player.CaretakerId,
+                    caretakerName: caretaker ? caretaker.Name : '',
+                    caretakerDocId: caretaker ? caretaker.IdCardNr : '',
+                    comments: player.Comments,
                     stepDescr: player.step.Description,
-                    photoSrc: photo,
-                    editable: false
-                 });
+                    steps: [player.step],
+                    photoSrc: photo
+                });
+                window.scrollTo(0, 0);
             })
             .catch(errors.handleError);
     }
@@ -78,80 +100,84 @@ export default class PlayerDetails extends Component {
     }
 
     handleControlChange(evt) {
-        //console.log(evt);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
+        //console.log(fieldName, fieldVal);
         this.setState({ [fieldName]: fieldVal });
     }
 
+    handleCheckboxToggle(evt) {
+        let fieldName = evt.target.name;
+        //console.log(fieldName, fieldVal);
+        this.setState({ [fieldName]: !this.state[fieldName] });
+    }
+
     handleEdit() {
-        this.setState({ editable: true });
+        this.setState({ editable: true, isEditSuccess: null });
+    }
+
+    validateForm() {
+        let result = true;
+        const { playerName, docId, gender, birth, caretakerName, caretakerDocId } = this.state;
+        result = result && 
+            playerName && playerName !== '' &&
+            docId && docId !== '' &&
+            gender && gender !== '' &&
+            birth && birth !== '';
+
+        result = result && 
+            caretakerName && caretakerName !== '' &&
+            caretakerDocId && caretakerDocId !== '';
+        return result;
     }
 
     handleSubmit(evt) {
-        const { season, teamId, stepId, personId } = this.state;
-        const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId);
-        if (personId !== null) {
-            console.log('Submitting player...');
-            const data = {
-                role: this.state.role,
-                person: {
-                    id: this.state.personId,
-                    name: this.state.name,
-                    docId: this.state.docId,
-                    gender: this.state.gender,
-                    birth: this.state.birth,
-                    email: caretakerRequired ? null : this.state.email,
-                    phoneNr: caretakerRequired ? null : this.state.phoneNr,
-                    voterNr: caretakerRequired ? null : this.state.voterNr,
-                    photo: this.state.photoSrc
-                },
-                caretaker: {
-                    name: this.state.caretakerName,
-                    docId: this.state.caretakerDocId,
-                    email: caretakerRequired ? this.state.email : null,
-                    phoneNr: caretakerRequired ? this.state.phoneNr : null,
-                    voterNr: caretakerRequired ? this.state.voterNr : null
-                },
-                comments: this.state.comments
-            };
-            const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
-            axios.put(url, data)
-                .then(result => {
-                    console.log(result);
-                    const playerId = result.data.Id;
-                    this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
-                    // if (result.data && result.data.length > 0) {
-                    //     this.setState({ data: result.data });
-                    // }
-                })
-                .catch((err) => {
-                    const errMsgs = { e409: 'Jogador já está inscrito no escalão escolhido.' };
-                    errors.handleError(err, errMsgs);
-                });
-        }
-        else {
-            console.log('Search person with docId ' + this.state.docId);
-            axios.get(settings.API_URL + '/api/persons?docId=' + this.state.docId)
-                .then(result => {
-                    const person = result.data;
-                    console.log('Person result: ' + JSON.stringify(person));
-                    if (person.Id) {
-                        console.log('Set personId: ' + person.Id);
-                        this.setState({
-                            personId: person.Id,
-                            name: person.Name,
-                            email: person.Email ? person.Email : '',
-                            phoneNr: person.Phone ? person.Phone : '',
-                            birth: person.Birthdate,
-                            voterNr: person.VoterNr
-                        });
-                    } else {
-                        console.log('No person found');
-                        this.setState({ personId: 0 });
+        if (this.validateForm()) {
+            const { season, teamId, stepId, personId, playerId } = this.state;
+            const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId);
+            if (personId !== null) {
+                console.log('Submitting player...');
+                const data = {
+                    player: {
+                        roleId: this.state.roleId,
+                        comments: this.state.comments,
+                    },
+                    person: {
+                        id: this.state.personId,
+                        name: this.state.playerName,
+                        docId: this.state.docId,
+                        gender: this.state.gender,
+                        birth: this.state.birth,
+                        email: caretakerRequired ? null : this.state.email,
+                        phoneNr: caretakerRequired ? null : this.state.phoneNr,
+                        voterNr: caretakerRequired || !this.state.isResident ? null : this.state.voterNr,
+                        photo: this.state.photoSrc
+                    },
+                    caretaker: {
+                        id: this.state.caretakerId,
+                        name: this.state.caretakerName,
+                        docId: this.state.caretakerDocId,
+                        email: caretakerRequired ? this.state.email : null,
+                        phoneNr: caretakerRequired ? this.state.phoneNr : null,
+                        voterNr: this.state.isResident && caretakerRequired ? this.state.voterNr : null
                     }
-                })
-                .catch(errors.handleError);
+                };
+                const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
+                axios.patch(url, data)
+                    .then(result => {
+                        console.log(result);
+                        this.fetchPlayer();
+                        this.setState({ editable: false, isEditSuccess: true });
+                        //this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
+                        // if (result.data && result.data.length > 0) {
+                        //     this.setState({ data: result.data });
+                        // }
+                    })
+                    .catch((err) => {
+                        const errMsgs = { e409: 'Jogador já está inscrito no escalão escolhido.' };
+                        errors.handleError(err, errMsgs);
+                    });
+            }
         }
         evt.preventDefault();
     }
@@ -200,6 +226,7 @@ export default class PlayerDetails extends Component {
             <FormPlayer {...this.state}
                 onChangeBirthdate={this.onChangeBirthdate}
                 handleControlChange={this.handleControlChange.bind(this)}
+                handleCheckboxToggle={this.handleCheckboxToggle.bind(this)}
                 handleGenderSelect={this.handleGenderSelect.bind(this)}
                 handlePhoto={this.handlePhoto.bind(this)}
                 handleEdit={this.handleEdit.bind(this)} /> :
@@ -207,13 +234,17 @@ export default class PlayerDetails extends Component {
 
         return (
             <div>
+                {this.state.isEditSuccess ?
+                    <Alert bsStyle="success">
+                        <strong>Jogador alterado com sucesso.</strong>
+                    </Alert> : ''}
                 <h2>{title}</h2>
                 <form>
                     {formDetails}
-                    { this.state.editable ? 
+                    {this.state.editable ?
                         <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                            <Button bsStyle="primary" onClick={this.handleCancel} style={{ margin: '3px'}}>Cancelar</Button>
-                            <Button bsStyle="primary" type="submit" onClick={this.handleSubmit} style={{ margin: '3px'}}>Confirmar</Button>
+                            <Button bsStyle="primary" onClick={this.handleCancel} style={{ margin: '3px' }}>Cancelar</Button>
+                            <Button bsStyle="primary" type="submit" onClick={this.handleSubmit} style={{ margin: '3px' }}>Confirmar</Button>
                         </div> :
                         ''}
                 </form>
@@ -223,7 +254,18 @@ export default class PlayerDetails extends Component {
 }
 
 function FormPlayer(props) {
-    const caretakerRequired = props.caretakerId ? true : false; //isCaretakerRequired(props.steps, props.stepId);
+    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId);
+    //console.log('Caretaker required: ', caretakerRequired);
+
+    const validateEmail = () => {
+        if (props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
+        return null;
+    };
+
+    const validatePhone = () => {
+        if (props.phoneNr !== '' && !props.phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/)) return 'error';
+        return null;
+    };
 
     const commonFields =
         <Fragment>
@@ -231,46 +273,58 @@ function FormPlayer(props) {
                 id="formEmail"
                 type="email"
                 name="email"
-                label={caretakerRequired ? "Email do Encarregado de Educação" : "Email"}
-                placeholder={caretakerRequired ? "Email do Encarregado de Educação" : "Email"}
+                label={caretakerRequired ? "Email do Responsável" : "Email"}
+                placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
                 readOnly={!props.editable}
+                validationState={validateEmail}
             />
             <FieldGroup
                 id="formPhone"
                 type="text"
                 name="phoneNr"
-                label={caretakerRequired ? "Telefone do Encarregado de Educação" : "Telefone"}
-                placeholder={caretakerRequired ? "Telefone do Encarregado de Educação" : "Telefone"}
+                label={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
+                placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
                 readOnly={!props.editable}
+                validationState={validatePhone}
             />
-            <FieldGroup
-                id="formVoterNr"
-                type="text"
-                name="voterNr"
-                label={caretakerRequired ? "Nr de Eleitor do Encarregado de Educação" : "Nr de Eleitor"}
-                placeholder={caretakerRequired ? "Nr do Eleitor do Encarregado de Educação" : "Nr de Eleitor"}
-                value={props.voterNr}
-                onChange={props.handleControlChange}
-                readOnly={!props.editable}
-            />
+            <Checkbox checked={props.isResident} readOnly={!props.editable}
+                name="isResident" onChange={props.handleCheckboxToggle} >
+                <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
+            </Checkbox>
+            {props.isResident ?
+                <FieldGroup
+                    id="formVoterNr"
+                    type="text"
+                    name="voterNr"
+                    label={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
+                    placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
+                    value={props.voterNr}
+                    onChange={props.handleControlChange}
+                    readOnly={!props.editable}
+                /> : ''}
+            {props.isResident && props.editable ?
+                <Fragment>
+                    Se não sabe o Nr de Eleitor pode obtê-lo aqui:
+                    <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
+                </Fragment> : ''}
         </Fragment>;
 
     const caretakerCtrls = caretakerRequired ?
         <Panel>
             <Panel.Heading>
-                <Panel.Title componentClass="h3">Dados do Encarregado de Educação</Panel.Title>
+                <Panel.Title componentClass="h3">Dados do Responsável (Mãe/Pai/Tutor)</Panel.Title>
             </Panel.Heading>
             <Panel.Body>
                 <FieldGroup
                     id="formCaretakerName"
                     type="text"
                     name="caretakerName"
-                    label="Nome da Mãe/Pai"
-                    placeholder="Nome da Mãe/Pai"
+                    label="Nome do Responsável"
+                    placeholder="Nome do Responsável"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
                     readOnly={!props.editable}
@@ -279,8 +333,9 @@ function FormPlayer(props) {
                     id="formCaretakerIdCard"
                     type="text"
                     name="caretakerDocId"
-                    label="Nr Cartão Cidadão da Mãe/Pai"
-                    placeholder="Nr Cartão Cidadão da Mãe/Pai"
+                    label="Nr Cartão Cidadão do Responsável"
+                    placeholder="Nr Cartão Cidadão do Responsável"
+                    value={props.caretakerDocId}
                     onChange={props.handleControlChange}
                     readOnly={!props.editable}
                 />
@@ -289,46 +344,65 @@ function FormPlayer(props) {
         </Panel> :
         <div />;
 
+    const photoUploader = props.editable ?
+        <div className="column">
+            <FieldGroup
+                id="formFoto"
+                type="file"
+                label="Fotografia"
+                help="Digitalização de Fotografia do Jogador"
+                onChange={props.handlePhoto}
+                readOnly={!props.editable}
+                accept="image/*"
+            /></div> : '';
+
+    const editButton = props.editable || props.editable === null ? '' :
+        <div className="column" style={{ float: 'right' }}>
+            <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>
+        </div>;
+
     return (<div>
-        <div>
-            <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/logo.png'} 
-                style={{maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'inline' }}/>
-            { props.editable ? 
-                <FieldGroup
-                    id="formFoto"
-                    type="file"
-                    label="Fotografia"
-                    help="Digitalização de Fotografia do Jogador"
-                    onChange={props.handlePhoto}
-                    readOnly={!props.editable}
-                    accept="image/*"
-                /> : (props.editable === null ? '' :
-                    <Button bsStyle="primary" onClick={props.handleEdit} style={{ float: 'right' }}>Editar</Button>) }
+        <div style={{ display: 'flex', maxHeight: '200px' }}>
+            <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/no_image.jpg'}
+                className="column"
+                style={{ maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'inline' }} />
+            {photoUploader}
+            {editButton}
         </div>
         <FieldGroup
             id="formName"
             type="text"
-            name="name"
+            name="playerName"
             label="Nome do Jogador"
             placeholder="Nome do Jogador"
-            value={props.name}
+            value={props.playerName}
             onChange={props.handleControlChange}
             readOnly={!props.editable}
+        />
+        <FieldGroup
+            id="formIdCard"
+            type="text"
+            name="docId"
+            label="Nr Cartão Cidadão do Jogador"
+            placeholder="Nr Cartão Cidadão do Jogador"
+            value={props.docId}
+            onChange={props.handleControlChange}
+            readOnly={true}
         />
         <FormGroup controlId="formBirthdate">
             <ControlLabel>Data Nascimento do Jogador</ControlLabel>
             <div>
-                <DatePicker onChange={props.onChangeBirthdate} value={props.birth} 
+                <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
                     required={true} locale="pt-PT" disabled={!props.editable}
                     calendarClassName="date-picker-form-control" />
             </div>
         </FormGroup>
-        
+
         <FormGroup controlId="selectGender">
-            <ControlLabel>Sexo</ControlLabel>
+            <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleGenderSelect} value={props.gender} 
-                readOnly={!props.editable}>
+                onChange={props.handleGenderSelect} value={props.gender}
+                disabled={!props.editable}>
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>
             </FormControl>
@@ -336,33 +410,30 @@ function FormPlayer(props) {
         </FormGroup>
         {caretakerCtrls}
         {caretakerRequired ? <div /> : commonFields}
-        <FieldGroup
-            id="formComments"
-            type="text"
-            name="comments"
-            label="Notas Adicionais"
-            placeholder="Notas"
-            value={props.comments}
-            onChange={props.handleControlChange}
-            readOnly={!props.editable}
-        />
+        <FormGroup controlId="formComments">
+            <ControlLabel>Notas Adicionais</ControlLabel>
+            <FormControl componentClass="textarea" placeholder="Notas"
+                name="comments" value={props.comments} onChange={props.handleControlChange}
+                readOnly={!props.editable} />
+        </FormGroup>
     </div>);
 }
 
 function isCaretakerRequired(steps, stepId) {
     // console.log('Steps: ', steps);
     // console.log('StepId: ', stepId);
-    const filter = steps.filter(s => s.id == stepId);
+    const filter = steps.filter(s => s.Id == stepId);
     //console.log(filter);
-    const result = filter[0].isCaretakerRequired;
+    const result = filter.length > 0 && filter[0].IsCaretakerRequired;
     return result;
 }
 
 function FieldGroup({ id, label, help, ...props }) {
     return (
-        <FormGroup controlId={id}>
+        <FormGroup controlId={id} validationState={props.validationState ? props.validationState() : null}>
             <ControlLabel>{label}</ControlLabel>
             <FormControl {...props} />
+            <FormControl.Feedback />
             {help && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>
     );

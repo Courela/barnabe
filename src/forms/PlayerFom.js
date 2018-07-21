@@ -293,8 +293,8 @@ function PlayerDetails(props) {
                 id="formEmail"
                 type="email"
                 name="email"
-                label={caretakerRequired ? "Email do Encarregado de Educação" : "Email"}
-                placeholder={caretakerRequired ? "Email do Encarregado de Educação" : "Email"}
+                label={caretakerRequired ? "Email do Responsável" : "Email"}
+                placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
             />
@@ -302,8 +302,8 @@ function PlayerDetails(props) {
                 id="formPhone"
                 type="text"
                 name="phoneNr"
-                label={caretakerRequired ? "Telefone do Encarregado de Educação" : "Telefone"}
-                placeholder={caretakerRequired ? "Telefone do Encarregado de Educação" : "Telefone"}
+                label={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
+                placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
             />
@@ -311,8 +311,8 @@ function PlayerDetails(props) {
                 id="formVoterNr"
                 type="text"
                 name="voterNr"
-                label={caretakerRequired ? "Nr de Eleitor do Encarregado de Educação" : "Nr de Eleitor"}
-                placeholder={caretakerRequired ? "Nr do Eleitor do Encarregado de Educação" : "Nr de Eleitor"}
+                label={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
+                placeholder={caretakerRequired ? "Nr do Eleitor do Responsável" : "Nr de Eleitor"}
                 value={props.voterNr}
                 onChange={props.handleControlChange}
             />
@@ -330,15 +330,15 @@ function PlayerDetails(props) {
     const caretakerCtrls = caretakerRequired ?
         <Panel>
             <Panel.Heading>
-                <Panel.Title componentClass="h3">Dados do Encarregado de Educação</Panel.Title>
+                <Panel.Title componentClass="h3">Dados do Responsável (Mãe/Pai/Tutor)</Panel.Title>
             </Panel.Heading>
             <Panel.Body>
                 <FieldGroup
                     id="formCaretakerName"
                     type="text"
                     name="caretakerName"
-                    label="Nome da Mãe/Pai"
-                    placeholder="Nome da Mãe/Pai"
+                    label="Nome do Responsável"
+                    placeholder="Nome do Responsável"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
                 />
@@ -346,8 +346,8 @@ function PlayerDetails(props) {
                     id="formCaretakerIdCard"
                     type="text"
                     name="caretakerDocId"
-                    label="Nr Cartão Cidadão da Mãe/Pai"
-                    placeholder="Nr Cartão Cidadão da Mãe/Pai"
+                    label="Nr Cartão Cidadão do Responsável"
+                    placeholder="Nr Cartão Cidadão do Responsável"
                     onChange={props.handleControlChange}
                 />
                 {commonFields}
@@ -387,7 +387,7 @@ function PlayerDetails(props) {
         </FormGroup>
         
         <FormGroup controlId="selectGender" validationState={props.validateGender()}>
-            <ControlLabel>Sexo</ControlLabel>
+            <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
                 onChange={props.handleGenderSelect} value={props.gender}>
                 <option value="0">Escolha...</option>

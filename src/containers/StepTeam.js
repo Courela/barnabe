@@ -87,7 +87,7 @@ export default class StepTeam extends Component {
 
     playerActions(row) {
         const { season, stepId } = this.state;
-        const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + '?edit';
+        const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + '?edit=1';
         const removeFn = (evt) => this.removePlayer(row.original.Id, row.original.Name);
         return (
             <Fragment>
@@ -101,9 +101,9 @@ export default class StepTeam extends Component {
         const { season, teamId, stepId } = this.state;
         if (window.confirm('Tem a certeza que quer remover o jogador ' + name + '?')) {
             await axios.delete(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + id);
-            this.setState({ players: [], staff: [] }, () => { 
-                this.getPlayers(); 
-                this.getStaff(); 
+            this.setState({ players: [], staff: [] }, () => {
+                this.getPlayers();
+                this.getStaff();
             });
         }
     }
@@ -125,7 +125,7 @@ export default class StepTeam extends Component {
                 <div style={{ float: 'right' }}>
                     <ButtonToolbar>
                         <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
-                        {this.state.isSeasonActive ? 
+                        {this.state.isSeasonActive ?
                             <Button bsStyle="primary" href={'/seasons/' + (this.state.season - 1).toString() + '/steps/' + this.state.stepId + '/import'}>Importar Jogadores {this.state.season - 1}</Button> :
                             ''}
                     </ButtonToolbar>
@@ -133,7 +133,7 @@ export default class StepTeam extends Component {
                 <div>
                     <h3>Jogadores</h3>
                     <PlayersTable players={this.state.players} getPlayers={this.getPlayers}
-                        linkToPlayer={this.linkToPlayer} playerActions={this.playerActions}/>
+                        linkToPlayer={this.linkToPlayer} playerActions={this.playerActions} />
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
@@ -146,8 +146,8 @@ export default class StepTeam extends Component {
                         <ReactTable
                             columns={[
                                 { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row) },
-                                { Header: "Data Nascimento", accessor: "Birthdate" },
                                 { Header: "Cartão Cidadão", accessor: "IdCardNr" },
+                                { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.Birthdate) },
                                 { Header: "", accessor: 'Id', Cell: (row) => this.playerActions(row) }
                             ]}
                             data={this.state.staff}
@@ -166,7 +166,7 @@ function PlayersTable(props) {
         <ReactTable
             columns={[
                 { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row) },
-                { Header: "Data Nascimento", accessor: "Birthdate" },
+                { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.Birthdate) },
                 { Header: "Cartão Cidadão", accessor: "IdCardNr" },
                 { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row) }
             ]}
@@ -176,4 +176,22 @@ function PlayersTable(props) {
             defaultPageSize={5}
             className="-striped" />
     </div>);
+}
+
+function dateFormat(date) {
+    console.log(date);
+    if (!date) { return ''; }
+     
+    const dateObj = new Date(date);
+    var dd = dateObj.getDate();
+    var mm = dateObj.getMonth() + 1; //January is 0!
+
+    var yyyy = dateObj.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    return dd + '/' + mm + '/' + yyyy;
 }

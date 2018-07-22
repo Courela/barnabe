@@ -88,14 +88,10 @@ export default class TopMenu extends Component {
                         <Nav onSelect={this.handleSelect}>
                             <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
                                 {seasons}
-                                {/* <LinkContainer to="/seasons/2018">
-                                    <MenuItem>2018</MenuItem>
-                                </LinkContainer>
-                                <MenuItem divider />
-                                <LinkContainer to="/seasons/2017">
-                                    <MenuItem>2017</MenuItem>
-                                </LinkContainer> */}
                             </NavDropdown>
+                            <LinkContainer to="/documents">
+                                <NavItem>Documentos</NavItem>
+                            </LinkContainer>
                         </Nav>
                         {menuOptions}
                     </Navbar.Collapse>

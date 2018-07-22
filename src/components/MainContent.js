@@ -9,7 +9,7 @@ import Standings from '../containers/Standings';
 import StepTeam from '../containers/StepTeam';
 import Documents from '../containers/Documents';
 import PlayerForm from '../forms/PlayerFom';
-import AddStep from '../forms/AddStep';
+import StepForm from '../forms/StepForm';
 import GoogleApiForm from '../forms/GoogleApiForm';
 import AddUser from '../forms/AddUser';
 import ImportPlayers from '../forms/ImportPlayers';
@@ -21,10 +21,15 @@ export default class MainContent extends Component {
         let stepId = 0;
 
         const authenticatedRoutesArr = [{
-            path: '/seasons/:year/addstep',
+            path: '/seasons/:year/remove-step',
             exact: true,
             //component: AddStep,
-            render: (props) => { return (<AddStep {...props} teamId={this.props.teamId} />) }
+            render: (props) => { return (<StepForm {...props} teamId={this.props.teamId} />) }
+        },{
+            path: '/seasons/:year/add-step',
+            exact: true,
+            //component: AddStep,
+            render: (props) => { return (<StepForm {...props} teamId={this.props.teamId} />) }
         }, {
             path: '/seasons/:year/steps/:stepId/import',
             exact: true,

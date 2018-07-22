@@ -1,14 +1,14 @@
 /* eslint no-console:0 */
 
-import React from 'react';
-import Menu, { SubMenu, Item as MenuItem } from 'rc-menu';
+import React, { Component } from 'react';
+import Menu, { SubMenu, Item as MenuItem } from 'rc-menu/lib';
 import 'rc-menu/assets/index.css';
-import animate from 'css-animation';
+import animate from 'css-animation/lib';
 import axios from 'axios';
 import settings from '../settings';
-import errors from '../components/Errors';
+import errors from './Errors';
 
-export default class SideMenu extends React.Component {
+export default class SideMenu extends Component {
     constructor(props) {
         super(props);
 
@@ -143,7 +143,8 @@ function AnonymousMenu(props) {
 function AuthenticatedMenu(props) {
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
-            <MenuItem key={"/seasons/" + props.season + "/addstep"}>Inscrever escalão</MenuItem>
+            <MenuItem key={"/seasons/" + props.season + "/add-step"}>Inscrever escalão</MenuItem>
+            <MenuItem key={"/seasons/" + props.season + "/remove-step"}>Remover escalão</MenuItem>
             {props.stepsMenu()}
             <MenuItem key={"/seasons/" + props.season + "/documents"}>Documentos</MenuItem>
         </Menu>);

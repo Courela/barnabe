@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import "../styles/Home.css";
 
 export default class Home extends Component {
@@ -14,19 +15,18 @@ export default class Home extends Component {
 neste site.<br />
 A partir da 13ª edição (2018) as inscrições devem ser feitas exclusivamente através deste site. 
 Mantêm-se os requisitos das edições anteriores: é necessário uma <strong>fotografia</strong> e a <strong>folha de inscrição</strong>
-&nbsp;(disponível na área reservada) com os dados do jogador e assinatura (para jogadores menores de 18 anos a assinatura do encarregado de educação).
+&nbsp;(disponível na área de <Link to="/documents">documentos</Link>) com os dados do jogador e assinatura (para jogadores menores de 18 anos a assinatura do encarregado de educação).
 A fotografia pode ser tirada com um telemóvel (deve ser idêntica a uma fotografia tipo passe) e o deve ser preenchido e posteriormente
 digitalizado, sendo ambos carregados na página de inscrição de jogador. Para a equipa técnica apenas é necessária a fotografia.</p>
 
-<p>Os escalões disponíveis para inscrição são os seguintes:
-    <ul>
-        <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 25/11/2009 e 31/12/2013 (Dos 5 aos 8 anos);</li>
-        <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 25/11/2005 e 24/11/2009 (Dos 9 aos 12 anos);</li>
-        <li><strong>II Escalão</strong> - masculino para nascidos entre 25-11-2000 a 24-11-2005 (Dos 13 aos 17 anos);</li>
-        <li><strong>III Escalão</strong> - masculino para nascidos antes de 24-11-2000 (+ de 17 anos);</li>
-        <li><strong>Escalão Feminino</strong> - para nascidas antes de 24-11-2005 ( + de 12 anos).</li>
-    </ul>
-</p>
+<p>Os escalões disponíveis para inscrição são os seguintes:</p>
+<ul>
+    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 25/11/2009 e 31/12/2013 (Dos 5 aos 8 anos);</li>
+    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 25/11/2005 e 24/11/2009 (Dos 9 aos 12 anos);</li>
+    <li><strong>II Escalão</strong> - masculino para nascidos entre 25-11-2000 a 24-11-2005 (Dos 13 aos 17 anos);</li>
+    <li><strong>III Escalão</strong> - masculino para nascidos antes de 24-11-2000 (+ de 17 anos);</li>
+    <li><strong>Escalão Feminino</strong> - para nascidas antes de 24-11-2005 ( + de 12 anos).</li>
+</ul>
 
 <p>Acompanhem-nos na página do torneio e também no Facebook e no Twitter.</p>
                 <h2>Links</h2>

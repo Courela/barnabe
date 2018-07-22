@@ -7,7 +7,7 @@ export default class SeasonMain extends Component {
     }
 
     handleAddStep() {
-        this.props.history.push("/seasons/" + this.props.match.params.year + "/addstep");
+        this.props.history.push("/seasons/" + this.props.match.params.year + "/add-step");
     }
 
     render() {

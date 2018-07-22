@@ -20,8 +20,8 @@ export default class PlayerDetails extends Component {
         this.validateForm = this.validateForm.bind(this);
 
         const stepId = props.match.params.stepId;
+        
         const playerId = props.match.params.playerId;
-
         const queryStringValues = queryString.parse(this.props.location.search)
         const edit = queryStringValues.edit ? true : false;
 
@@ -45,9 +45,12 @@ export default class PlayerDetails extends Component {
             caretakerDocId: '',
             photoSrc: null,
             comments: '',
+            docExists: false,
+            doc: null,
             editable: edit,
             caretakerId: null,
-            isEditSuccess: null
+            isEditSuccess: null,
+            isSubmitting: false
         };
     }
 
@@ -88,7 +91,8 @@ export default class PlayerDetails extends Component {
                     comments: player.Comments,
                     stepDescr: player.step.Description,
                     steps: [player.step],
-                    photoSrc: photo
+                    photoSrc: photo,
+                    docExists: player.DocFilename ? true : false
                 });
                 window.scrollTo(0, 0);
             })
@@ -119,65 +123,74 @@ export default class PlayerDetails extends Component {
     validateForm() {
         let result = true;
         const { playerName, docId, gender, birth, caretakerName, caretakerDocId } = this.state;
-        result = result && 
+        result = result &&
             playerName && playerName !== '' &&
             docId && docId !== '' &&
             gender && gender !== '' &&
             birth && birth !== '';
 
-        result = result && 
-            caretakerName && caretakerName !== '' &&
-            caretakerDocId && caretakerDocId !== '';
+        if (isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId)) {
+            result = result &&
+                caretakerName && caretakerName !== '' &&
+                caretakerDocId && caretakerDocId !== '';
+        }
         return result;
     }
 
     handleSubmit(evt) {
         if (this.validateForm()) {
             const { season, teamId, stepId, personId, playerId } = this.state;
-            const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId);
+            const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId);
             if (personId !== null) {
                 console.log('Submitting player...');
-                const data = {
-                    player: {
-                        roleId: this.state.roleId,
-                        comments: this.state.comments,
-                    },
-                    person: {
-                        id: this.state.personId,
-                        name: this.state.playerName,
-                        docId: this.state.docId,
-                        gender: this.state.gender,
-                        birth: this.state.birth,
-                        email: caretakerRequired ? null : this.state.email,
-                        phoneNr: caretakerRequired ? null : this.state.phoneNr,
-                        voterNr: caretakerRequired || !this.state.isResident ? null : this.state.voterNr,
-                        photo: this.state.photoSrc
-                    },
-                    caretaker: {
-                        id: this.state.caretakerId,
-                        name: this.state.caretakerName,
-                        docId: this.state.caretakerDocId,
-                        email: caretakerRequired ? this.state.email : null,
-                        phoneNr: caretakerRequired ? this.state.phoneNr : null,
-                        voterNr: this.state.isResident && caretakerRequired ? this.state.voterNr : null
-                    }
-                };
-                const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
-                axios.patch(url, data)
-                    .then(result => {
-                        //console.log(result);
-                        this.fetchPlayer();
-                        this.setState({ editable: false, isEditSuccess: true });
-                        //this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
-                        // if (result.data && result.data.length > 0) {
-                        //     this.setState({ data: result.data });
-                        // }
-                    })
-                    .catch((err) => {
-                        const errMsgs = { e409: 'Jogador já está inscrito no escalão escolhido.' };
-                        errors.handleError(err, errMsgs);
-                    });
+                this.setState({ isSubmitting: true }, () => {
+                    const data = {
+                        player: {
+                            roleId: this.state.roleId,
+                            comments: this.state.comments,
+                            photo: this.state.photoSrc,
+                            doc: this.state.doc
+                        },
+                        person: {
+                            id: this.state.personId,
+                            name: this.state.playerName,
+                            docId: this.state.docId,
+                            gender: this.state.gender,
+                            birth: this.state.birth,
+                            email: caretakerRequired ? null : this.state.email,
+                            phoneNr: caretakerRequired ? null : this.state.phoneNr,
+                            voterNr: caretakerRequired || !this.state.isResident ? null : this.state.voterNr
+                        },
+                        caretaker: {
+                            id: this.state.caretakerId,
+                            name: this.state.caretakerName,
+                            docId: this.state.caretakerDocId,
+                            email: caretakerRequired ? this.state.email : null,
+                            phoneNr: caretakerRequired ? this.state.phoneNr : null,
+                            voterNr: this.state.isResident && caretakerRequired ? this.state.voterNr : null
+                        }
+                    };
+                    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
+                    axios.patch(url, data)
+                        .then(result => {
+                            //console.log(result);
+                            this.fetchPlayer();
+                            this.setState({ editable: false, isEditSuccess: true, isSubmitting: false });
+                            //this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
+                            // if (result.data && result.data.length > 0) {
+                            //     this.setState({ data: result.data });
+                            // }
+                        })
+                        .catch((err) => {
+                            const errMsgs = { e409: 'Jogador já está inscrito no escalão escolhido.' };
+                            errors.handleError(err, errMsgs);
+                            this.setState({ isSubmitting: false });
+                        });
+                });
             }
+        }
+        else {
+            alert('Campos obrigatórios em falta!');
         }
         evt.preventDefault();
     }
@@ -217,6 +230,30 @@ export default class PlayerDetails extends Component {
         }
     }
 
+    handleDoc(evt) {
+        var files = evt.target.files; // FileList object
+
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; i < files.length; i++) {
+            f = files[i]
+
+            if (f.type.match('image.*') || f.type.match('application.pdf')) {
+                var reader = new FileReader();
+                let self = this;
+                // Closure to capture the file information.
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        self.setState({ doc: reader.result });
+                        //self.setState({ doc: window.btoa(reader.result) });
+                    };
+                })(f);
+
+                reader.readAsDataURL(f);
+                //reader.readAsBinaryString(f);
+            }
+        }
+    }
+
     onChangeBirthdate = date => this.setState({ birth: date })
 
     render() {
@@ -229,7 +266,8 @@ export default class PlayerDetails extends Component {
                 handleCheckboxToggle={this.handleCheckboxToggle.bind(this)}
                 handleGenderSelect={this.handleGenderSelect.bind(this)}
                 handlePhoto={this.handlePhoto.bind(this)}
-                handleEdit={this.handleEdit.bind(this)} /> :
+                handleEdit={this.handleEdit.bind(this)}
+                handleDoc={this.handleDoc.bind(this)} /> :
             <div />;
 
         return (
@@ -243,8 +281,11 @@ export default class PlayerDetails extends Component {
                     {formDetails}
                     {this.state.editable ?
                         <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                            <Button bsStyle="primary" onClick={this.handleCancel} style={{ margin: '3px' }}>Cancelar</Button>
-                            <Button bsStyle="primary" type="submit" onClick={this.handleSubmit} style={{ margin: '3px' }}>Confirmar</Button>
+                            <Button bsStyle="primary" disabled={this.state.isSubmitting} 
+                                onClick={this.handleCancel} style={{ margin: '3px' }}>Cancelar</Button>
+                            <Button bsStyle="primary" type="submit" disabled={this.state.isSubmitting} 
+                                onClick={this.handleSubmit} style={{ margin: '3px' }}>Confirmar</Button>
+                            <span style={{ display: this.state.isSubmitting ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
                         </div> :
                         ''}
                 </form>
@@ -254,7 +295,7 @@ export default class PlayerDetails extends Component {
 }
 
 function FormPlayer(props) {
-    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId);
+    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId);
     //console.log('Caretaker required: ', caretakerRequired);
 
     const validateEmail = () => {
@@ -291,7 +332,7 @@ function FormPlayer(props) {
                 readOnly={!props.editable}
                 validationState={validatePhone}
             />
-            <Checkbox checked={props.isResident} readOnly={!props.editable}
+            <Checkbox checked={props.isResident} disabled={!props.editable}
                 name="isResident" onChange={props.handleCheckboxToggle} >
                 <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
             </Checkbox>
@@ -308,7 +349,7 @@ function FormPlayer(props) {
                 /> : ''}
             {props.isResident && props.editable ?
                 <Fragment>
-                    Se não sabe o Nr de Eleitor pode obtê-lo aqui:
+                    Se não sabe o Nr de Eleitor pode obtê-lo aqui:&nbsp;
                     <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
                 </Fragment> : ''}
         </Fragment>;
@@ -354,9 +395,24 @@ function FormPlayer(props) {
                 onChange={props.handlePhoto}
                 readOnly={!props.editable}
                 accept="image/*"
-            /></div> : '';
+            />
+            <FieldGroup
+                id="formDoc"
+                type="file"
+                label="Ficha individual de jogador"
+                help="Ficha individual de jogador"
+                onChange={props.handleDoc}
+                readOnly={!props.editable}
+                accept="image/*,application/pdf"
+            />
+        </div> : 
+        <Fragment>
+            <p><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
+                {props.docExists ? ' submetida.' : ' em falta!'}
+            </span></p>
+        </Fragment>;
 
-    const editButton = props.editable || props.editable === null ? '' :
+    const editButton = !props.personId || props.editable || props.editable === null ? '' :
         <div className="column" style={{ float: 'right' }}>
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>
         </div>;
@@ -400,6 +456,8 @@ function FormPlayer(props) {
             value={props.playerName}
             onChange={props.handleControlChange}
             readOnly={!props.editable}
+            validationState={validateNotEmpty}
+            validationArgs={props.playerName}
         />
         <FieldGroup
             id="formIdCard"
@@ -443,18 +501,21 @@ function FormPlayer(props) {
     </div>);
 }
 
-function isCaretakerRequired(steps, stepId) {
+function isCaretakerRequired(steps, stepId, roleId) {
     // console.log('Steps: ', steps);
     // console.log('StepId: ', stepId);
-    const filter = steps.filter(s => s.Id == stepId);
-    //console.log(filter);
-    const result = filter.length > 0 && filter[0].IsCaretakerRequired;
+    let result = false;
+    if (roleId && roleId == 1) {
+        const filter = steps.filter(s => s.Id == stepId);
+        //console.log(filter);
+        result = filter.length > 0 && filter[0].IsCaretakerRequired;
+    }
     return result;
 }
 
 function FieldGroup({ id, label, help, ...props }) {
     return (
-        <FormGroup controlId={id} validationState={props.validationState ? props.validationState() : null}>
+        <FormGroup controlId={id} validationState={props.validationState ? props.validationState(props.validationArgs) : null}>
             <ControlLabel>{label}</ControlLabel>
             <FormControl {...props} />
             <FormControl.Feedback />
@@ -462,3 +523,8 @@ function FieldGroup({ id, label, help, ...props }) {
         </FormGroup>
     );
 }
+
+function validateNotEmpty(str) {
+    if (!str || str === '') return 'error';
+    return null;
+};

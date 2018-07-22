@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import {
     FormGroup, FormControl, ControlLabel, HelpBlock,
-    Button, Panel, Image
+    Button, Panel, Image, Checkbox
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 import axios from 'axios';
@@ -36,11 +36,14 @@ export default class PlayerForm extends Component {
             docId: '',
             phoneNr: '',
             email: '',
+            isResident: false,
             voterNr: '',
             caretakerName: '',
             caretakerDocId: '',
             photoSrc: null,
             comments: '',
+            doc: null,
+            isSubmitting: false
         };
     }
 
@@ -52,7 +55,7 @@ export default class PlayerForm extends Component {
     getSteps() {
         const year = this.props.match.params.year;
         const teamId = this.props.teamId;
-        
+
         if (this.state.stepId > 0) {
             const url = settings.API_URL + '/api/seasons/' + this.state.season + '/steps/' + this.state.stepId;
             axios.get(url)
@@ -86,7 +89,7 @@ export default class PlayerForm extends Component {
                             gender: s.Gender,
                             isCaretakerRequired: s.IsCaretakerRequired,
                             minDate: s.MinDate,
-                            maxDate: s.maxDate
+                            maxDate: s.MaxDate
                         }));
                         //console.log(single);
                         this.setState({
@@ -162,6 +165,12 @@ export default class PlayerForm extends Component {
         this.setState({ [fieldName]: fieldVal });
     }
 
+    handleCheckboxToggle(evt) {
+        let fieldName = evt.target.name;
+        //console.log(fieldName, fieldVal);
+        this.setState({ [fieldName]: !this.state[fieldName] });
+    }
+
     validateStep() {
         if (this.state.stepId <= 0) return 'error';
         return null;
@@ -177,47 +186,74 @@ export default class PlayerForm extends Component {
         return null;
     }
 
+    validateForm() {
+        let result = true;
+        const { name, docId, gender, birth, caretakerName, caretakerDocId } = this.state;
+        result = result &&
+            name && name !== '' &&
+            docId && docId !== '' &&
+            gender && gender !== '' &&
+            birth && birth !== '';
+
+        if (isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId)) {
+            result = result &&
+                caretakerName && caretakerName !== '' &&
+                caretakerDocId && caretakerDocId !== '';
+        }
+        return result;
+    }
+
     handleSubmit(evt) {
+        
         const { season, teamId, stepId, personId } = this.state;
-        const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId);
+        const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId);
         if (personId !== null) {
-            console.log('Submitting player...');
-            const data = {
-                role: this.state.roleId,
-                person: {
-                    id: this.state.personId,
-                    name: this.state.name,
-                    docId: this.state.docId,
-                    gender: this.state.gender,
-                    birth: this.state.birth,
-                    email: caretakerRequired ? null : this.state.email,
-                    phoneNr: caretakerRequired ? null : this.state.phoneNr,
-                    voterNr: caretakerRequired ? null : this.state.voterNr,
-                    photo: this.state.photoSrc
-                },
-                caretaker: {
-                    name: this.state.caretakerName,
-                    docId: this.state.caretakerDocId,
-                    email: caretakerRequired ? this.state.email : null,
-                    phoneNr: caretakerRequired ? this.state.phoneNr : null,
-                    voterNr: caretakerRequired ? this.state.voterNr : null
-                },
-                comments: this.state.comments
-            };
-            const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
-            axios.put(url, data)
-                .then(result => {
-                    console.log(result);
-                    const playerId = result.data.Id;
-                    this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
-                    // if (result.data && result.data.length > 0) {
-                    //     this.setState({ data: result.data });
-                    // }
-                })
-                .catch((err) => {
-                    const errMsgs = { e409: 'Jogador já está inscrito no escalão escolhido.' };
-                    errors.handleError(err, errMsgs);
+            if (this.validateForm()) {
+                console.log('Submitting player...');
+                this.setState({ isSubmitting: true }, () => {
+                    const data = {
+                        role: this.state.roleId,
+                        photo: this.state.photoSrc,
+                        person: {
+                            id: this.state.personId,
+                            name: this.state.name,
+                            docId: this.state.docId,
+                            gender: this.state.gender,
+                            birth: this.state.birth,
+                            email: caretakerRequired ? null : this.state.email,
+                            phoneNr: caretakerRequired ? null : this.state.phoneNr,
+                            voterNr: caretakerRequired ? null : this.state.voterNr
+                        },
+                        caretaker: {
+                            name: this.state.caretakerName,
+                            docId: this.state.caretakerDocId,
+                            email: caretakerRequired ? this.state.email : null,
+                            phoneNr: caretakerRequired ? this.state.phoneNr : null,
+                            voterNr: caretakerRequired ? this.state.voterNr : null
+                        },
+                        comments: this.state.comments,
+                        doc: this.state.doc
+                    };
+                    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
+                    axios.put(url, data)
+                        .then(result => {
+                            console.log(result);
+                            const playerId = result.data.Id;
+                            this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId);
+                            // if (result.data && result.data.length > 0) {
+                            //     this.setState({ data: result.data });
+                            // }
+                        })
+                        .catch((err) => {
+                            const errMsgs = { e409: 'Jogador já está inscrito no escalão escolhido.' };
+                            errors.handleError(err, errMsgs);
+                            this.setState({ isSubmitting: false });
+                        });
                 });
+            }
+            else {
+                alert('Campos obrigatórios em falta!');
+            }
         }
         else {
             console.log('Search person with docId ' + this.state.docId);
@@ -232,7 +268,7 @@ export default class PlayerForm extends Component {
                             name: person.Name,
                             email: person.Email ? person.Email : '',
                             phoneNr: person.Phone ? person.Phone : '',
-                            birth: person.Birthdate,
+                            birth: new Date(person.Birthdate),
                             voterNr: person.VoterNr
                         });
                     } else {
@@ -275,6 +311,30 @@ export default class PlayerForm extends Component {
         }
     }
 
+    handleDoc(evt) {
+        var files = evt.target.files; // FileList object
+
+        // Loop through the FileList and render image files as thumbnails.
+        for (var i = 0, f; i < files.length; i++) {
+            f = files[i]
+
+            if (f.type.match('image.*') || f.type.match('application.pdf')) {
+                var reader = new FileReader();
+                let self = this;
+                // Closure to capture the file information.
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        self.setState({ doc: reader.result });
+                        //self.setState({ doc: window.btoa(reader.result) });
+                    };
+                })(f);
+
+                reader.readAsDataURL(f);
+                //reader.readAsBinaryString(f);
+            }
+        }
+    }
+
     onChangeBirthdate = date => this.setState({ birth: date })
 
     render() {
@@ -284,11 +344,13 @@ export default class PlayerForm extends Component {
             <PlayerDetails {...this.state}
                 onChangeBirthdate={this.onChangeBirthdate}
                 handleControlChange={this.handleControlChange.bind(this)}
+                handleCheckboxToggle={this.handleCheckboxToggle.bind(this)}
                 handleGenderSelect={this.handleGenderSelect.bind(this)}
                 handleRoleSelect={this.handleRoleSelect.bind(this)}
                 validateGender={this.validateGender.bind(this)}
                 validateRole={this.validateRole.bind(this)}
-                handlePhoto={this.handlePhoto.bind(this)} /> :
+                handlePhoto={this.handlePhoto.bind(this)}
+                handleDoc={this.handleDoc.bind(this)} /> :
             <div />;
 
         const submitLabel = this.state.personId ? "Inscrever" : "Continuar"
@@ -314,9 +376,15 @@ export default class PlayerForm extends Component {
                         label="Nr Cartão Cidadão do Jogador"
                         placeholder="CC"
                         onChange={this.handleControlChange.bind(this)}
+                        validationState={validateNotEmpty}
+                        validationArgs={this.state.docId}
                     />
                     {formDetails}
-                    <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>{submitLabel}</Button>
+                    <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}
+                        disabled={this.state.isSubmitting}>
+                        {submitLabel}
+                    </Button>
+                    <span style={{ display: this.state.isSubmitting ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
                 </form>
             </div>
         );
@@ -324,7 +392,17 @@ export default class PlayerForm extends Component {
 }
 
 function PlayerDetails(props) {
-    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId);
+    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId);
+    
+    const validateEmail = () => {
+        if (props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
+        return null;
+    };
+
+    const validatePhone = () => {
+        if (props.phoneNr !== '' && !props.phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/)) return 'error';
+        return null;
+    };
 
     const commonFields =
         <Fragment>
@@ -336,6 +414,8 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
+                validationState={validateEmail}
+                validationArgs={[]}
             />
             <FieldGroup
                 id="formPhone"
@@ -345,25 +425,27 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
+                validationState={validatePhone}
+                validationArgs={[]}
             />
-            <FieldGroup
-                id="formVoterNr"
-                type="text"
-                name="voterNr"
-                label={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
-                placeholder={caretakerRequired ? "Nr do Eleitor do Responsável" : "Nr de Eleitor"}
-                value={props.voterNr}
-                onChange={props.handleControlChange}
-            />
-            <FieldGroup
-                id="formComments"
-                type="text"
-                name="comments"
-                label="Notas Adicionais"
-                placeholder="Notas"
-                value={props.comments}
-                onChange={props.handleControlChange}
-            />
+            <Checkbox checked={props.isResident}
+                name="isResident" onChange={props.handleCheckboxToggle} >
+                <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
+            </Checkbox>
+            {props.isResident ?
+                <Fragment>
+                    <FieldGroup
+                        id="formVoterNr"
+                        type="text"
+                        name="voterNr"
+                        label={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
+                        placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
+                        value={props.voterNr}
+                        onChange={props.handleControlChange}
+                    />
+                    Se não sabe o Nr de Eleitor pode obtê-lo aqui:&nbsp;
+                    <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
+                </Fragment> : ''}
         </Fragment>;
 
     const caretakerCtrls = caretakerRequired ?
@@ -380,6 +462,8 @@ function PlayerDetails(props) {
                     placeholder="Nome do Responsável"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
+                    validationState={validateNotEmpty}
+                    validationArgs={props.caretakerName}
                 />
                 <FieldGroup
                     id="formCaretakerIdCard"
@@ -387,7 +471,10 @@ function PlayerDetails(props) {
                     name="caretakerDocId"
                     label="Nr Cartão Cidadão do Responsável"
                     placeholder="Nr Cartão Cidadão do Responsável"
+                    value={props.caretakerDocId}
                     onChange={props.handleControlChange}
+                    validationState={validateNotEmpty}
+                    validationArgs={props.caretakerDocId}
                 />
                 {commonFields}
             </Panel.Body>
@@ -428,6 +515,8 @@ function PlayerDetails(props) {
             placeholder="Nome do Jogador"
             value={props.name}
             onChange={props.handleControlChange}
+            validationState={validateNotEmpty}
+            validationArgs={props.name}
         />
         <FormGroup controlId="formBirthdate">
             <ControlLabel>Data Nascimento do Jogador</ControlLabel>
@@ -456,29 +545,53 @@ function PlayerDetails(props) {
             label="Fotografia"
             help="Digitalização de Fotografia do Jogador"
             onChange={props.handlePhoto}
+            accept="image/*"
         />
         <Image id="photoThumb" thumbnail src={props.photoSrc}
             style={{ maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'block' }} />
+        {props.roleId == 1 ?
+            <FieldGroup
+                id="formDoc"
+                type="file"
+                label="Ficha individual de jogador"
+                help="Ficha individual de jogador"
+                onChange={props.handleDoc}
+                accept="image/*,application/pdf"
+            /> : ''}
         {caretakerCtrls}
         {caretakerRequired ? <div /> : commonFields}
+        <FormGroup controlId="formComments">
+            <ControlLabel>Notas Adicionais</ControlLabel>
+            <FormControl componentClass="textarea" placeholder="Notas"
+                name="comments" value={props.comments} 
+                onChange={props.handleControlChange} />
+        </FormGroup>
     </div>);
 }
 
-function isCaretakerRequired(steps, stepId) {
+function isCaretakerRequired(steps, stepId, roleId) {
     // console.log('Steps: ', steps);
     // console.log('StepId: ', stepId);
-    const filter = steps.filter(s => s.id == stepId);
-    //console.log(filter);
-    const result = filter[0].isCaretakerRequired;
+    let result = false;
+    if (roleId && roleId == 1) {
+        const filter = steps.filter(s => s.id == stepId);
+        //console.log(filter);
+        result = filter[0].isCaretakerRequired;
+    }
     return result;
 }
 
 function FieldGroup({ id, label, help, ...props }) {
     return (
-        <FormGroup controlId={id}>
+        <FormGroup controlId={id} validationState={props.validationState ? props.validationState(...props.validationArgs) : null}>
             <ControlLabel>{label}</ControlLabel>
             <FormControl {...props} />
             {help && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>
     );
 }
+
+function validateNotEmpty(str) {
+    if (!str || str === '') return 'error';
+    return null;
+};

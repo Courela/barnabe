@@ -95,7 +95,7 @@ export default class TopMenu extends Component {
                         <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
-                        <Nav collapseOnSelect onSelect={this.handleSelect}>
+                        <Nav onSelect={this.handleSelect}>
                             {leftSideOptions}
                         </Nav>
                         {menuOptions}

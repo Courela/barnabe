@@ -10,9 +10,11 @@ export default class StepTeam extends Component {
     constructor(props) {
         super(props);
 
+        const season = props.match.params.year;
+
         this.state = {
-            season: props.match.params.year,
-            isSeasonActive: false,
+            season: season,
+            isSeasonActive: season == 2018,
             teamId: props.teamId,
             stepId: props.match.params.stepId,
             stepName: null,
@@ -124,10 +126,10 @@ export default class StepTeam extends Component {
                 <h2>{this.state.stepName}</h2>
                 <div style={{ float: 'right' }}>
                     <ButtonToolbar>
-                        <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
                         {this.state.isSeasonActive ?
-                            <Button bsStyle="primary" href={'/seasons/' + (this.state.season - 1).toString() + '/steps/' + this.state.stepId + '/import'}>Importar Jogadores {this.state.season - 1}</Button> :
+                            <Button bsStyle="primary" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button> :
                             ''}
+                        <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
                     </ButtonToolbar>
                 </div>
                 <div>
@@ -181,7 +183,7 @@ function PlayersTable(props) {
 function dateFormat(date) {
     //console.log(date);
     if (!date) { return ''; }
-     
+
     const dateObj = new Date(date);
     var dd = dateObj.getDate();
     var mm = dateObj.getMonth() + 1; //January is 0!

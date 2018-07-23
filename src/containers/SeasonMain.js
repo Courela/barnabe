@@ -1,7 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 
 export default class SeasonMain extends Component {
+    constructor(props) {
+        super(props);
+
+        const season = props.match.params.year;
+        this.state = {
+            season: season,
+            isSeasonActive: season == 2018,
+            teamId: props.teamId,
+        };
+    }
     handleNewPlayer() {
         this.props.history.push('/seasons/' + this.props.match.params.year + '/steps/0/player');
     }
@@ -11,10 +21,12 @@ export default class SeasonMain extends Component {
     }
 
     render() {
-        return (
-            <ButtonToolbar>
-                <Button bsStyle="primary" onClick={this.handleAddStep.bind(this)}>Inscrever escalão</Button>
-                <Button bsStyle="primary" onClick={this.handleNewPlayer.bind(this)}>Adicionar Jogador</Button>
-            </ButtonToolbar>);
+        return (<Fragment>
+            {this.state.isSeasonActive ? 
+                <ButtonToolbar>
+                    <Button bsStyle="primary" onClick={this.handleAddStep.bind(this)}>Inscrever escalão</Button>
+                    <Button bsStyle="primary" onClick={this.handleNewPlayer.bind(this)}>Adicionar Jogador</Button>
+                </ButtonToolbar> : ''}
+            </Fragment>);
     }
 } 

@@ -12,7 +12,8 @@ import PlayerForm from '../forms/PlayerFom';
 import StepForm from '../forms/StepForm';
 import GoogleApiForm from '../forms/GoogleApiForm';
 import AddUser from '../forms/AddUser';
-import ImportPlayers from '../forms/ImportPlayers';
+//import ImportPlayers from '../forms/ImportPlayers';
+import ImportPlayers from '../forms/Import';
 import PlayerDetails from '../forms/PlayerDetails';
 
 export default class MainContent extends Component {
@@ -34,14 +35,12 @@ export default class MainContent extends Component {
             path: '/seasons/:year/steps/:stepId/import',
             exact: true,
             render: (props) => {
-                stepId = props.match.params.stepId;
                 return (<ImportPlayers {...props} teamId={this.props.teamId} />);
             }
         }, {
             path: '/seasons/:year/steps/:stepId',
             exact: true,
             render: (props) => {
-                stepId = props.match.params.stepId;
                 return (<StepTeam {...props} teamId={this.props.teamId} />);
             }
         }, {

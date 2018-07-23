@@ -122,12 +122,13 @@ export default class PlayerDetails extends Component {
 
     validateForm() {
         let result = true;
-        const { playerName, docId, gender, birth, caretakerName, caretakerDocId } = this.state;
+        const { playerName, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
         result = result &&
             playerName && playerName !== '' &&
             docId && docId !== '' &&
             gender && gender !== '' &&
-            birth && birth !== '';
+            birth && birth !== '' &&
+            isValidEmail(email) && isValidPhone(phoneNr);
 
         if (isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId)) {
             result = result &&
@@ -190,7 +191,7 @@ export default class PlayerDetails extends Component {
             }
         }
         else {
-            alert('Campos obrigatórios em falta!');
+            alert('Campos inválidos ou não preenchidos!');
         }
         evt.preventDefault();
     }
@@ -299,12 +300,12 @@ function FormPlayer(props) {
     //console.log('Caretaker required: ', caretakerRequired);
 
     const validateEmail = () => {
-        if (props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
+        if (!isValidEmail(props.email)) return 'error';
         return null;
     };
 
     const validatePhone = () => {
-        if (props.phoneNr !== '' && !props.phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/)) return 'error';
+        if (!isValidPhone(props.phoneNr)) return 'error';
         return null;
     };
 
@@ -528,3 +529,11 @@ function validateNotEmpty(str) {
     if (!str || str === '') return 'error';
     return null;
 };
+
+function isValidEmail(email) {
+    return (email === '' || email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i));
+}
+
+function isValidPhone(phoneNr) {
+    return (phoneNr === '' || phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/));
+}

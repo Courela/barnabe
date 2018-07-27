@@ -317,20 +317,22 @@ export default class PlayerForm extends Component {
     handleDoc(evt) {
         var files = evt.target.files; // FileList object
 
+        let self = this;
+        const onload = function (theFile) {
+            return function (e) {
+                self.setState({ doc: reader.result });
+                //self.setState({ doc: window.btoa(reader.result) });
+            };
+        };
         // Loop through the FileList and render image files as thumbnails.
         for (var i = 0, f; i < files.length; i++) {
             f = files[i]
 
             if (f.type.match('image.*') || f.type.match('application.pdf')) {
                 var reader = new FileReader();
-                let self = this;
+                
                 // Closure to capture the file information.
-                reader.onload = (function (theFile) {
-                    return function (e) {
-                        self.setState({ doc: reader.result });
-                        //self.setState({ doc: window.btoa(reader.result) });
-                    };
-                })(f);
+                reader.onload = (onload)(f);
 
                 reader.readAsDataURL(f);
                 //reader.readAsBinaryString(f);

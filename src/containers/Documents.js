@@ -5,6 +5,7 @@ export default class Documents extends Component {
     render() {
         const data = [
             { name: 'Ficha_Inscricao_Jogador.pdf', type: 'Ficha Individual de Jogador', download: '/doc/Ficha_Inscricao_Jogador.pdf' },
+            { name: 'Regulamento_Desportivo_2018.pdf', type: 'Regulamento Desportivo', download: '/doc/Regulamento_Desportivo_2018.pdf' }
         ];
 
         const rows = data.map((row, idx) => <tr key={idx}>

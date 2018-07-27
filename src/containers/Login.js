@@ -26,6 +26,8 @@ export default class Login extends Component {
     }
 
     handleSubmit = async event => {
+        event.preventDefault();
+
         const user = await validateUser(this.state.username, this.state.password);
         console.log('Logged User: ' + user);
         if (user) {
@@ -40,8 +42,6 @@ export default class Login extends Component {
             this.props.userHasAuthenticated(false, user, '');
             alert('Autenticação falhou!');
         }
-        
-        event.preventDefault();
     }
 
     render() {

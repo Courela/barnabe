@@ -23,7 +23,7 @@ export default class Season extends Component {
     componentDidMount() {
         const year = this.props.match.params.year;
         if (year && year !== this.state.year) {
-            this.getSeason();
+            this.getSeason(year);
         }
     }
 

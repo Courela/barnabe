@@ -56,9 +56,6 @@ class App extends Component {
                 this.props.history.push(url);
                 //this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
             }
-            else {
-                this.props.history.push('/');
-            }
         });
     }
 

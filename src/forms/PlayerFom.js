@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import {
-    FormGroup, FormControl, ControlLabel, HelpBlock,
+    FormGroup, FormControl, ControlLabel,
     Button, Panel, Image, Checkbox
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
+import { validateNotEmpty, isValidEmail, isValidPhone } from '../utils/validations';
+import { FieldGroup } from '../utils/controls';
 
 export default class PlayerForm extends Component {
     constructor(props, context) {
@@ -188,12 +190,13 @@ export default class PlayerForm extends Component {
 
     validateForm() {
         let result = true;
-        const { name, docId, gender, birth, caretakerName, caretakerDocId } = this.state;
+        const { name, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
         result = result &&
             name && name !== '' &&
             docId && docId !== '' &&
             gender && gender !== '' &&
-            birth && birth !== '';
+            birth && birth !== '' &&
+            isValidEmail(email) && isValidPhone(phoneNr);
 
         if (isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId)) {
             result = result &&
@@ -204,7 +207,7 @@ export default class PlayerForm extends Component {
     }
 
     handleSubmit(evt) {
-        
+
         const { season, teamId, stepId, personId } = this.state;
         const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId);
         if (personId !== null) {
@@ -268,7 +271,7 @@ export default class PlayerForm extends Component {
                             name: person.Name,
                             email: person.Email ? person.Email : '',
                             phoneNr: person.Phone ? person.Phone : '',
-                            birth: new Date(person.Birthdate),
+                            birth: person.Birthdate ? new Date(person.Birthdate) : null,
                             voterNr: person.VoterNr
                         });
                     } else {
@@ -393,7 +396,7 @@ export default class PlayerForm extends Component {
 
 function PlayerDetails(props) {
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId);
-    
+
     const validateEmail = () => {
         if (props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
         return null;
@@ -428,10 +431,11 @@ function PlayerDetails(props) {
                 validationState={validatePhone}
                 validationArgs={[]}
             />
-            <Checkbox checked={props.isResident}
-                name="isResident" onChange={props.handleCheckboxToggle} >
-                <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
-            </Checkbox>
+            {props.roleId ?
+                <Checkbox checked={props.isResident}
+                    name="isResident" onChange={props.handleCheckboxToggle} >
+                    <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
+                </Checkbox> : ''}
             {props.isResident ?
                 <Fragment>
                     <FieldGroup
@@ -563,7 +567,7 @@ function PlayerDetails(props) {
         <FormGroup controlId="formComments">
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
-                name="comments" value={props.comments} 
+                name="comments" value={props.comments}
                 onChange={props.handleControlChange} />
         </FormGroup>
     </div>);
@@ -580,18 +584,3 @@ function isCaretakerRequired(steps, stepId, roleId) {
     }
     return result;
 }
-
-function FieldGroup({ id, label, help, ...props }) {
-    return (
-        <FormGroup controlId={id} validationState={props.validationState ? props.validationState(...props.validationArgs) : null}>
-            <ControlLabel>{label}</ControlLabel>
-            <FormControl {...props} />
-            {help && <HelpBlock>{help}</HelpBlock>}
-        </FormGroup>
-    );
-}
-
-function validateNotEmpty(str) {
-    if (!str || str === '') return 'error';
-    return null;
-};

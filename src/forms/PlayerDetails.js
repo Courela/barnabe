@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import {
-    Alert, FormGroup, FormControl, ControlLabel, HelpBlock,
+    Alert, FormGroup, FormControl, ControlLabel,
     Button, Checkbox, Panel, Image
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
@@ -9,6 +9,8 @@ import queryString from 'query-string';
 import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
+import { validateNotEmpty, isValidEmail, isValidPhone } from  '../utils/validations';
+import { FieldGroup } from '../utils/controls';
 
 export default class PlayerDetails extends Component {
     constructor(props, context) {
@@ -27,6 +29,7 @@ export default class PlayerDetails extends Component {
 
         this.state = {
             season: props.match.params.year,
+            isSeasonActive: props.isSeasonActive || false,
             teamId: props.teamId,
             stepId: stepId,
             steps: [],
@@ -55,6 +58,11 @@ export default class PlayerDetails extends Component {
     }
 
     componentDidMount() {
+        const isSeasonActive = this.props.isSeasonActive;
+        if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
+            this.setState({ isSeasonActive: isSeasonActive });
+        }
+        
         this.fetchPlayer();
     }
 
@@ -413,7 +421,7 @@ function FormPlayer(props) {
             </span></p>
         </Fragment>;
 
-    const editButton = !props.personId || props.editable || props.editable === null ? '' :
+    const editButton = props.isSeasonActive && (!props.personId || props.editable || props.editable === null) ? '' :
         <div className="column" style={{ float: 'right' }}>
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>
         </div>;
@@ -512,28 +520,4 @@ function isCaretakerRequired(steps, stepId, roleId) {
         result = filter.length > 0 && filter[0].IsCaretakerRequired;
     }
     return result;
-}
-
-function FieldGroup({ id, label, help, ...props }) {
-    return (
-        <FormGroup controlId={id} validationState={props.validationState ? props.validationState(props.validationArgs) : null}>
-            <ControlLabel>{label}</ControlLabel>
-            <FormControl {...props} />
-            <FormControl.Feedback />
-            {help && <HelpBlock>{help}</HelpBlock>}
-        </FormGroup>
-    );
-}
-
-function validateNotEmpty(str) {
-    if (!str || str === '') return 'error';
-    return null;
-};
-
-function isValidEmail(email) {
-    return (email === '' || email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i));
-}
-
-function isValidPhone(phoneNr) {
-    return (phoneNr === '' || phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/));
 }

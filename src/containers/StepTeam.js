@@ -14,7 +14,7 @@ export default class StepTeam extends Component {
 
         this.state = {
             season: season,
-            isSeasonActive: season == 2018,
+            isSeasonActive: props.isSeasonActive,
             teamId: props.teamId,
             stepId: props.match.params.stepId,
             stepName: null,
@@ -34,6 +34,11 @@ export default class StepTeam extends Component {
     componentDidMount() {
         this.getPlayers();
         this.getStaff();
+
+        const isSeasonActive = this.props.isSeasonActive;
+        if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
+            this.setState({ isSeasonActive: isSeasonActive });
+        }
     }
 
     componentWillReceiveProps(newProps) {
@@ -88,15 +93,18 @@ export default class StepTeam extends Component {
     }
 
     playerActions(row) {
-        const { season, stepId } = this.state;
-        const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + '?edit=1';
-        const removeFn = (evt) => this.removePlayer(row.original.Id, row.original.Name);
-        return (
-            <Fragment>
-                <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>
-                <Button bsStyle="link" bsSize="small" onClick={removeFn}>Remover</Button>
-            </Fragment>
-        );
+        const { season, stepId, isSeasonActive } = this.state;
+        if (isSeasonActive) {
+            const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + '?edit=1';
+            const removeFn = (evt) => this.removePlayer(row.original.Id, row.original.Name);
+            return (
+                <Fragment>
+                    <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>
+                    <Button bsStyle="link" bsSize="small" onClick={removeFn}>Remover</Button>
+                </Fragment>
+            );
+        }
+        else return ('');
     }
 
     async removePlayer(id, name) {
@@ -125,12 +133,11 @@ export default class StepTeam extends Component {
             <Fragment>
                 <h2>{this.state.stepName}</h2>
                 <div style={{ float: 'right' }}>
-                    <ButtonToolbar>
-                        {this.state.isSeasonActive ?
-                            <Button bsStyle="primary" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button> :
-                            ''}
-                        <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
-                    </ButtonToolbar>
+                    {this.state.isSeasonActive ?
+                        <ButtonToolbar>
+                            <Button bsStyle="primary" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button>
+                            <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
+                        </ButtonToolbar> : ''}
                 </div>
                 <div>
                     <h3>Jogadores</h3>
@@ -139,9 +146,10 @@ export default class StepTeam extends Component {
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
-                        <ButtonToolbar>
-                            <Button bsStyle="primary" onClick={this.handleNewStaff}>Adicionar Elemento</Button>
-                        </ButtonToolbar>
+                        {this.state.isSeasonActive ?
+                            <ButtonToolbar>
+                                <Button bsStyle="primary" onClick={this.handleNewStaff}>Adicionar Elemento</Button>
+                            </ButtonToolbar> : ''}
                     </div>
                     <h3>Equipa Técnica</h3>
                     <div>

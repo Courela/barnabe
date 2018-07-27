@@ -21,11 +21,11 @@ digitalizado, sendo ambos carregados na página de inscrição de jogador. Para 
 
 <p>Os escalões disponíveis para inscrição são os seguintes:</p>
 <ul>
-    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 25/11/2009 e 31/12/2013 (Dos 5 aos 8 anos);</li>
-    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 25/11/2005 e 24/11/2009 (Dos 9 aos 12 anos);</li>
-    <li><strong>II Escalão</strong> - masculino para nascidos entre 25-11-2000 a 24-11-2005 (Dos 13 aos 17 anos);</li>
-    <li><strong>III Escalão</strong> - masculino para nascidos antes de 24-11-2000 (+ de 17 anos);</li>
-    <li><strong>Escalão Feminino</strong> - para nascidas antes de 24-11-2005 ( + de 12 anos).</li>
+    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 22/11/2009 e 31/12/2013 (Dos 5 aos 8 anos);</li>
+    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 22/11/2005 e 21/11/2009 (Dos 9 aos 12 anos);</li>
+    <li><strong>II Escalão</strong> - masculino para nascidos entre 22-11-2000 a 21-11-2005 (Dos 13 aos 17 anos);</li>
+    <li><strong>III Escalão</strong> - masculino para nascidos antes de 21-11-2000 (+ de 17 anos);</li>
+    <li><strong>Escalão Feminino</strong> - para nascidas antes de 21-11-2005 ( + de 12 anos).</li>
 </ul>
 
 <p>Acompanhem-nos na página do torneio e também no Facebook e no Twitter.</p>

@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { Route } from "react-router-dom";
+import axios from 'axios';
 //import LeftMenu from "../components/LeftMenu";
 import MainContent from '../components/MainContent';
 import SideMenu from '../components/SideMenu';
+import settings from '../settings';
+import errors from '../components/Errors';
 import "../styles/Season.css";
 
 export default class Season extends Component {
@@ -10,15 +13,38 @@ export default class Season extends Component {
         super(props);
 
         this.state = {
-            year: 0 
+            year: 0,
+            isSeasonActive: false
+        }
+
+        this.getSeason = this.getSeason.bind(this);
+    }
+
+    componentDidMount() {
+        const year = this.props.match.params.year;
+        if (year && year !== this.state.year) {
+            this.getSeason();
         }
     }
 
     componentWillReceiveProps(newProps) {
         const year = newProps.match.params.year;
         if (year && year !== this.state.year) {
-            this.setState({ year: newProps.match.params.year });
+            this.getSeason(year);
         }
+    }
+
+    getSeason(year) {
+        const url = settings.API_URL + '/api/seasons/' + year;
+        axios.get(url)
+            .then(result => {
+                //console.log(result);
+                if (result.data) {
+                    this.setState({ year: result.data.Year, isSeasonActive: result.data.IsActive });
+                    //this.setState({ stepName: result.data.Description });
+                }
+            })
+            .catch(errors.handleError);
     }
 
     render() {
@@ -49,7 +75,8 @@ export default class Season extends Component {
                                 <MainContent {...props} isAuthenticated={this.props.isAuthenticated} /> } />
                         <Route key={this.state.year + 3} path="/seasons/:year" 
                             render={(props) => 
-                                <MainContent {...props} isAuthenticated={this.props.isAuthenticated} teamId={this.props.teamId} /> } />
+                                <MainContent {...props} teamId={this.props.teamId}
+                                    isSeasonActive={this.state.isSeasonActive} isAuthenticated={this.props.isAuthenticated} /> } />
                     {/* </Switch> */}
                 </div>
             </div>);

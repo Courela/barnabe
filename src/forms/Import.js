@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React from 'react';
 import ReactTable from 'react-table';
 import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import axios from 'axios';

@@ -8,10 +8,25 @@ export default class SeasonMain extends Component {
         const season = props.match.params.year;
         this.state = {
             season: season,
-            isSeasonActive: season == 2018,
+            isSeasonActive: props.isSeasonActive,
             teamId: props.teamId,
         };
     }
+
+    componentDidMount() {
+        const isSeasonActive = this.props.isSeasonActive;
+        if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
+            this.setState({ isSeasonActive: isSeasonActive });
+        }
+    }
+
+    componentWillReceiveProps(newProps) {
+        const isSeasonActive = newProps.isSeasonActive;
+        if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
+            this.setState({ isSeasonActive: isSeasonActive });
+        }
+    }
+
     handleNewPlayer() {
         this.props.history.push('/seasons/' + this.props.match.params.year + '/steps/0/player');
     }

@@ -155,6 +155,7 @@ function AdminMenu(props) {
         <Menu onSelect={props.handleSelect}>
             <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
             <MenuItem key={"/admin/users"}>Crir Utilizador</MenuItem>
+            <MenuItem key={"/admin/seasons"}>Gerir Épocas</MenuItem>
         </Menu>);
 }
 

@@ -15,6 +15,7 @@ import AddUser from '../forms/AddUser';
 //import ImportPlayers from '../forms/ImportPlayers';
 import ImportPlayers from '../forms/Import';
 import PlayerDetails from '../forms/PlayerDetails';
+import ManageSeasons from '../forms/ManageSeasons';
 
 export default class MainContent extends Component {
     render() {
@@ -41,12 +42,12 @@ export default class MainContent extends Component {
             path: '/seasons/:year/steps/:stepId',
             exact: true,
             render: (props) => {
-                return (<StepTeam {...props} teamId={this.props.teamId} />);
+                return (<StepTeam {...props} isSeasonActive={this.props.isSeasonActive} teamId={this.props.teamId} />);
             }
         }, {
             path: '/seasons/:year/steps/:stepId/players/:playerId',
             exact: true,
-            render: (props) => <PlayerDetails {...props} teamId={this.props.teamId} />,
+            render: (props) => <PlayerDetails {...props} isSeasonActive={this.props.isSeasonActive} teamId={this.props.teamId} />,
         }, {
             path: '/seasons/:year/steps/:stepId/player',
             exact: true,
@@ -61,7 +62,7 @@ export default class MainContent extends Component {
         }, {
             path: '/seasons/:year',
             exact: true,
-            render: (props) => <SeasonMain {...props} teamId={this.props.teamId} />
+            render: (props) => <SeasonMain {...props} isSeasonActive={this.props.isSeasonActive} teamId={this.props.teamId} />
         }];
 
         if (this.props.isAuthenticated && !this.props.teamId) {
@@ -75,6 +76,11 @@ export default class MainContent extends Component {
                 exact: true,
                 //component: AddStep,
                 render: (props) => { return (<AddUser {...props} />) }
+            },{
+                path: '/admin/seasons',
+                exact: true,
+                //component: AddStep,
+                render: (props) => { return (<ManageSeasons {...props} />) }
             });
         }
 

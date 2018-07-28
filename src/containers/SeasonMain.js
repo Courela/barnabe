@@ -1,29 +1,50 @@
 import React, { Component, Fragment } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
+import axios from 'axios';
+import settings from '../settings';
+import errors from '../components/Errors';
 
 export default class SeasonMain extends Component {
     constructor(props) {
         super(props);
+
+        this.updateSeasonActive = this.updateSeasonActive.bind(this);
+        this.getTeam = this.getTeam.bind(this);
 
         const season = props.match.params.year;
         this.state = {
             season: season,
             isSeasonActive: props.isSeasonActive,
             teamId: props.teamId,
+            team: null
         };
     }
 
     componentDidMount() {
-        const isSeasonActive = this.props.isSeasonActive;
+        this.updateSeasonActive(this.props.isSeasonActive);
+        this.getTeam();
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.updateSeasonActive(newProps.isSeasonActive)
+    }
+
+    updateSeasonActive(isSeasonActive) {
         if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
             this.setState({ isSeasonActive: isSeasonActive });
         }
     }
 
-    componentWillReceiveProps(newProps) {
-        const isSeasonActive = newProps.isSeasonActive;
-        if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
-            this.setState({ isSeasonActive: isSeasonActive });
+    getTeam() {
+        const { team, teamId } = this.state; 
+        if (!team || team.Id !== teamId) {
+            const url = settings.API_URL + '/api/teams/' + teamId;
+            axios.get(url)
+                .then(res => {
+                    console.log('Team result: ', res.data);
+                    this.setState({ team: res.data });
+                })
+                .catch(errors.handleError);
         }
     }
 
@@ -36,12 +57,15 @@ export default class SeasonMain extends Component {
     }
 
     render() {
-        return (<Fragment>
-            {this.state.isSeasonActive ? 
-                <ButtonToolbar>
-                    <Button bsStyle="primary" onClick={this.handleAddStep.bind(this)}>Inscrever escalão</Button>
-                    <Button bsStyle="primary" onClick={this.handleNewPlayer.bind(this)}>Adicionar Jogador</Button>
-                </ButtonToolbar> : ''}
-            </Fragment>);
+        return (
+            <div>
+                <h2>Época {this.state.season}</h2>
+                <h3>{this.state.team ? this.state.team.Name : ''}</h3>
+                {/* {this.state.isSeasonActive ?
+                    <ButtonToolbar>
+                        <Button bsStyle="primary" onClick={this.handleAddStep.bind(this)}>Inscrever escalão</Button>
+                        <Button bsStyle="primary" onClick={this.handleNewPlayer.bind(this)}>Adicionar Jogador</Button>
+                    </ButtonToolbar> : ''} */}
+            </div>);
     }
 } 

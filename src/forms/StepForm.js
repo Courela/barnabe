@@ -48,19 +48,23 @@ export default class AddStep extends Component {
     handleSubmit(evt) {
         // console.log('Params: ', this.props.match.params);
         // console.log('Props: ', this.props);
-        if (this.state.stepId > 0) {
+        const { stepId } = this.state; 
+        if (stepId > 0) {
             const year = this.props.match.params.year;
             const teamId = this.props.teamId;
 
             let url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
             if (this.state.action === 'remove') {
-                url = url + '/' + this.state.stepId; 
-                axios.delete(url)
-                    .then(res => { this.props.history.push('/seasons/' + year); })
-                    .catch(errors.handleError);
+                const step = this.state.steps.find(s => s.id == stepId);
+                if (window.confirm('Tem a certeza que quer remover o escalão ' + step ? step.descr : stepId + '?')) {
+                    url = url + '/' + stepId; 
+                    axios.delete(url)
+                        .then(res => { this.props.history.push('/seasons/' + year); })
+                        .catch(errors.handleError);
+                }
             }
             else {
-                const data = { stepId: this.state.stepId };
+                const data = { stepId: stepId };
                 axios.put(url, data, {
                     headers: {
                         'Content-Type': 'application/json'

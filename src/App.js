@@ -56,6 +56,12 @@ class App extends Component {
                 this.props.history.push(url);
                 //this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
             }
+            else {
+                const url = redirectTo ? 
+                    redirectTo : 
+                    '/login';
+                this.props.history.push(url);
+            }
         });
     }
 

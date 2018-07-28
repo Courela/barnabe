@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import ReactTable from 'react-table';
 import { Link } from 'react-router-dom';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import axios from 'axios';
+import Table from '../components/Table';
 import settings from '../settings';
 import errors from '../components/Errors';
 
@@ -153,7 +153,7 @@ export default class StepTeam extends Component {
                     </div>
                     <h3>Equipa Técnica</h3>
                     <div>
-                        <ReactTable
+                        <Table
                             columns={[
                                 { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row) },
                                 { Header: "Cartão Cidadão", accessor: "IdCardNr" },
@@ -161,10 +161,7 @@ export default class StepTeam extends Component {
                                 { Header: "", accessor: 'Id', Cell: (row) => this.playerActions(row) }
                             ]}
                             data={this.state.staff}
-                            minRows={Math.max(Math.min(this.state.staff.length, 5), 1)}
-                            onFetchData={this.getStaff}
-                            defaultPageSize={5}
-                            className="-striped" />
+                            onFetchData={this.getStaff}  />
                     </div>
                 </div>
             </Fragment>);
@@ -173,7 +170,7 @@ export default class StepTeam extends Component {
 
 function PlayersTable(props) {
     return (<div>
-        <ReactTable
+        <Table
             columns={[
                 { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row) },
                 { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.Birthdate) },
@@ -181,10 +178,7 @@ function PlayersTable(props) {
                 { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row) }
             ]}
             data={props.players}
-            minRows={Math.max(Math.min(props.players.length, 5), 1)}
-            onFetchData={props.getPlayers}
-            defaultPageSize={5}
-            className="-striped" />
+            onFetchData={props.getPlayers} />
     </div>);
 }
 

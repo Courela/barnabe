@@ -46,16 +46,7 @@ export default class TopMenu extends Component {
     }
 
     render() {
-        const seasons = this.state.seasons.map(s => 
-            <Fragment key={s.Year}>
-                <LinkContainer to={'/seasons/' + s.Year}>
-                    <MenuItem>{s.Year}</MenuItem>
-                </LinkContainer>
-                {s.IsActive ? <MenuItem divider /> : '' }
-            </Fragment>
-        );
-
-        const authenticatedOptions = 
+        const authenticatedOptions =
             <Fragment>
                 <NavItem disabled>Utilizador: {this.props.username}</NavItem>
                 <NavItem onClick={this.handleLogout}>Sair</NavItem>
@@ -75,16 +66,28 @@ export default class TopMenu extends Component {
                 }
             </Nav>;
 
-        const leftSideOptions = 
+        const seasons = this.state.seasons.map(s =>
+            <Fragment key={s.Year}>
+                <LinkContainer to={'/seasons/' + s.Year}>
+                    <MenuItem>{s.Year}</MenuItem>
+                </LinkContainer>
+                {s.IsActive ? <MenuItem divider /> : ''}
+            </Fragment>
+        );
+
+        const seasonDropDown = 
+            <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
+                {seasons}
+            </NavDropdown>;
+
+        const leftSideOptions =
             <Fragment>
-                <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
-                    {seasons}
-                </NavDropdown>
+                {this.props.isAuthenticated ? seasonDropDown : ''}
                 <LinkContainer to="/documents">
                     <NavItem>Documentos</NavItem>
                 </LinkContainer>
             </Fragment>;
-            
+
         return (
             <div>
                 <Navbar fluid collapseOnSelect>

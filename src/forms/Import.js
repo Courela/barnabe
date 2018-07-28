@@ -197,8 +197,8 @@ export default class Import extends React.Component {
                     data={this.state.players}
                     columns={columns}
                     defaultSorted={[{ id: "Id", desc: false }]}
-                    minRows={Math.max(Math.min(this.state.players.length, 5), 1)}
-                    defaultPageSize={5}
+                    minRows={Math.max(Math.min(this.state.players.length, settings.DEFAULT_TABLE_PAGE_SIZE), 1)}
+                    defaultPageSize={settings.DEFAULT_TABLE_PAGE_SIZE}
                 />
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}
                     disabled={this.state.isSubmitting}>

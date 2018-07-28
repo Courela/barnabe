@@ -107,10 +107,10 @@ function SeasonDropDown(props) {
 
     return (
         <NavDropdown title="Edição" id="season-nav-dropdown">
-            {seasons.map(s => {
+            {seasons.map((s, idx) => {
                 return (s > 0 ? 
-                    <LinkContainer to={'/seasons/' + s}><MenuItem>{s}</MenuItem></LinkContainer> : 
-                    <MenuItem divider />
+                    <LinkContainer key={idx} to={'/seasons/' + s}><MenuItem>{s}</MenuItem></LinkContainer> : 
+                    <MenuItem key={idx} divider />
                 );
             })}
         </NavDropdown>);

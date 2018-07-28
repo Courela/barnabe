@@ -5,6 +5,7 @@ import axios from 'axios';
 import Table from '../components/Table';
 import settings from '../settings';
 import errors from '../components/Errors';
+import { dateFormat } from '../utils/formats';
 
 export default class StepTeam extends Component {
     constructor(props) {
@@ -180,22 +181,4 @@ function PlayersTable(props) {
             data={props.players}
             onFetchData={props.getPlayers} />
     </div>);
-}
-
-function dateFormat(date) {
-    //console.log(date);
-    if (!date) { return ''; }
-
-    const dateObj = new Date(date);
-    var dd = dateObj.getDate();
-    var mm = dateObj.getMonth() + 1; //January is 0!
-
-    var yyyy = dateObj.getFullYear();
-    if (dd < 10) {
-        dd = '0' + dd;
-    }
-    if (mm < 10) {
-        mm = '0' + mm;
-    }
-    return dd + '/' + mm + '/' + yyyy;
 }

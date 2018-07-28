@@ -4,6 +4,7 @@ import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';
+import { dateFormat } from '../utils/formats';
 
 export default class Import extends React.Component {
     constructor(props) {
@@ -50,16 +51,6 @@ export default class Import extends React.Component {
                     //console.log(result);
                     if (result.data && result.data.length > 0) {
                         this.setState({ players: result.data });
-                    }
-                })
-                .catch(errors.handleError);
-        }
-        if (!this.state.stepName) {
-            axios.get(settings.API_URL + '/api/steps/' + this.state.stepId)
-                .then(result => {
-                    //console.log(result);
-                    if (result.data) {
-                        this.setState({ stepName: result.data.Description });
                     }
                 })
                 .catch(errors.handleError);
@@ -208,22 +199,4 @@ export default class Import extends React.Component {
             </div>
         );
     }
-}
-
-function dateFormat(date) {
-    //console.log(date);
-    if (!date) { return ''; }
-     
-    const dateObj = new Date(date);
-    var dd = dateObj.getDate();
-    var mm = dateObj.getMonth() + 1; //January is 0!
-
-    var yyyy = dateObj.getFullYear();
-    if (dd < 10) {
-        dd = '0' + dd;
-    }
-    if (mm < 10) {
-        mm = '0' + mm;
-    }
-    return dd + '/' + mm + '/' + yyyy;
 }

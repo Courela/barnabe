@@ -330,6 +330,7 @@ function FormPlayer(props) {
                 value={props.email}
                 onChange={props.handleControlChange}
                 readOnly={!props.editable}
+                maxLength="100"
                 validationState={validateEmail}
             />
             <FieldGroup
@@ -341,6 +342,7 @@ function FormPlayer(props) {
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
                 readOnly={!props.editable}
+                maxLength="16"
                 validationState={validatePhone}
             />
             <Checkbox checked={props.isResident} disabled={!props.editable}
@@ -357,6 +359,7 @@ function FormPlayer(props) {
                     value={props.voterNr}
                     onChange={props.handleControlChange}
                     readOnly={!props.editable}
+                    maxLength="10"
                 /> : ''}
             {props.isResident && props.editable ?
                 <Fragment>
@@ -380,6 +383,7 @@ function FormPlayer(props) {
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
                     readOnly={!props.editable}
+                    maxLength="80"
                 />
                 <FieldGroup
                     id="formCaretakerIdCard"
@@ -390,6 +394,7 @@ function FormPlayer(props) {
                     value={props.caretakerDocId}
                     onChange={props.handleControlChange}
                     readOnly={!props.editable}
+                    maxLength="30"
                 />
                 {commonFields}
             </Panel.Body>
@@ -467,6 +472,7 @@ function FormPlayer(props) {
             value={props.playerName}
             onChange={props.handleControlChange}
             readOnly={!props.editable}
+            maxLength="80"
             validationState={validateNotEmpty}
             validationArgs={props.playerName}
         />
@@ -479,6 +485,7 @@ function FormPlayer(props) {
             value={props.docId}
             onChange={props.handleControlChange}
             readOnly={true}
+            maxLength="30"
         />
         <FormGroup controlId="formBirthdate">
             <ControlLabel>Data Nascimento do Jogador</ControlLabel>
@@ -507,7 +514,7 @@ function FormPlayer(props) {
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
                 name="comments" value={props.comments} onChange={props.handleControlChange}
-                readOnly={!props.editable} />
+                readOnly={!props.editable} maxLength="2000"/>
         </FormGroup>
     </div>);
 }

@@ -381,6 +381,7 @@ export default class PlayerForm extends Component {
                         label="Nr Cartão Cidadão do Jogador"
                         placeholder="CC"
                         onChange={this.handleControlChange.bind(this)}
+                        maxLength="30"
                         validationState={validateNotEmpty}
                         validationArgs={this.state.docId}
                     />
@@ -419,6 +420,7 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
+                maxLength="100"
                 validationState={validateEmail}
                 validationArgs={[]}
             />
@@ -430,6 +432,7 @@ function PlayerDetails(props) {
                 placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
+                maxLength="16"
                 validationState={validatePhone}
                 validationArgs={[]}
             />
@@ -448,6 +451,7 @@ function PlayerDetails(props) {
                         placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
                         value={props.voterNr}
                         onChange={props.handleControlChange}
+                        maxLength="10"
                     />
                     Se não sabe o Nr de Eleitor pode obtê-lo aqui:&nbsp;
                     <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
@@ -468,6 +472,7 @@ function PlayerDetails(props) {
                     placeholder="Nome do Responsável"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
+                    maxLength="80"
                     validationState={validateNotEmpty}
                     validationArgs={props.caretakerName}
                 />
@@ -479,6 +484,7 @@ function PlayerDetails(props) {
                     placeholder="Nr Cartão Cidadão do Responsável"
                     value={props.caretakerDocId}
                     onChange={props.handleControlChange}
+                    maxLength="30"
                     validationState={validateNotEmpty}
                     validationArgs={props.caretakerDocId}
                 />
@@ -521,6 +527,7 @@ function PlayerDetails(props) {
             placeholder="Nome do Jogador"
             value={props.name}
             onChange={props.handleControlChange}
+            maxLength="80"
             validationState={validateNotEmpty}
             validationArgs={props.name}
         />
@@ -570,7 +577,7 @@ function PlayerDetails(props) {
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
                 name="comments" value={props.comments}
-                onChange={props.handleControlChange} />
+                onChange={props.handleControlChange} maxLength="2000"/>
         </FormGroup>
     </div>);
 }

@@ -14,9 +14,10 @@ export default class Home extends Component {
 neste site.<br />
 A partir da 13ª edição (2018) as inscrições devem ser feitas exclusivamente através deste site. 
 Mantêm-se os requisitos das edições anteriores: é necessário uma <strong>fotografia</strong> e a <strong>folha de inscrição</strong>
-&nbsp;(disponível na área de <Link to="/documents">documentos</Link>) com os dados do jogador e assinatura (para jogadores menores de 18 anos a assinatura do encarregado de educação).
-A fotografia pode ser tirada com um telemóvel (deve ser idêntica a uma fotografia tipo passe) e o deve ser preenchido e posteriormente
-digitalizado, sendo ambos carregados na página de inscrição de jogador. Para a equipa técnica apenas é necessária a fotografia.</p>
+&nbsp;(disponível na área de <Link to="/documents">documentos</Link>) com os dados do jogador e assinatura (para jogadores menores 
+de 18 anos a assinatura do encarregado de educação).
+A fotografia pode ser tirada com um telemóvel (deve ser idêntica a uma fotografia tipo passe) e a folha de inscrição deve ser preenchida 
+e posteriormente digitalizada, sendo ambos carregados na página de inscrição de jogador. Para a equipa técnica apenas é necessária a fotografia.</p>
 
 <p>Os escalões disponíveis para inscrição são os seguintes:</p>
 <ul>

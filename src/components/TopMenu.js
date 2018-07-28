@@ -41,8 +41,8 @@ export default class TopMenu extends Component {
     }
 
     handleSelect(eventKey) {
-        //event.preventDefault();
-        //alert(`selected ${eventKey}`);
+        //eventKey.preventDefault();
+        alert(`selected ${eventKey}`);
     }
 
     render() {
@@ -66,23 +66,9 @@ export default class TopMenu extends Component {
                 }
             </Nav>;
 
-        const seasons = this.state.seasons.map(s =>
-            <Fragment key={s.Year}>
-                <LinkContainer to={'/seasons/' + s.Year}>
-                    <MenuItem>{s.Year}</MenuItem>
-                </LinkContainer>
-                {s.IsActive ? <MenuItem divider /> : ''}
-            </Fragment>
-        );
-
-        const seasonDropDown = 
-            <NavDropdown eventKey={3} title="Edição" id="basic-nav-dropdown">
-                {seasons}
-            </NavDropdown>;
-
         const leftSideOptions =
             <Fragment>
-                {this.props.isAuthenticated ? seasonDropDown : ''}
+                {this.props.isAuthenticated ? <SeasonDropDown seasons={this.state.seasons} /> : ''}
                 <LinkContainer to="/documents">
                     <NavItem>Documentos</NavItem>
                 </LinkContainer>
@@ -106,4 +92,26 @@ export default class TopMenu extends Component {
                 </Navbar>
             </div>);
     }
+}
+
+function SeasonDropDown(props) {
+    let seasons = [];
+    if (props.seasons.length > 0) {
+        const activeSeason = props.seasons.find(s => s.IsActive);
+        const indexActive = props.seasons.indexOf(activeSeason);
+
+        seasons = props.seasons.map(s => s.Year);
+        seasons.splice(indexActive, 1);
+        seasons.splice(0, 0, activeSeason.Year, 0);
+    }
+
+    return (
+        <NavDropdown title="Edição" id="season-nav-dropdown">
+            {seasons.map(s => {
+                return (s > 0 ? 
+                    <LinkContainer to={'/seasons/' + s}><MenuItem>{s}</MenuItem></LinkContainer> : 
+                    <MenuItem divider />
+                );
+            })}
+        </NavDropdown>);
 }

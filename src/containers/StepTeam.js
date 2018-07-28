@@ -135,7 +135,7 @@ export default class StepTeam extends Component {
                 <div style={{ float: 'right' }}>
                     {this.state.isSeasonActive ?
                         <ButtonToolbar>
-                            <Button bsStyle="primary" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button>
+                            <Button bsStyle="success" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button>
                             <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
                         </ButtonToolbar> : ''}
                 </div>

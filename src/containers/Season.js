@@ -61,7 +61,7 @@ export default class Season extends Component {
                         render={(props) => 
                             <SideMenu {...props} season={props.match.params.year} 
                                 isAuthenticated={this.props.isAuthenticated} 
-                                teamId={this.props.teamId} 
+                                teamId={this.props.teamId} isSeasonActive={this.state.isSeasonActive}
                                 /* navigate={this.navigate} */ />} />
                 </div>
                 <div className="main-content">

@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Menu, { SubMenu, Item as MenuItem } from 'rc-menu/lib';
 import 'rc-menu/assets/index.css';
 import animate from 'css-animation/lib';
@@ -15,7 +15,8 @@ export default class SideMenu extends Component {
         this.state = {
             season: props.season,
             teams: [],
-            steps: []
+            steps: [],
+            isSeasonActive: props.isSeasonActive
         };
 
         this.handleSelect = this.handleSelect.bind(this);
@@ -117,7 +118,7 @@ export default class SideMenu extends Component {
 
         const authenticatedMenu = (
             <AuthenticatedMenu handleSelect={this.handleSelect} onOpenChange={this.onOpenChange} 
-                stepsMenu={this.stepsMenu} season={this.state.season}/> 
+                stepsMenu={this.stepsMenu} season={this.state.season} isSeasonActive={this.state.isSeasonActive}/> 
             );
 
         //console.log('Side menu teamdId: ', this.props.teamId);
@@ -141,10 +142,15 @@ function AnonymousMenu(props) {
         </Menu>);
 }
 function AuthenticatedMenu(props) {
+    const stepOptions = [
+        <MenuItem key={"/seasons/" + props.season + "/add-step"}>Inscrever escalão</MenuItem>,
+        <MenuItem key={"/seasons/" + props.season + "/remove-step"}>Remover escalão</MenuItem>
+    ];
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
-            <MenuItem key={"/seasons/" + props.season + "/add-step"}>Inscrever escalão</MenuItem>
-            <MenuItem key={"/seasons/" + props.season + "/remove-step"}>Remover escalão</MenuItem>
+            {props.isSeasonActive ?
+                stepOptions
+                : ''}
             {props.stepsMenu()}
             <MenuItem key={"/seasons/" + props.season + "/documents"}>Documentos</MenuItem>
         </Menu>);

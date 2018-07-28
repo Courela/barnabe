@@ -378,7 +378,7 @@ export default class PlayerForm extends Component {
                         id="formIdCard"
                         type="text"
                         name="docId"
-                        label="Nr Cartão Cidadão do Jogador"
+                        label={"Nr Cartão Cidadão" + (this.state.roleId == 1 ? " do Jogador" : "")}
                         placeholder="CC"
                         onChange={this.handleControlChange.bind(this)}
                         maxLength="30"
@@ -436,7 +436,7 @@ function PlayerDetails(props) {
                 validationState={validatePhone}
                 validationArgs={[]}
             />
-            {props.roleId ?
+            {props.roleId && props.roleId == 1 ?
                 <Checkbox checked={props.isResident}
                     name="isResident" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
@@ -523,8 +523,8 @@ function PlayerDetails(props) {
             id="formName"
             type="text"
             name="name"
-            label="Nome do Jogador"
-            placeholder="Nome do Jogador"
+            label={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
+            placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
             value={props.name}
             onChange={props.handleControlChange}
             maxLength="80"
@@ -532,7 +532,7 @@ function PlayerDetails(props) {
             validationArgs={props.name}
         />
         <FormGroup controlId="formBirthdate">
-            <ControlLabel>Data Nascimento do Jogador</ControlLabel>
+            <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
                     required={true} locale="pt-PT"
@@ -556,7 +556,7 @@ function PlayerDetails(props) {
             id="formFoto"
             type="file"
             label="Fotografia"
-            help="Digitalização de Fotografia do Jogador"
+            help={"Digitalização de Fotografia" + (props.roleId == 1 ? " do Jogador" : "")}
             onChange={props.handlePhoto}
             accept="image/*"
         />

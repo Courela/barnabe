@@ -9,7 +9,7 @@ import queryString from 'query-string';
 import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
-import { validateNotEmpty, isValidEmail, isValidPhone } from  '../utils/validations';
+import { validateNotEmpty, isValidEmail, isValidPhone } from '../utils/validations';
 import { FieldGroup } from '../utils/controls';
 
 export default class PlayerDetails extends Component {
@@ -22,7 +22,7 @@ export default class PlayerDetails extends Component {
         this.validateForm = this.validateForm.bind(this);
 
         const stepId = props.match.params.stepId;
-        
+
         const playerId = props.match.params.playerId;
         const queryStringValues = queryString.parse(this.props.location.search)
         const edit = queryStringValues.edit ? true : false;
@@ -62,7 +62,7 @@ export default class PlayerDetails extends Component {
         if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
             this.setState({ isSeasonActive: isSeasonActive });
         }
-        
+
         this.fetchPlayer();
     }
 
@@ -132,16 +132,21 @@ export default class PlayerDetails extends Component {
         let result = true;
         const { playerName, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
         result = result &&
-            playerName && playerName !== '' &&
-            docId && docId !== '' &&
-            gender && gender !== '' &&
-            birth && birth !== '' &&
-            isValidEmail(email) && isValidPhone(phoneNr);
-
-        if (isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId)) {
+                playerName && playerName !== '' &&
+                docId && docId !== '' &&
+                isValidEmail(email) && isValidPhone(phoneNr);
+                
+        if (this.state.roleId == 1) {
             result = result &&
-                caretakerName && caretakerName !== '' &&
-                caretakerDocId && caretakerDocId !== '';
+                gender && gender !== '' &&
+                birth && birth !== '';
+
+            const { steps, stepId, roleId } = this.state;
+            if (isCaretakerRequired(steps, stepId, roleId)) {
+                result = result &&
+                    caretakerName && caretakerName !== '' &&
+                    caretakerDocId && caretakerDocId !== '';
+            }
         }
         return result;
     }
@@ -243,7 +248,7 @@ export default class PlayerDetails extends Component {
         var files = evt.target.files; // FileList object
 
         let self = this;
-        const onload = (theFile) => 
+        const onload = (theFile) =>
             function (e) {
                 self.setState({ doc: reader.result });
                 //self.setState({ doc: window.btoa(reader.result) });
@@ -255,7 +260,7 @@ export default class PlayerDetails extends Component {
 
             if (f.type.match('image.*') || f.type.match('application.pdf')) {
                 var reader = new FileReader();
-                
+
                 // Closure to capture the file information.
                 reader.onload = (onload)(f);
 
@@ -268,7 +273,9 @@ export default class PlayerDetails extends Component {
     onChangeBirthdate = date => this.setState({ birth: date })
 
     render() {
-        const title = this.state.editable ? "Editar Jogador" : "Ficha de Jogador"
+        const title = this.state.editable ? 
+            (this.state.roleId == 1 ? "Editar Jogador" : "Editar Elemento Equipa Técnica") : 
+            (this.state.roleId == 1 ? "Ficha de Jogador" : "Ficha de Elemento Equipa Técnica");
 
         const formDetails = this.state.playerId ?
             <FormPlayer {...this.state}
@@ -285,16 +292,16 @@ export default class PlayerDetails extends Component {
             <div>
                 {this.state.isEditSuccess ?
                     <Alert bsStyle="success">
-                        <strong>Jogador alterado com sucesso.</strong>
+                        <strong>{this.state.roleId == 1 ? "Jogador" : "Elemento "} alterado com sucesso.</strong>
                     </Alert> : ''}
                 <h2>{title}</h2>
                 <form>
                     {formDetails}
                     {this.state.editable ?
                         <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                            <Button bsStyle="primary" disabled={this.state.isSubmitting} 
+                            <Button bsStyle="primary" disabled={this.state.isSubmitting}
                                 onClick={this.handleCancel} style={{ margin: '3px' }}>Cancelar</Button>
-                            <Button bsStyle="primary" type="submit" disabled={this.state.isSubmitting} 
+                            <Button bsStyle="primary" type="submit" disabled={this.state.isSubmitting}
                                 onClick={this.handleSubmit} style={{ margin: '3px' }}>Confirmar</Button>
                             <span style={{ display: this.state.isSubmitting ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
                         </div> :
@@ -345,10 +352,11 @@ function FormPlayer(props) {
                 maxLength="16"
                 validationState={validatePhone}
             />
-            <Checkbox checked={props.isResident} disabled={!props.editable}
-                name="isResident" onChange={props.handleCheckboxToggle} >
-                <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
-            </Checkbox>
+            { props.roleId == 1 ?
+                <Checkbox checked={props.isResident} disabled={!props.editable}
+                    name="isResident" onChange={props.handleCheckboxToggle} >
+                    <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
+                </Checkbox> : ''}
             {props.isResident ?
                 <FieldGroup
                     id="formVoterNr"
@@ -401,32 +409,37 @@ function FormPlayer(props) {
         </Panel> :
         <div />;
 
-    const photoUploader = props.editable ?
+    const photoUploader = <FieldGroup
+            id="formFoto"
+            type="file"
+            label="Fotografia"
+            help="Digitalização de Fotografia do Jogador"
+            onChange={props.handlePhoto}
+            readOnly={!props.editable}
+            accept="image/*"
+        />;
+    
+    const docUploader = <FieldGroup
+            id="formDoc"
+            type="file"
+            label="Ficha individual de jogador"
+            help="Ficha individual de jogador"
+            onChange={props.handleDoc}
+            readOnly={!props.editable}
+            accept="image/*,application/pdf"
+        />;
+
+    const docUploaders = props.editable ?
         <div className="column">
-            <FieldGroup
-                id="formFoto"
-                type="file"
-                label="Fotografia"
-                help="Digitalização de Fotografia do Jogador"
-                onChange={props.handlePhoto}
-                readOnly={!props.editable}
-                accept="image/*"
-            />
-            <FieldGroup
-                id="formDoc"
-                type="file"
-                label="Ficha individual de jogador"
-                help="Ficha individual de jogador"
-                onChange={props.handleDoc}
-                readOnly={!props.editable}
-                accept="image/*,application/pdf"
-            />
-        </div> : 
-        <Fragment>
-            <p><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
-                {props.docExists ? ' submetida.' : ' em falta!'}
-            </span></p>
-        </Fragment>;
+            {photoUploader}    
+            { props.roleId == 1 ? docUploader : '' } 
+        </div> :
+        ( props.roleId == 1 ?
+            <Fragment>
+                <p><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
+                    {props.docExists ? ' submetida.' : ' em falta!'}
+                </span></p>
+            </Fragment> : '' );
 
     const editButton = props.isSeasonActive && (!props.personId || props.editable || props.editable === null) ? '' :
         <div className="column" style={{ float: 'right' }}>
@@ -460,15 +473,15 @@ function FormPlayer(props) {
             <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/no_image.jpg'}
                 className="column"
                 style={{ maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'inline' }} />
-            {photoUploader}
+            {docUploaders}
             {editButton}
         </div>
         <FieldGroup
             id="formName"
             type="text"
             name="playerName"
-            label="Nome do Jogador"
-            placeholder="Nome do Jogador"
+            label={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
+            placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
             value={props.playerName}
             onChange={props.handleControlChange}
             readOnly={!props.editable}
@@ -480,15 +493,15 @@ function FormPlayer(props) {
             id="formIdCard"
             type="text"
             name="docId"
-            label="Nr Cartão Cidadão do Jogador"
-            placeholder="Nr Cartão Cidadão do Jogador"
+            label={props.roleId == 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
+            placeholder={props.roleId == 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
             value={props.docId}
             onChange={props.handleControlChange}
             readOnly={true}
             maxLength="30"
         />
         <FormGroup controlId="formBirthdate">
-            <ControlLabel>Data Nascimento do Jogador</ControlLabel>
+            <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
                     required={true} locale="pt-PT" disabled={!props.editable}
@@ -514,7 +527,7 @@ function FormPlayer(props) {
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
                 name="comments" value={props.comments} onChange={props.handleControlChange}
-                readOnly={!props.editable} maxLength="2000"/>
+                readOnly={!props.editable} maxLength="2000" />
         </FormGroup>
     </div>);
 }

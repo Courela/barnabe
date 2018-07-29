@@ -16,8 +16,10 @@ function isCaretakerRequired(steps, stepId, roleId, birthdate, eighteenDate) {
     let result = false;
     if (roleId && roleId == 1) {
         const filter = steps.filter(s => s.id == stepId);
-        result = filter[0].isCaretakerRequired ||
-            (isValidDate(birthdate) && eighteenDate && new Date(birthdate) > eighteenDate);
+        if (filter && filter.length > 0) {
+            result = filter[0].isCaretakerRequired ||
+                (isValidDate(birthdate) && eighteenDate && new Date(birthdate) > eighteenDate);
+        }
     }
     return result;
 }
@@ -27,7 +29,7 @@ function isValidDate(date) {
     try {
         result = new Date(date) != 'Invalid Date';
     }
-    catch(err) { }
+    catch (err) { }
     return result;
 }
 

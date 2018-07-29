@@ -480,7 +480,7 @@ function FormPlayer(props) {
         <div style={{ display: 'flex', maxHeight: '200px' }}>
             <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/no_image.jpg'}
                 className="column"
-                style={{ maxWidth: "200px", border: props.photoSrc ? 'none' : '1px solid red' }} />
+                style={{ maxWidth: "200px", border: props.isSeasonActive && !props.photoSrc ? '1px solid red' : 'none' }} />
             {docUploaders}
             {editButton}
         </div>

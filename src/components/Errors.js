@@ -14,6 +14,9 @@ function handleError(errResponse, errorMsgs) {
             case 409:
                 msg = errorMsgs && errorMsgs.e409 ? errorMsgs.e409 : 'Registo duplicado!'; 
                 break;
+            case 413:
+                msg = errorMsgs && errorMsgs.e413 ? errorMsgs.e413 : 'Fotografia e/ou Ficha de Jogador demasiado grandes!'; 
+                break;
             default:
                 break;
         }

@@ -61,14 +61,15 @@ export default class StepTeam extends Component {
                         this.setState({ players: result.data });
                     }
                 })
-                .catch(errors.handleError);
-        }
-        if (!this.state.stepName) {
-            axios.get(settings.API_URL + '/api/steps/' + this.state.stepId)
-                .then(result => {
-                    //console.log(result);
-                    if (result.data) {
-                        this.setState({ stepName: result.data.Description });
+                .then(res => {
+                    if (!this.state.stepName) {
+                        axios.get(settings.API_URL + '/api/steps/' + this.state.stepId)
+                            .then(result => {
+                                if (result.data) {
+                                    this.setState({ stepName: result.data.Description });
+                                }
+                            })
+                            .catch(errors.handleError);
                     }
                 })
                 .catch(errors.handleError);
@@ -147,7 +148,7 @@ export default class StepTeam extends Component {
             <Fragment>
                 <h2>{this.state.stepName}</h2>
                 <div style={{ float: 'right' }}>
-                    {this.state.isSeasonActive ?
+                    {this.state.isSeasonActive && this.state.stepName ?
                         <ButtonToolbar>
                             <Button bsStyle="success" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button>
                             <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
@@ -161,7 +162,7 @@ export default class StepTeam extends Component {
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
-                        {this.state.isSeasonActive ?
+                        {this.state.isSeasonActive && this.state.stepName ?
                             <ButtonToolbar>
                                 <Button bsStyle="primary" onClick={this.handleNewStaff}>Adicionar Elemento</Button>
                             </ButtonToolbar> : ''}

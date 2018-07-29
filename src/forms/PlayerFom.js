@@ -17,10 +17,9 @@ export default class PlayerForm extends Component {
 
         this.getSteps = this.getSteps.bind(this);
         this.getRoles = this.getRoles.bind(this);
-        //this.handleStepSelect = this.handleStepSelect.bind(this);
         this.validateStep = this.validateStep.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        //this.getGender = this.getGender.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
 
         const stepId = props.match.params.stepId;
 
@@ -234,6 +233,7 @@ export default class PlayerForm extends Component {
                             phoneNr: caretakerRequired ? this.state.phoneNr : null,
                             voterNr: caretakerRequired ? this.state.voterNr : null
                         },
+                        isResident: this.state.isResident,
                         comments: this.state.comments,
                         doc: this.state.doc
                     };
@@ -330,7 +330,7 @@ export default class PlayerForm extends Component {
 
             if (f.type.match('image.*') || f.type.match('application.pdf')) {
                 var reader = new FileReader();
-                
+
                 // Closure to capture the file information.
                 reader.onload = (onload)(f);
 
@@ -341,6 +341,8 @@ export default class PlayerForm extends Component {
     }
 
     onChangeBirthdate = date => this.setState({ birth: date })
+
+    handleCancel = () => this.props.history.goBack();
 
     render() {
         const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.descr}</option>);
@@ -358,7 +360,7 @@ export default class PlayerForm extends Component {
                 handleDoc={this.handleDoc.bind(this)} /> :
             <div />;
 
-        const submitLabel = this.state.personId ? "Inscrever" : "Continuar"
+        const submitLabel = this.state.personId != null ? "Inscrever" : "Continuar"
 
         return (
             <div>
@@ -386,11 +388,15 @@ export default class PlayerForm extends Component {
                         validationArgs={this.state.docId}
                     />
                     {formDetails}
-                    <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}
-                        disabled={this.state.isSubmitting}>
-                        {submitLabel}
-                    </Button>
-                    <span style={{ display: this.state.isSubmitting ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
+                    <div style={{ display: 'flex', flexDirection: 'row-reverse', padding: '5px' }}>
+                        <Button bsStyle="primary" disabled={this.state.isSubmitting}
+                            onClick={this.handleCancel} style={{ margin: '3px' }}>Cancelar</Button>
+                        <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}
+                            disabled={this.state.isSubmitting} style={{ margin: '3px' }}>
+                            {submitLabel}
+                        </Button>
+                        <span style={{ display: this.state.isSubmitting ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
+                    </div>
                 </form>
             </div>
         );
@@ -523,8 +529,8 @@ function PlayerDetails(props) {
             id="formName"
             type="text"
             name="name"
-            label={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
-            placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
+            label={props.roleId == 1 ? "Nome do Jogador" : "Nome"}
+            placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome"}
             value={props.name}
             onChange={props.handleControlChange}
             maxLength="80"
@@ -532,7 +538,7 @@ function PlayerDetails(props) {
             validationArgs={props.name}
         />
         <FormGroup controlId="formBirthdate">
-            <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
+            <ControlLabel>Data Nascimento{props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
                     required={true} locale="pt-PT"
@@ -546,7 +552,7 @@ function PlayerDetails(props) {
             <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
                 onChange={props.handleGenderSelect} value={props.gender}
-                disabled={!props.steps || (props.steps.length === 1 && props.steps[0].gender) }>
+                disabled={!props.steps || (props.steps.length === 1 && props.steps[0].gender)}>
                 <option value="0">Escolha...</option>
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>
@@ -578,7 +584,7 @@ function PlayerDetails(props) {
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
                 name="comments" value={props.comments}
-                onChange={props.handleControlChange} maxLength="2000"/>
+                onChange={props.handleControlChange} maxLength="2000" />
         </FormGroup>
     </div>);
 }

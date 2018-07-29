@@ -157,16 +157,16 @@ export default class Import extends React.Component {
             },
             {
                 Header: "Nome",
-                accessor: "Name"
+                accessor: "person.Name"
             },
             {
                 Header: "Data Nascimento",
                 id: "Id",
-                Cell: (row) => dateFormat(row.original.Birthdate)
+                Cell: (row) => dateFormat(row.original.person.Birthdate)
             },
             {
                 Header: "Cartão Cidadão",
-                accessor: "IdCardNr"
+                accessor: "person.IdCardNr"
             }
         ];
 

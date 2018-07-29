@@ -1,11 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import { ButtonToolbar, Button, Glyphicon, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import axios from 'axios';
 import Table from '../components/Table';
 import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
+import { validateNotEmpty, isValidEmail, isValidPhone } from '../utils/validations';
 
 export default class StepTeam extends Component {
     constructor(props) {
@@ -90,7 +91,7 @@ export default class StepTeam extends Component {
 
     linkToPlayer(row) {
         const { season, stepId } = this.state;
-        return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id}>{row.original.Name}</Link>);
+        return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id}>{row.original.person.Name}</Link>);
     }
 
     playerActions(row) {
@@ -129,6 +130,18 @@ export default class StepTeam extends Component {
         this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/staff');
     };
 
+    isValidPlayer(row) {
+        let result = false;
+        const { Name, Gender, Birthdate, IdCardNr, Phone, Email, VoterNr } = row.original.person;
+        const { Resident, CareTakerId, PhotoFilename, DocFilename, caretaker } = row.original;
+
+        result = Name && Gender && Birthdate && IdCardNr && isValidEmail(Email) && isValidPhone(Phone);
+        result = result && (!caretaker || (caretaker && caretaker.Name && caretaker.IdCardNr)); 
+        result = result && (!Resident || (Resident && (VoterNr || (caretaker && caretaker.VoterNr))));
+        result = result && PhotoFilename && DocFilename;
+        return result;
+    }
+
     render() {
         return (
             <Fragment>
@@ -143,7 +156,8 @@ export default class StepTeam extends Component {
                 <div>
                     <h3>Jogadores</h3>
                     <PlayersTable players={this.state.players} getPlayers={this.getPlayers}
-                        linkToPlayer={this.linkToPlayer} playerActions={this.playerActions} />
+                        linkToPlayer={this.linkToPlayer} playerActions={this.playerActions}
+                        isValidPlayer={this.isValidPlayer} isSeasonActive={this.state.isSeasonActive} />
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
@@ -170,14 +184,35 @@ export default class StepTeam extends Component {
 }
 
 function PlayersTable(props) {
+    const statusIcon = (row) => {
+        const tooltip = <Tooltip id="tooltip">Dados em falta!</Tooltip>;
+
+        const isValid = props.isValidPlayer(row);
+        if (isValid) {
+            return <Glyphicon glyph="ok-sign" style={{ color: 'green' }}/>
+        }
+        else {
+            return (
+                <OverlayTrigger placement="left" overlay={tooltip}>
+                    <Glyphicon glyph="remove-sign" style={{ color: 'red' }} />
+                </OverlayTrigger>);
+        }
+    };
+
+    let columns = [
+        { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row) },
+        { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
+        { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
+        { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row) }
+    ];
+
+    if (props.isSeasonActive) {
+        columns.splice(0, 0, { Header: "", id: 'Id', width: 25, Cell: (row) => statusIcon(row) });
+    }
+
     return (<div>
         <Table
-            columns={[
-                { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row) },
-                { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.Birthdate) },
-                { Header: "Cartão Cidadão", accessor: "IdCardNr" },
-                { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row) }
-            ]}
+            columns={columns}
             data={props.players}
             onFetchData={props.getPlayers} />
     </div>);

@@ -8,9 +8,9 @@ import axios from 'axios';
 import queryString from 'query-string';
 import settings from '../settings';
 import errors from '../components/Errors';
-import '../styles/PlayerForm.css'
-import { validateNotEmpty, isValidEmail, isValidPhone } from '../utils/validations';
+import { validateNotEmpty, isValidEmail, isValidPhone, isValidDate } from '../utils/validations';
 import { FieldGroup } from '../utils/controls';
+import '../styles/PlayerForm.css'
 
 export default class PlayerDetails extends Component {
     constructor(props, context) {
@@ -50,7 +50,7 @@ export default class PlayerDetails extends Component {
             comments: '',
             docExists: false,
             doc: null,
-            editable: edit,
+            isEditing: edit,
             caretakerId: null,
             isEditSuccess: null,
             isSubmitting: false
@@ -86,14 +86,14 @@ export default class PlayerDetails extends Component {
                     personId: person.Id,
                     roleId: player.RoleId,
                     playerName: person.Name,
-                    birth: new Date(person.Birthdate),
+                    birth: isValidDate(person.Birthdate) ? new Date(person.Birthdate) : null,
                     docId: person.IdCardNr,
                     gender: person.Gender,
-                    isResident: voterNr ? true : false,
+                    isResident: player.Resident ? true : false,
                     voterNr: voterNr,
                     phoneNr: caretaker && caretaker.Phone ? caretaker.Phone : (person.Phone ? person.Phone : ''),
                     email: caretaker && caretaker.Email ? caretaker.Email : (person.Email ? person.Email : ''),
-                    caretakerId: player.CaretakerId,
+                    caretakerId: player.CareTakerId,
                     caretakerName: caretaker ? caretaker.Name : '',
                     caretakerDocId: caretaker ? caretaker.IdCardNr : '',
                     comments: player.Comments,
@@ -125,7 +125,7 @@ export default class PlayerDetails extends Component {
     }
 
     handleEdit() {
-        this.setState({ editable: true, isEditSuccess: null });
+        this.setState({ isEditing: true, isEditSuccess: null });
     }
 
     validateForm() {
@@ -163,7 +163,8 @@ export default class PlayerDetails extends Component {
                             roleId: this.state.roleId,
                             comments: this.state.comments,
                             photo: this.state.photoSrc,
-                            doc: this.state.doc
+                            doc: this.state.doc,
+                            isResident: this.state.isResident 
                         },
                         person: {
                             id: this.state.personId,
@@ -189,7 +190,7 @@ export default class PlayerDetails extends Component {
                         .then(result => {
                             //console.log(result);
                             this.fetchPlayer();
-                            this.setState({ editable: false, isEditSuccess: true, isSubmitting: false });
+                            this.setState({ isEditing: false, isEditSuccess: true, isSubmitting: false });
                             //this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
                             // if (result.data && result.data.length > 0) {
                             //     this.setState({ data: result.data });
@@ -211,7 +212,7 @@ export default class PlayerDetails extends Component {
 
     handleCancel() {
         this.fetchPlayer();
-        this.setState({ editable: false });
+        this.setState({ isEditing: false });
     }
 
     handlePhoto(evt) {
@@ -273,7 +274,7 @@ export default class PlayerDetails extends Component {
     onChangeBirthdate = date => this.setState({ birth: date })
 
     render() {
-        const title = this.state.editable ? 
+        const title = this.state.isEditing ? 
             (this.state.roleId == 1 ? "Editar Jogador" : "Editar Elemento Equipa Técnica") : 
             (this.state.roleId == 1 ? "Ficha de Jogador" : "Ficha de Elemento Equipa Técnica");
 
@@ -297,7 +298,7 @@ export default class PlayerDetails extends Component {
                 <h2>{title}</h2>
                 <form>
                     {formDetails}
-                    {this.state.editable ?
+                    {this.state.isEditing ?
                         <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                             <Button bsStyle="primary" disabled={this.state.isSubmitting}
                                 onClick={this.handleCancel} style={{ margin: '3px' }}>Cancelar</Button>
@@ -314,7 +315,6 @@ export default class PlayerDetails extends Component {
 
 function FormPlayer(props) {
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId);
-    //console.log('Caretaker required: ', caretakerRequired);
 
     const validateEmail = () => {
         if (!isValidEmail(props.email)) return 'error';
@@ -336,7 +336,7 @@ function FormPlayer(props) {
                 placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
-                readOnly={!props.editable}
+                readOnly={!props.isEditing}
                 maxLength="100"
                 validationState={validateEmail}
             />
@@ -348,12 +348,12 @@ function FormPlayer(props) {
                 placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
-                readOnly={!props.editable}
+                readOnly={!props.isEditing}
                 maxLength="16"
                 validationState={validatePhone}
             />
             { props.roleId == 1 ?
-                <Checkbox checked={props.isResident} disabled={!props.editable}
+                <Checkbox checked={props.isResident} disabled={!props.isEditing}
                     name="isResident" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
                 </Checkbox> : ''}
@@ -366,10 +366,10 @@ function FormPlayer(props) {
                     placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
                     value={props.voterNr}
                     onChange={props.handleControlChange}
-                    readOnly={!props.editable}
+                    readOnly={!props.isEditing}
                     maxLength="10"
                 /> : ''}
-            {props.isResident && props.editable ?
+            {props.isResident && props.isEditing ?
                 <Fragment>
                     Se não sabe o Nr de Eleitor pode obtê-lo aqui:&nbsp;
                     <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
@@ -390,7 +390,9 @@ function FormPlayer(props) {
                     placeholder="Nome do Responsável"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
-                    readOnly={!props.editable}
+                    readOnly={!props.isEditing}
+                    validationState={validateNotEmpty}
+                    validationArgs={props.caretakerName}
                     maxLength="80"
                 />
                 <FieldGroup
@@ -401,7 +403,9 @@ function FormPlayer(props) {
                     placeholder="Nr Cartão Cidadão do Responsável"
                     value={props.caretakerDocId}
                     onChange={props.handleControlChange}
-                    readOnly={!props.editable}
+                    readOnly={!props.isEditing}
+                    validationState={validateNotEmpty}
+                    validationArgs={props.caretakerDocId}
                     maxLength="30"
                 />
                 {commonFields}
@@ -415,7 +419,7 @@ function FormPlayer(props) {
             label="Fotografia"
             help="Digitalização de Fotografia do Jogador"
             onChange={props.handlePhoto}
-            readOnly={!props.editable}
+            readOnly={!props.isEditing}
             accept="image/*"
         />;
     
@@ -425,29 +429,29 @@ function FormPlayer(props) {
             label="Ficha individual de jogador"
             help="Ficha individual de jogador"
             onChange={props.handleDoc}
-            readOnly={!props.editable}
+            readOnly={!props.isEditing}
             accept="image/*,application/pdf"
         />;
 
-    const docUploaders = props.editable ?
+    const docUploaders = props.isEditing ?
         <div className="column">
             {photoUploader}    
             { props.roleId == 1 ? docUploader : '' } 
         </div> :
         ( props.roleId == 1 ?
             <Fragment>
-                <p><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
+                <p style={{ margin: '2px'}}><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
                     {props.docExists ? ' submetida.' : ' em falta!'}
                 </span></p>
             </Fragment> : '' );
 
-    const editButton = props.isSeasonActive && (!props.personId || props.editable || props.editable === null) ? '' :
+    const showEditButton = props.isSeasonActive && (!props.personId || !props.isEditing);
+    const editButton = showEditButton ?
         <div className="column" style={{ float: 'right' }}>
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>
-        </div>;
+        </div> : '';
 
     const getStepDate = (prop, defaultDate) => {
-        //console.log('Date: ', prop, defaultDate);
         let result = defaultDate;
         const step = props.steps.find((s) => s.Id == props.stepId);
         if (step) {
@@ -472,7 +476,7 @@ function FormPlayer(props) {
         <div style={{ display: 'flex', maxHeight: '200px' }}>
             <Image id="photoThumb" thumbnail src={props.photoSrc ? props.photoSrc : '/no_image.jpg'}
                 className="column"
-                style={{ maxWidth: "200px", display: props.photoSrc === null ? 'none' : 'inline' }} />
+                style={{ maxWidth: "200px", border: props.photoSrc ? 'none' : '1px solid red' }} />
             {docUploaders}
             {editButton}
         </div>
@@ -484,7 +488,7 @@ function FormPlayer(props) {
             placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
             value={props.playerName}
             onChange={props.handleControlChange}
-            readOnly={!props.editable}
+            readOnly={!props.isEditing}
             maxLength="80"
             validationState={validateNotEmpty}
             validationArgs={props.playerName}
@@ -504,7 +508,7 @@ function FormPlayer(props) {
             <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
-                    required={true} locale="pt-PT" disabled={!props.editable}
+                    required={true} locale="pt-PT" disabled={!props.isEditing}
                     minDate={getStepDate('MinDate', new Date('1900-01-01T00:00:00.000Z'))}
                     maxDate={getStepDate('MaxDate', new Date())}
                     calendarClassName="date-picker-form-control" />
@@ -515,7 +519,7 @@ function FormPlayer(props) {
             <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
                 onChange={props.handleGenderSelect} value={props.gender}
-                disabled={!props.editable}>
+                disabled={!props.isEditing}>
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>
             </FormControl>
@@ -527,18 +531,15 @@ function FormPlayer(props) {
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
                 name="comments" value={props.comments} onChange={props.handleControlChange}
-                readOnly={!props.editable} maxLength="2000" />
+                readOnly={!props.isEditing} maxLength="2000" />
         </FormGroup>
     </div>);
 }
 
 function isCaretakerRequired(steps, stepId, roleId) {
-    // console.log('Steps: ', steps);
-    // console.log('StepId: ', stepId);
     let result = false;
     if (roleId && roleId == 1) {
         const filter = steps.filter(s => s.Id == stepId);
-        //console.log(filter);
         result = filter.length > 0 && filter[0].IsCaretakerRequired;
     }
     return result;

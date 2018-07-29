@@ -15,12 +15,17 @@ function isValidPhone(phoneNr) {
 function isCaretakerRequired(steps, stepId, roleId, birthdate, eighteenDate) {
     let result = false;
     if (roleId && roleId == 1) {
-        const filter = steps.filter(s => s.id == stepId);
+        console.log('Steps: ', steps);
+        const filter = steps.filter(s => s.Id == stepId || s.id == stepId);
+        console.log('Filter: ', stepId, filter);
         if (filter && filter.length > 0) {
-            result = filter[0].isCaretakerRequired ||
-                (isValidDate(birthdate) && eighteenDate && new Date(birthdate) > eighteenDate);
+            //TODO Uniform steps array
+            result = filter[0].IsCaretakerRequired ? filter[0].IsCaretakerRequired : false ||
+                filter[0].isCaretakerRequired ? filter[0].isCaretakerRequired : false;
+            result = result || (isValidDate(birthdate) && eighteenDate && new Date(birthdate) > eighteenDate);
         }
     }
+    console.log('Caretaker required: ', result);
     return result;
 }
 

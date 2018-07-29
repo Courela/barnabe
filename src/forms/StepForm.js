@@ -59,7 +59,11 @@ export default class AddStep extends Component {
                 if (window.confirm('Tem a certeza que quer remover o escalão ' + step ? step.descr : stepId + '?')) {
                     url = url + '/' + stepId; 
                     axios.delete(url)
-                        .then(res => { this.props.history.push('/seasons/' + year); })
+                        .then(res => { 
+                            //this.props.history.push('/seasons/' + year);
+                            //TODO Avoid whole page refresh
+                            window.location.href = '/seasons/' + year;
+                        })
                         .catch(errors.handleError);
                 }
             }

@@ -42,7 +42,7 @@ export default class TopMenu extends Component {
 
     handleSelect(eventKey) {
         //eventKey.preventDefault();
-        alert(`selected ${eventKey}`);
+        //alert(`selected ${eventKey}`);
     }
 
     render() {

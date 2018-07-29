@@ -180,14 +180,14 @@ export default class PlayerDetails extends Component {
                             voterNr: caretakerRequired || !this.state.isResident ? null : this.state.voterNr,
                             isLocalBorn: this.state.isLocalBorn
                         },
-                        caretaker: {
+                        caretaker: caretakerRequired ? {
                             id: this.state.caretakerId,
                             name: this.state.caretakerName,
                             docId: this.state.caretakerDocId,
                             email: caretakerRequired ? this.state.email : null,
                             phoneNr: caretakerRequired ? this.state.phoneNr : null,
                             voterNr: this.state.isResident && caretakerRequired ? this.state.voterNr : null
-                        }
+                        } : null
                     };
                     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
                     axios.patch(url, data)

@@ -229,13 +229,13 @@ export default class PlayerForm extends Component {
                             voterNr: caretakerRequired ? null : this.state.voterNr,
                             isLocalBorn: this.state.isLocalBorn
                         },
-                        caretaker: {
+                        caretaker: caretakerRequired ? {
                             name: this.state.caretakerName,
                             docId: this.state.caretakerDocId,
                             email: caretakerRequired ? this.state.email : null,
                             phoneNr: caretakerRequired ? this.state.phoneNr : null,
                             voterNr: caretakerRequired ? this.state.voterNr : null
-                        },
+                        } : null,
                         isResident: this.state.isResident,
                         comments: this.state.comments,
                         doc: this.state.doc

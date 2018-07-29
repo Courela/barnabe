@@ -8,7 +8,8 @@ export default class Home extends Component {
             <div className="Home">
                 <div className="lander">
                     <h1>Página de Inscrições</h1>
-                    <h3><p>13ª Edição: início a 21 de Setembro</p></h3>
+                    <h3><p>13ª Edição: início a 21 de Setembro de 2018</p></h3>
+                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: 3 de Setembro de 2018</p></h4>
                 </div>     
 <p>Para participar no torneio, as coletividades interessadas terão de inscrever os escalões e respectivos jogadores e equipa técnica 
 neste site.<br />

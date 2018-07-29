@@ -6,6 +6,7 @@ import MainContent from '../components/MainContent';
 import SideMenu from '../components/SideMenu';
 import settings from '../settings';
 import errors from '../components/Errors';
+import { isValidDate } from '../utils/validations';
 import "../styles/Season.css";
 
 export default class Season extends Component {
@@ -40,11 +41,18 @@ export default class Season extends Component {
             .then(result => {
                 //console.log(result);
                 if (result.data) {
-                    this.setState({ year: result.data.Year, isSeasonActive: result.data.IsActive });
+                    const isSeasonActive = result.data.IsActive && !this.isSignUpExpired(result.data.SignUpDueDate);
+                    this.setState({ year: result.data.Year, isSeasonActive: isSeasonActive });
                     //this.setState({ stepName: result.data.Description });
                 }
             })
             .catch(errors.handleError);
+    }
+
+    isSignUpExpired(date) {
+        let result = true;
+        result = !(isValidDate(date) && new Date(date) > new Date());
+        return result;
     }
 
     render() {

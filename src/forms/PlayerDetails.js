@@ -8,7 +8,8 @@ import axios from 'axios';
 import queryString from 'query-string';
 import settings from '../settings';
 import errors from '../components/Errors';
-import { validateNotEmpty, isValidEmail, isValidPhone, isValidDate } from '../utils/validations';
+import { validateNotEmpty, isValidEmail, isValidPhone, 
+    isValidDate, isCaretakerRequired } from '../utils/validations';
 import { FieldGroup } from '../utils/controls';
 import '../styles/PlayerForm.css'
 
@@ -143,8 +144,8 @@ export default class PlayerDetails extends Component {
                 gender && gender !== '' &&
                 birth && birth !== '';
 
-            const { steps, stepId, roleId } = this.state;
-            if (isCaretakerRequired(steps, stepId, roleId)) {
+            const { steps, stepId, roleId, birth } = this.state;
+            if (isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate)) {
                 result = result &&
                     caretakerName && caretakerName !== '' &&
                     caretakerDocId && caretakerDocId !== '';
@@ -155,8 +156,8 @@ export default class PlayerDetails extends Component {
 
     handleSubmit(evt) {
         if (this.validateForm()) {
-            const { season, teamId, stepId, personId, playerId } = this.state;
-            const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId);
+            const { season, teamId, stepId, personId, playerId, steps, roleId, birth } = this.state;
+            const caretakerRequired = isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate);
             if (personId !== null) {
                 console.log('Submitting player...');
                 this.setState({ isSubmitting: true }, () => {
@@ -317,7 +318,7 @@ export default class PlayerDetails extends Component {
 }
 
 function FormPlayer(props) {
-    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId);
+    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
     const validateEmail = () => {
         if (!isValidEmail(props.email)) return 'error';
@@ -542,13 +543,4 @@ function FormPlayer(props) {
                 readOnly={!props.isEditing} maxLength="2000" />
         </FormGroup>
     </div>);
-}
-
-function isCaretakerRequired(steps, stepId, roleId) {
-    let result = false;
-    if (roleId && roleId == 1) {
-        const filter = steps.filter(s => s.Id == stepId);
-        result = filter.length > 0 && filter[0].IsCaretakerRequired;
-    }
-    return result;
 }

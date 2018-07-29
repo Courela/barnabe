@@ -15,7 +15,8 @@ export default class Season extends Component {
 
         this.state = {
             year: 0,
-            isSeasonActive: false
+            isSeasonActive: false,
+            eighteenDate: null
         }
 
         this.getSeason = this.getSeason.bind(this);
@@ -42,7 +43,18 @@ export default class Season extends Component {
                 //console.log(result);
                 if (result.data) {
                     const isSeasonActive = result.data.IsActive && !this.isSignUpExpired(result.data.SignUpDueDate);
-                    this.setState({ year: result.data.Year, isSeasonActive: isSeasonActive });
+                    const startDate = result.data.StartDate;
+                    let eighteenDate = null;
+                    if (isValidDate(startDate)) {
+                        eighteenDate = new Date(startDate);
+                        eighteenDate.setFullYear(eighteenDate.getFullYear() - 18);
+                    }
+
+                    this.setState({ 
+                        year: result.data.Year, 
+                        isSeasonActive: isSeasonActive,
+                        eighteenDate: eighteenDate
+                    });
                     //this.setState({ stepName: result.data.Description });
                 }
             })
@@ -84,7 +96,9 @@ export default class Season extends Component {
                         <Route key={this.state.year + 3} path="/seasons/:year" 
                             render={(props) => 
                                 <MainContent {...props} teamId={this.props.teamId}
-                                    isSeasonActive={this.state.isSeasonActive} isAuthenticated={this.props.isAuthenticated} /> } />
+                                    isSeasonActive={this.state.isSeasonActive}
+                                    eighteenDate={this.state.eighteenDate}
+                                    isAuthenticated={this.props.isAuthenticated} /> } />
                     {/* </Switch> */}
                 </div>
             </div>);

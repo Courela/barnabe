@@ -47,11 +47,13 @@ export default class MainContent extends Component {
         }, {
             path: '/seasons/:year/steps/:stepId/players/:playerId',
             exact: true,
-            render: (props) => <PlayerDetails {...props} isSeasonActive={this.props.isSeasonActive} teamId={this.props.teamId} />,
+            render: (props) => <PlayerDetails {...props} isSeasonActive={this.props.isSeasonActive} 
+                                    teamId={this.props.teamId} eighteenDate={this.props.eighteenDate}/>,
         }, {
             path: '/seasons/:year/steps/:stepId/player',
             exact: true,
-            render: (props) => { return <PlayerForm {...props} teamId={this.props.teamId} roleId="1" /> }
+            render: (props) => { return <PlayerForm {...props} teamId={this.props.teamId} 
+                                            eighteenDate={this.props.eighteenDate} roleId="1" /> }
         }, {
             path: '/seasons/:year/steps/:stepId/staff',
             exact: true,

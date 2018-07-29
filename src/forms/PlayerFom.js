@@ -8,7 +8,8 @@ import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
-import { validateNotEmpty, isValidEmail, isValidPhone } from '../utils/validations';
+import { validateNotEmpty, isValidEmail, isValidPhone, 
+    isCaretakerRequired } from '../utils/validations';
 import { FieldGroup } from '../utils/controls';
 
 export default class PlayerForm extends Component {
@@ -190,15 +191,15 @@ export default class PlayerForm extends Component {
 
     validateForm() {
         let result = true;
-        const { name, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
+        const { name, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId, steps, stepId, roleId } = this.state;
         result = result &&
             name && name !== '' &&
             docId && docId !== '' &&
             gender && gender !== '' &&
             birth && birth !== '' &&
             isValidEmail(email) && isValidPhone(phoneNr);
-
-        if (isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId)) {
+        
+        if (isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate)) {
             result = result &&
                 caretakerName && caretakerName !== '' &&
                 caretakerDocId && caretakerDocId !== '';
@@ -208,8 +209,8 @@ export default class PlayerForm extends Component {
 
     handleSubmit(evt) {
 
-        const { season, teamId, stepId, personId } = this.state;
-        const caretakerRequired = isCaretakerRequired(this.state.steps, this.state.stepId, this.state.roleId);
+        const { season, teamId, stepId, personId, steps, roleId, birth } = this.state;
+        const caretakerRequired = isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate);
         if (personId !== null) {
             if (this.validateForm()) {
                 console.log('Submitting player...');
@@ -352,6 +353,7 @@ export default class PlayerForm extends Component {
 
         const formDetails = this.state.personId !== null ?
             <PlayerDetails {...this.state}
+                eighteenDate={this.props.eighteenDate}
                 onChangeBirthdate={this.onChangeBirthdate}
                 handleControlChange={this.handleControlChange.bind(this)}
                 handleCheckboxToggle={this.handleCheckboxToggle.bind(this)}
@@ -407,7 +409,7 @@ export default class PlayerForm extends Component {
 }
 
 function PlayerDetails(props) {
-    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId);
+    const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
     const validateEmail = () => {
         if (props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
@@ -595,16 +597,4 @@ function PlayerDetails(props) {
                 onChange={props.handleControlChange} maxLength="2000" />
         </FormGroup>
     </div>);
-}
-
-function isCaretakerRequired(steps, stepId, roleId) {
-    // console.log('Steps: ', steps);
-    // console.log('StepId: ', stepId);
-    let result = false;
-    if (roleId && roleId == 1) {
-        const filter = steps.filter(s => s.id == stepId);
-        //console.log(filter);
-        result = filter[0].isCaretakerRequired;
-    }
-    return result;
 }

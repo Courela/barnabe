@@ -144,7 +144,7 @@ export default class PlayerDetails extends Component {
                 gender && gender !== '' &&
                 birth && birth !== '';
 
-            const { steps, stepId, roleId, birth } = this.state;
+            const { steps, stepId, roleId } = this.state;
             if (isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate)) {
                 result = result &&
                     caretakerName && caretakerName !== '' &&

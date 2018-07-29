@@ -442,7 +442,7 @@ function FormPlayer(props) {
             {photoUploader}    
             { props.roleId == 1 ? docUploader : '' } 
         </div> :
-        ( props.roleId == 1 ?
+        ( props.isSeasonActive && props.roleId == 1 ?
             <Fragment>
                 <p style={{ margin: '2px'}}><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
                     {props.docExists ? ' submetida.' : ' em falta!'}

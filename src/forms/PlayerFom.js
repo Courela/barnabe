@@ -38,6 +38,7 @@ export default class PlayerForm extends Component {
             phoneNr: '',
             email: '',
             isResident: false,
+            isLocalBorn: false,
             voterNr: '',
             caretakerName: '',
             caretakerDocId: '',
@@ -224,7 +225,8 @@ export default class PlayerForm extends Component {
                             birth: this.state.birth,
                             email: caretakerRequired ? null : this.state.email,
                             phoneNr: caretakerRequired ? null : this.state.phoneNr,
-                            voterNr: caretakerRequired ? null : this.state.voterNr
+                            voterNr: caretakerRequired ? null : this.state.voterNr,
+                            isLocalBorn: this.state.isLocalBorn
                         },
                         caretaker: {
                             name: this.state.caretakerName,
@@ -272,7 +274,8 @@ export default class PlayerForm extends Component {
                             email: person.Email ? person.Email : '',
                             phoneNr: person.Phone ? person.Phone : '',
                             birth: person.Birthdate ? new Date(person.Birthdate) : null,
-                            voterNr: person.VoterNr
+                            voterNr: person.VoterNr,
+                            isLocalBorn: person.LocalBorn ? true : false
                         });
                     } else {
                         console.log('No person found');
@@ -559,6 +562,11 @@ function PlayerDetails(props) {
             </FormControl>
             <FormControl.Feedback />
         </FormGroup>
+        {props.roleId && props.roleId == 1 ?
+                <Checkbox checked={props.isLocalBorn}
+                    name="isLocalBorn" onChange={props.handleCheckboxToggle} >
+                    <span style={{ fontWeight: '700' }}>Natural da freguesia (registado como nascido na freguesia) ?</span>
+                </Checkbox> : ''}
         <FieldGroup
             id="formFoto"
             type="file"

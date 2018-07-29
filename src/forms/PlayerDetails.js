@@ -43,6 +43,7 @@ export default class PlayerDetails extends Component {
             phoneNr: '',
             email: '',
             isResident: false,
+            isLocalBorn: false,
             voterNr: '',
             caretakerName: '',
             caretakerDocId: '',
@@ -90,6 +91,7 @@ export default class PlayerDetails extends Component {
                     docId: person.IdCardNr,
                     gender: person.Gender,
                     isResident: player.Resident ? true : false,
+                    isLocalBorn: person.LocalBorn ? true : false,
                     voterNr: voterNr,
                     phoneNr: caretaker && caretaker.Phone ? caretaker.Phone : (person.Phone ? person.Phone : ''),
                     email: caretaker && caretaker.Email ? caretaker.Email : (person.Email ? person.Email : ''),
@@ -164,7 +166,7 @@ export default class PlayerDetails extends Component {
                             comments: this.state.comments,
                             photo: this.state.photoSrc,
                             doc: this.state.doc,
-                            isResident: this.state.isResident 
+                            isResident: this.state.isResident
                         },
                         person: {
                             id: this.state.personId,
@@ -174,7 +176,8 @@ export default class PlayerDetails extends Component {
                             birth: this.state.birth,
                             email: caretakerRequired ? null : this.state.email,
                             phoneNr: caretakerRequired ? null : this.state.phoneNr,
-                            voterNr: caretakerRequired || !this.state.isResident ? null : this.state.voterNr
+                            voterNr: caretakerRequired || !this.state.isResident ? null : this.state.voterNr,
+                            isLocalBorn: this.state.isLocalBorn
                         },
                         caretaker: {
                             id: this.state.caretakerId,
@@ -525,6 +528,11 @@ function FormPlayer(props) {
             </FormControl>
             <FormControl.Feedback />
         </FormGroup>
+        { props.roleId == 1 ?
+                <Checkbox checked={props.isLocalBorn} disabled={!props.isEditing}
+                    name="isLocalBorn" onChange={props.handleCheckboxToggle} >
+                    <span style={{ fontWeight: '700' }}>Natural da freguesia (registado como nascido na freguesia) ?</span>
+                </Checkbox> : ''}
         {caretakerCtrls}
         {caretakerRequired ? <div /> : commonFields}
         <FormGroup controlId="formComments">

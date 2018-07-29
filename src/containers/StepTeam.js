@@ -6,7 +6,7 @@ import Table from '../components/Table';
 import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
-import { validateNotEmpty, isValidEmail, isValidPhone } from '../utils/validations';
+import { isValidEmail, isValidPhone } from '../utils/validations';
 
 export default class StepTeam extends Component {
     constructor(props) {
@@ -134,7 +134,7 @@ export default class StepTeam extends Component {
     isValidPlayer(row) {
         let result = false;
         const { Name, Gender, Birthdate, IdCardNr, Phone, Email, VoterNr } = row.original.person;
-        const { Resident, CareTakerId, PhotoFilename, DocFilename, caretaker } = row.original;
+        const { Resident, PhotoFilename, DocFilename, caretaker } = row.original;
 
         result = Name && Gender && Birthdate && IdCardNr && isValidEmail(Email) && isValidPhone(Phone);
         result = result && (!caretaker || (caretaker && caretaker.Name && caretaker.IdCardNr)); 

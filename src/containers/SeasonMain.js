@@ -1,5 +1,4 @@
-import React, { Component, Fragment } from 'react';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import React, { Component } from 'react';
 import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';

@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import Menu, { SubMenu, Item as MenuItem } from 'rc-menu/lib';
 import 'rc-menu/assets/index.css';
 import animate from 'css-animation/lib';

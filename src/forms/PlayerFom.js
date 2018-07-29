@@ -545,7 +545,8 @@ function PlayerDetails(props) {
         <FormGroup controlId="selectGender" validationState={props.validateGender()}>
             <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleGenderSelect} value={props.gender}>
+                onChange={props.handleGenderSelect} value={props.gender}
+                disabled={!props.steps || (props.steps.length === 1 && props.steps[0].gender) }>
                 <option value="0">Escolha...</option>
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>

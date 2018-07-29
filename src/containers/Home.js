@@ -28,7 +28,8 @@ e posteriormente digitalizada, sendo ambos carregados na página de inscrição 
     <li><strong>Escalão Feminino</strong> - para nascidas antes de 21-11-2005 ( + de 12 anos).</li>
 </ul>
 
-<p>Para mais informações sobre o torneio consulte o <a href="/doc/Regulamento_Desportivo_2018.pdf">Regulamento Desportivo</a>.</p>
+<p>Para mais informações sobre o torneio consulte o 
+    <a href="https://drive.google.com/open?id=1HdbvEZwIiopL1azo8i7w75XAQBbyiFAI" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
 <p>Qualquer problema ou questão relacionada com a página de inscrições, envie um mail para <a href="mailto:courela+tacabarnabe@gmail.com">courela+tacabarnabe@gmail.com</a>.</p>
 
 <p>Acompanhem-nos na página do torneio e também no Facebook e no Twitter.</p>

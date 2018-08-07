@@ -16,6 +16,7 @@ import AddUser from '../forms/AddUser';
 import ImportPlayers from '../forms/Import';
 import PlayerDetails from '../forms/PlayerDetails';
 import ManageSeasons from '../forms/ManageSeasons';
+import Search from '../containers/Search';
 
 export default class MainContent extends Component {
     render() {
@@ -83,6 +84,10 @@ export default class MainContent extends Component {
                 exact: true,
                 //component: AddStep,
                 render: (props) => { return (<ManageSeasons {...props} />) }
+            },{
+                path: '/admin/search',
+                exact: true,
+                component: Search
             });
         }
 

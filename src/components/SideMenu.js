@@ -162,6 +162,7 @@ function AdminMenu(props) {
             <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
             <MenuItem key={"/admin/users"}>Crir Utilizador</MenuItem>
             <MenuItem key={"/admin/seasons"}>Gerir Épocas</MenuItem>
+            <MenuItem key={"/admin/search"}>Procurar</MenuItem>
         </Menu>);
 }
 

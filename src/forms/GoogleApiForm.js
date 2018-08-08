@@ -13,7 +13,7 @@ export default class GoogleApiForm extends Component {
             fileContent: null,
             url: '',
             authCode: '',
-            isAuthorized: false
+            isAuthorized: true
         };
 
         this.checkStatus = this.checkStatus.bind(this);
@@ -24,7 +24,7 @@ export default class GoogleApiForm extends Component {
     }
 
     componentDidMount() {
-        this.checkStatus();
+        //this.checkStatus();
     }
 
     checkStatus() {

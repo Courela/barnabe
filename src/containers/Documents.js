@@ -5,7 +5,8 @@ export default class Documents extends Component {
     render() {
         const data = [
             { name: 'Ficha_Inscricao_Jogador.pdf', type: 'Ficha Individual de Jogador', download: 'https://drive.google.com/open?id=1JvEZAj804aTE7aO2ydLCumJvts_bQh3D' },
-            { name: 'Regulamento_Desportivo_2018.pdf', type: 'Regulamento Desportivo', download: 'https://drive.google.com/open?id=1HdbvEZwIiopL1azo8i7w75XAQBbyiFAI' }
+            { name: 'Regulamento_Desportivo_2018.pdf', type: 'Regulamento Desportivo', download: 'https://drive.google.com/open?id=1HdbvEZwIiopL1azo8i7w75XAQBbyiFAI' },
+            { name: 'Regulamento_Organizacao_2018.pdf', type: 'Regulamento da Organização 2018', download: 'https://drive.google.com/open?id=0B6mGDIzH6fPwOEdwTnREMmVFbUttSjlvdlNDamNVOWUzSHBR' }
         ];
 
         const rows = data.map((row, idx) => <tr key={idx}>

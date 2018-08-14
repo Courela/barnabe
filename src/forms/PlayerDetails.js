@@ -48,6 +48,7 @@ export default class PlayerDetails extends Component {
             voterNr: '',
             caretakerName: '',
             caretakerDocId: '',
+            newPhotoUpload: false,
             photoSrc: null,
             comments: '',
             docExists: false,
@@ -103,6 +104,7 @@ export default class PlayerDetails extends Component {
                     stepDescr: player.step.Description,
                     steps: [player.step],
                     photoSrc: photo,
+                    newPhotoUpload: false,
                     docExists: player.DocFilename ? true : false
                 });
                 window.scrollTo(0, 0);
@@ -165,7 +167,7 @@ export default class PlayerDetails extends Component {
                         player: {
                             roleId: this.state.roleId,
                             comments: this.state.comments,
-                            photo: this.state.photoSrc,
+                            photo: this.state.newPhotoUpload ? this.state.photoSrc : null,
                             doc: this.state.doc,
                             isResident: this.state.isResident
                         },
@@ -235,7 +237,7 @@ export default class PlayerDetails extends Component {
             // Closure to capture the file information.
             reader.onload = (function (theFile) {
                 return function (e) {
-                    self.setState({ photoSrc: e.target.result });
+                    self.setState({ photoSrc: e.target.result, newPhotoUpload: true });
                     // Render thumbnail.
                     // var span = document.createElement('span');
                     // span.innerHTML = ['<img class="thumb" src="', e.target.result,

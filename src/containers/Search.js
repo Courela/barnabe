@@ -68,9 +68,13 @@ export default class Seach extends Component {
                     }
                 })
                 .catch(errors.handleError);
+        
+        evt.preventDefault();
     }
 
     render() {
+        const { season, teamId, stepId } = this.state;
+
         const selectTeams = this.state.teams.map((t,idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
         const selectSteps = this.state.steps.map((s,idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
@@ -88,7 +92,7 @@ export default class Seach extends Component {
                 <FormGroup controlId="selectSeason">
                     <ControlLabel>Época</ControlLabel>
                     <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleControlChange} value={this.state.season}>
+                        onChange={this.handleControlChange} value={season}>
                         <option value="0">Escolha...</option>
                         <option value="2017">2017</option>
                         <option value="2018">2018</option>
@@ -98,7 +102,7 @@ export default class Seach extends Component {
                 <FormGroup controlId="selectTeam">
                     <ControlLabel>Equipa</ControlLabel>
                     <FormControl name="teamId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleControlChange} value={this.state.teamId}>
+                        onChange={this.handleControlChange} value={teamId}>
                         <option value="0">Escolha...</option>
                         {selectTeams}
                     </FormControl>
@@ -107,7 +111,7 @@ export default class Seach extends Component {
                 <FormGroup controlId="selectStep">
                     <ControlLabel>Escalão</ControlLabel>
                     <FormControl name="stepId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleControlChange} value={this.state.stepId}>
+                        onChange={this.handleControlChange} value={stepId}>
                         <option value="0">Escolha...</option>
                         {selectSteps}
                     </FormControl>
@@ -115,6 +119,9 @@ export default class Seach extends Component {
                 </FormGroup>
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
                 <Table columns={columns} data={this.state.data}/>
+                {this.state.data.length > 0 ?
+                    <a href={settings.API_URL + '/api/admin/export-players?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId } target="_blank">Exportar</a>
+                    : ''}
                 </Form>
             </div>);
     }

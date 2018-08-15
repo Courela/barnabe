@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import queryString from 'query-string'
 import {
     FormGroup, FormControl, ControlLabel, Button, Form
 } from 'react-bootstrap';
@@ -20,17 +22,41 @@ export default class Seach extends Component {
             teamId: 0,
             stepId: 0,
             data: []
-        }
+        };
 
         this.handleControlChange = this.handleControlChange.bind(this);
         this.getTeams = this.getTeams.bind(this);
         this.getSteps = this.getSteps.bind(this);
+        this.linkToPlayer = this.linkToPlayer.bind(this);
+        this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.fetchResults = this.fetchResults.bind(this);
     }
 
     componentDidMount() {
         this.getTeams();
         this.getSteps();
+        this.fillSearchCriteria(this.props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log('Next: ', nextProps);
+        console.log('Actual: ', this.props);
+        if (nextProps.location.search !== this.props.location.search) {
+            this.fillSearchCriteria(nextProps);
+        }
+    }
+
+    fillSearchCriteria(props) {
+        const { season, teamId, stepId } = queryString.parse(props.location.search);
+        if (season && teamId && stepId) {
+            console.log('Set state: ', season, teamId, stepId);
+            this.setState({
+                season: parseInt(season),
+                teamId: parseInt(teamId),
+                stepId: parseInt(stepId)
+            }, () => this.fetchResults());
+        }
     }
 
     getTeams() {
@@ -60,16 +86,34 @@ export default class Seach extends Component {
 
     handleSubmit(evt) {
         const { season, teamId, stepId } = this.state;
-        axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players')
-                .then(result => {
-                    //console.log(result);
-                    if (result.data && result.data.length > 0) {
-                        this.setState({ data: result.data });
-                    }
-                })
-                .catch(errors.handleError);
+        if (season > 0 && teamId > 0 && stepId > 0) {
+            this.props.history.push(this.props.location.pathname + '?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId);
+        }
+        else {
+            alert('Escolha todos os critérios de pesquisa.');
+        }
         
-        evt.preventDefault();
+        if(evt) { evt.preventDefault(); }
+    }
+
+    fetchResults() {
+        const { season, teamId, stepId } = this.state;
+        axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players')
+            .then(result => {
+                //console.log(result);
+                if (result.data && result.data.length > 0) {
+                    this.setState({ data: result.data });
+                }
+                else {
+                    this.setState({ data: [] });
+                }
+            })
+            .catch(errors.handleError);
+    }
+
+    linkToPlayer(row) {
+        const { season, teamId, stepId } = this.state;
+        return (<Link to={'/admin/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + row.original.Id}>{row.original.person.Name}</Link>);
     }
 
     render() {
@@ -79,7 +123,7 @@ export default class Seach extends Component {
         const selectSteps = this.state.steps.map((s,idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
         let columns = [
-            { Header: "Nome", accessor: "person.Name" },
+            { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row) },
             { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
             { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
             { Header: "Equipa", accessor: "player.TeamId" },
@@ -120,7 +164,7 @@ export default class Seach extends Component {
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
                 <Table columns={columns} data={this.state.data}/>
                 {this.state.data.length > 0 ?
-                    <a href={settings.API_URL + '/api/admin/export-players?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId } target="_blank">Exportar</a>
+                    <a href={settings.API_URL + '/api/admin/export-players?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId } target="_blank" rel="noopener noreferrer">Exportar</a>
                     : ''}
                 </Form>
             </div>);

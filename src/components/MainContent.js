@@ -88,6 +88,11 @@ export default class MainContent extends Component {
                 path: '/admin/search',
                 exact: true,
                 component: Search
+            },{
+                path: '/admin/seasons/:year/teams/:teamId/steps/:stepId/players/:playerId',
+                exact: true,
+                render: (props) => <PlayerDetails {...props} isSeasonActive={false} 
+                                    teamId={props.match.params.teamId} />,
             });
         }
 

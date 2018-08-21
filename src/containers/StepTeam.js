@@ -99,7 +99,7 @@ export default class StepTeam extends Component {
         const { season, stepId, isSeasonActive } = this.state;
         if (isSeasonActive) {
             const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + row.original.Id + '?edit=1';
-            const removeFn = (evt) => this.removePlayer(row.original.Id, row.original.Name);
+            const removeFn = (evt) => this.removePlayer(row.original.Id, row.original.person.Name);
             return (
                 <Fragment>
                     <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>

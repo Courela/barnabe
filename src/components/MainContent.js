@@ -17,6 +17,7 @@ import ImportPlayers from '../forms/Import';
 import PlayerDetails from '../forms/PlayerDetails';
 import ManageSeasons from '../forms/ManageSeasons';
 import Search from '../containers/Search';
+import Statistics from '../containers/Statistics';
 
 export default class MainContent extends Component {
     render() {
@@ -70,6 +71,11 @@ export default class MainContent extends Component {
 
         if (this.props.isAuthenticated && !this.props.teamId) {
             authenticatedRoutesArr.push({
+                path: '/admin',
+                exact: true,
+                //component: AddStep,
+                render: (props) => { return (<Statistics {...props} />) }
+            },{
                 path: '/admin/drive',
                 exact: true,
                 //component: AddStep,

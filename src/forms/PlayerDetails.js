@@ -342,7 +342,7 @@ function FormPlayer(props) {
                 placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
                 value={props.email}
                 onChange={props.handleControlChange}
-                readOnly={!props.isEditing}
+                readOnly={!props.isEditing || props.isSubmitting}
                 maxLength="100"
                 validationState={validateEmail}
             />
@@ -354,12 +354,12 @@ function FormPlayer(props) {
                 placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
                 value={props.phoneNr}
                 onChange={props.handleControlChange}
-                readOnly={!props.isEditing}
+                readOnly={!props.isEditing || props.isSubmitting }
                 maxLength="16"
                 validationState={validatePhone}
             />
             { props.roleId == 1 ?
-                <Checkbox checked={props.isResident} disabled={!props.isEditing}
+                <Checkbox checked={props.isResident} disabled={!props.isEditing || props.isSubmitting}
                     name="isResident" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
                 </Checkbox> : ''}
@@ -372,7 +372,7 @@ function FormPlayer(props) {
                     placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
                     value={props.voterNr}
                     onChange={props.handleControlChange}
-                    readOnly={!props.isEditing}
+                    readOnly={!props.isEditing || props.isSubmitting}
                     maxLength="10"
                 /> : ''}
             {props.isResident && props.isEditing ?
@@ -396,7 +396,7 @@ function FormPlayer(props) {
                     placeholder="Nome do Responsável"
                     value={props.caretakerName}
                     onChange={props.handleControlChange}
-                    readOnly={!props.isEditing}
+                    readOnly={!props.isEditing || props.isSubmitting}
                     validationState={validateNotEmpty}
                     validationArgs={props.caretakerName}
                     maxLength="80"
@@ -409,7 +409,7 @@ function FormPlayer(props) {
                     placeholder="Nr Cartão Cidadão do Responsável"
                     value={props.caretakerDocId}
                     onChange={props.handleControlChange}
-                    readOnly={!props.isEditing}
+                    readOnly={!props.isEditing || props.isSubmitting}
                     validationState={validateNotEmpty}
                     validationArgs={props.caretakerDocId}
                     maxLength="30"
@@ -425,7 +425,7 @@ function FormPlayer(props) {
             label="Fotografia"
             help="Digitalização de Fotografia do Jogador"
             onChange={props.handlePhoto}
-            readOnly={!props.isEditing}
+            readOnly={!props.isEditing || props.isSubmitting}
             accept="image/*"
         />;
     
@@ -435,7 +435,7 @@ function FormPlayer(props) {
             label="Ficha individual de jogador"
             help="Ficha individual de jogador"
             onChange={props.handleDoc}
-            readOnly={!props.isEditing}
+            readOnly={!props.isEditing || props.isSubmitting}
             accept="image/*,application/pdf"
         />;
 
@@ -494,7 +494,7 @@ function FormPlayer(props) {
             placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
             value={props.playerName}
             onChange={props.handleControlChange}
-            readOnly={!props.isEditing}
+            readOnly={!props.isEditing || props.isSubmitting}
             maxLength="80"
             validationState={validateNotEmpty}
             validationArgs={props.playerName}
@@ -514,7 +514,7 @@ function FormPlayer(props) {
             <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
-                    required={true} locale="pt-PT" disabled={!props.isEditing}
+                    required={true} locale="pt-PT" disabled={!props.isEditing || props.isSubmitting}
                     minDate={getStepDate('MinDate', new Date('1900-01-01T00:00:00.000Z'))}
                     maxDate={getStepDate('MaxDate', new Date())}
                     calendarClassName="date-picker-form-control" />
@@ -525,14 +525,14 @@ function FormPlayer(props) {
             <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
                 onChange={props.handleGenderSelect} value={props.gender}
-                disabled={!props.isEditing}>
+                disabled={!props.isEditing || props.isSubmitting}>
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>
             </FormControl>
             <FormControl.Feedback />
         </FormGroup>
         { props.roleId == 1 ?
-                <Checkbox checked={props.isLocalBorn} disabled={!props.isEditing}
+                <Checkbox checked={props.isLocalBorn} disabled={!props.isEditing || props.isSubmitting}
                     name="isLocalBorn" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Natural da freguesia (registado como nascido na freguesia) ?</span>
                 </Checkbox> : ''}
@@ -542,7 +542,7 @@ function FormPlayer(props) {
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
                 name="comments" value={props.comments} onChange={props.handleControlChange}
-                readOnly={!props.isEditing} maxLength="2000" />
+                readOnly={!props.isEditing || props.isSubmitting} maxLength="2000" />
         </FormGroup>
     </div>);
 }

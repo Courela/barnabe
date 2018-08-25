@@ -200,10 +200,18 @@ function PlayersTable(props) {
         }
     };
 
+    const isResident = (row) => {
+        console.log('Row:',row);
+        const { person, caretaker } = row.original;
+        const result = caretaker && caretaker.VoterNr ? '' : (person.VoterNr ? '' : 'Sim');
+        return result;
+    }
+
     let columns = [
         { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row) },
         { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
         { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
+        { Header: "Estrangeiro", Cell: (row) => isResident(row) },
         { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row) }
     ];
 

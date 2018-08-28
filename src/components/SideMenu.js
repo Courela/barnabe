@@ -158,11 +158,14 @@ function AuthenticatedMenu(props) {
 
 function AdminMenu(props) {
     return (
-        <Menu onSelect={props.handleSelect}>
+        <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
             <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
             <MenuItem key={"/admin/users"}>Crir Utilizador</MenuItem>
             <MenuItem key={"/admin/seasons"}>Gerir Épocas</MenuItem>
             <MenuItem key={"/admin/search"}>Procurar</MenuItem>
+            <SubMenu title="Utilitários">
+                <MenuItem key={"/admin/manage-persons"}>Gerir Pessoas</MenuItem>
+            </SubMenu>
         </Menu>);
 }
 

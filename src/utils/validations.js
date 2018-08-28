@@ -38,10 +38,31 @@ function isValidDate(date) {
     return result;
 }
 
+function isResident(player) {
+    //console.log('Row:',row);
+    const { person, caretaker } = player;
+    const result = caretaker && caretaker.VoterNr ? '' : (person.VoterNr ? '' : 'Sim');
+    return result;
+}
+
+function isValidPlayer(player) {
+    let result = false;
+    const { Name, Gender, Birthdate, IdCardNr, Phone, Email, VoterNr } = player.person;
+    const { Resident, PhotoFilename, DocFilename, caretaker } = player;
+
+    result = Name && Gender && Birthdate && IdCardNr && isValidEmail(Email) && isValidPhone(Phone);
+    result = result && (!caretaker || (caretaker && caretaker.Name && caretaker.IdCardNr)); 
+    result = result && (!Resident || (Resident && (VoterNr || (caretaker && caretaker.VoterNr))));
+    result = result && PhotoFilename && DocFilename;
+    return result;
+}
+
 export {
     validateNotEmpty,
     isValidEmail,
     isValidPhone,
     isValidDate,
-    isCaretakerRequired
+    isCaretakerRequired,
+    isResident,
+    isValidPlayer
 }

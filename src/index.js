@@ -24,15 +24,26 @@ registerServiceWorker();
 
 function Api(props) {
     //console.log(props);
-    let apiResponse = CallApi(settins.API_URL + props.location.pathname);
-    console.log(apiResponse);
-    return (<div>
-        {JSON.stringify(apiResponse)}
-    </div>);
+    const url = settins.API_URL + props.location.pathname + (props.location.search ? props.location.search : '');
+    if (props.location.pathname.indexOf('api/files') > -1) {
+        console.log('Redirect to ', url);
+        window.location.href = url;
+    }
+    else {
+        let apiResponse = CallApi(settins.API_URL + props.location.pathname + (props.location.search ? props.location.search : ''));
+        console.log(apiResponse);
+        return (<div>
+            {JSON.stringify(apiResponse)}
+        </div>);
+    }
 }
 
 async function CallApi(url) {
-    let apiResponse;
-    await axios.get(url).then(res => { apiResponse = res.data; return res.data; });
+    let apiResponse = await axios.get(url)
+        .then(res => res.data)
+        .catch(err => {
+            console.error(err);
+            throw 'Unexpected error!';
+        });
     return apiResponse;
 }

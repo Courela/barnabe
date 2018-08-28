@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import queryString from 'query-string'
 import {
-    FormGroup, FormControl, ControlLabel, Button, Form
+    FormGroup, FormControl, ControlLabel, Button, Form,
+    Glyphicon, Tooltip, OverlayTrigger
 } from 'react-bootstrap';
 import axios from 'axios';
 import Table from '../components/Table';
 import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
+import { isResident, isValidPlayer } from '../utils/validations';
 
 export default class Seach extends Component {
     constructor(props) {
@@ -100,7 +102,7 @@ export default class Seach extends Component {
         const { season, teamId, stepId } = this.state;
         axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players')
             .then(result => {
-                //console.log(result);
+                //console.log(result.data);
                 if (result.data && result.data.length > 0) {
                     this.setState({ data: result.data });
                 }
@@ -117,17 +119,33 @@ export default class Seach extends Component {
     }
 
     render() {
+        const statusIcon = (player) => {
+            const tooltip = <Tooltip id="tooltip">Dados em falta!</Tooltip>;
+    
+            const isValid = isValidPlayer(player);
+            if (isValid) {
+                return <Glyphicon glyph="ok-sign" style={{ color: 'green' }}/>
+            }
+            else {
+                return (
+                    <OverlayTrigger placement="left" overlay={tooltip}>
+                        <Glyphicon glyph="remove-sign" style={{ color: 'red' }} />
+                    </OverlayTrigger>);
+            }
+        };
+
         const { season, teamId, stepId } = this.state;
 
         const selectTeams = this.state.teams.map((t,idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
         const selectSteps = this.state.steps.map((s,idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
         let columns = [
+            { Header: "", id: 'Id', width: 25, Cell: (row) => statusIcon(row.original) },
             { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row) },
             { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
             { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
-            { Header: "Equipa", accessor: "player.TeamId" },
-            { Header: "Escalão", accessor: "player.StepId" }
+            { Header: "Estrangeiro", Cell: (row) => isResident(row.original) },
+            { Header: "Nr Eleitor", Cell: (row) => row.original.caretaker && row.original.caretaker.VoterNr ? row.original.caretaker.VoterNr : row.original.person.VoterNr }
         ];
 
         return (
@@ -164,7 +182,7 @@ export default class Seach extends Component {
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
                 <Table columns={columns} data={this.state.data}/>
                 {this.state.data.length > 0 ?
-                    <a href={settings.API_URL + '/api/admin/export-players?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId } target="_blank" rel="noopener noreferrer">Exportar</a>
+                    <a href={'/api/admin/export?type=players&season=' + season + '&teamId=' + teamId + '&stepId=' + stepId } target="_blank" rel="noopener noreferrer">Exportar</a>
                     : ''}
                 </Form>
             </div>);

@@ -140,12 +140,12 @@ export default class Seach extends Component {
         const selectSteps = this.state.steps.map((s,idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
         let columns = [
-            { Header: "", id: 'Id', width: 25, Cell: (row) => statusIcon(row.original) },
-            { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row) },
-            { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
-            { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
-            { Header: "Estrangeiro", Cell: (row) => isResident(row.original) },
-            { Header: "Nr Eleitor", Cell: (row) => row.original.caretaker && row.original.caretaker.VoterNr ? row.original.caretaker.VoterNr : row.original.person.VoterNr }
+            { Header: "", id: 'icon', width: 25, Cell: (row) => statusIcon(row.original) },
+            { Header: "Nome", id: 'id', accessor: "person.Name", Cell: (row) => this.linkToPlayer(row) },
+            { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
+            { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.IdCardNr" },
+            { Header: "Estrangeiro", id: "foreign", accessor: "person.VoterNr", Cell: (row) => isResident(row.original) },
+            { Header: "Nr Eleitor", id: "voterNr", accessor: "person.VoterNr", Cell: (row) => row.original.caretaker && row.original.caretaker.VoterNr ? row.original.caretaker.VoterNr : row.original.person.VoterNr }
         ];
 
         return (

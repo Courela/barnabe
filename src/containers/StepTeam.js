@@ -196,15 +196,16 @@ function PlayersTable(props) {
     // }
 
     let columns = [
-        { Header: "Nome", id: 'Id', Cell: (row) => props.linkToPlayer(row.original) },
-        { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
-        { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
-        { Header: "Estrangeiro", Cell: (row) => isResident(row.original) },
-        { Header: "", accessor: 'Id', Cell: (row) => props.playerActions(row.original) }
+        { Header: "Nome", id: 'id', accessor: "person.Name", Cell: (row) => props.linkToPlayer(row.original) },
+        { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
+        { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.IdCardNr" },
+        { Header: "Estrangeiro", id: "foreign", Cell: (row) => isResident(row.original) },
+        { Header: "Nr Eleitor", id: "voterNr", accessor: "person.VoterNr", Cell: (row) => row.original.caretaker && row.original.caretaker.VoterNr ? row.original.caretaker.VoterNr : row.original.person.VoterNr },
+        { Header: "", id: "actions", accessor: 'Id', Cell: (row) => props.playerActions(row.original) }
     ];
 
     if (props.isSeasonActive) {
-        columns.splice(0, 0, { Header: "", id: 'Id', width: 25, Cell: (row) => statusIcon(row.original) });
+        columns.splice(0, 0, { Header: "", id: 'icon', accessor: "Id", width: 25, Cell: (row) => statusIcon(row.original) });
     }
 
     return (<div>

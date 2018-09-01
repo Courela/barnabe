@@ -23,7 +23,8 @@ export default class Seach extends Component {
             season: 0,
             teamId: 0,
             stepId: 0,
-            data: []
+            data: [],
+            exportDataUrl: null
         };
 
         this.handleControlChange = this.handleControlChange.bind(this);
@@ -118,6 +119,17 @@ export default class Seach extends Component {
         return (<Link to={'/admin/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + row.original.Id}>{row.original.person.Name}</Link>);
     }
 
+    prepareExport() {
+        const { season, teamId, stepId } = this.state;
+        axios.get(settings.API_URL + '/api/admin/export?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId)
+            .then(result => {
+                var blob = new Blob([result.data.data], {type: "txt/csv"});
+                var url = window.URL.createObjectURL(blob);
+                this.setState({ exportDataUrl: url });
+            })
+            .catch(err => console.error(err));
+    }
+
     render() {
         const statusIcon = (player) => {
             const tooltip = <Tooltip id="tooltip">Dados em falta!</Tooltip>;
@@ -182,7 +194,10 @@ export default class Seach extends Component {
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
                 <Table columns={columns} data={this.state.data}/>
                 {this.state.data.length > 0 ?
-                    <a href={'/api/admin/export?type=players&season=' + season + '&teamId=' + teamId + '&stepId=' + stepId } target="_blank" rel="noopener noreferrer">Exportar</a>
+                    <Button bsStyle="primary" onClick={this.prepareExport.bind(this)}>Exportar</Button> : ''
+                }
+                {this.state.exportDataUrl ?
+                    <a href={this.state.exportDataUrl} download="export.csv" target="_blank" rel="noopener noreferrer">Download</a>
                     : ''}
                 </Form>
             </div>);

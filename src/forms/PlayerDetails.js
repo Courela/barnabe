@@ -103,9 +103,23 @@ export default class PlayerDetails extends Component {
                     comments: player.Comments,
                     stepDescr: player.step.Description,
                     steps: [player.step],
-                    photoSrc: photo,
+                    photoSrc: photo.src,
                     newPhotoUpload: false,
                     docExists: player.DocFilename ? true : false
+                }, () => {
+                    if (!photo.existsLocally) {
+                        console.log("Getting photo...");
+                        setTimeout(() => {
+                            axios.get(url + '/photo')
+                                .then(result => {
+                                    console.log("Photo loaded", result.data.existsLocally);
+                                    if (result.data && result.data.existsLocally) {
+                                        this.setState({ photoSrc: result.data.src });
+                                    }
+                                })
+                                .catch(errors.handleError);
+                        }, 3000);
+                    }
                 });
                 window.scrollTo(0, 0);
             })

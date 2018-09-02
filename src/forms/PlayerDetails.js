@@ -34,6 +34,7 @@ export default class PlayerDetails extends Component {
             teamId: props.teamId,
             stepId: stepId,
             steps: [],
+            roles: [],
             playerId: playerId,
             personId: null,
             roleId: null,
@@ -88,6 +89,7 @@ export default class PlayerDetails extends Component {
                 this.setState({
                     personId: person.Id,
                     roleId: player.RoleId,
+                    roles: [{id: player.role.Id, descr: player.role.Description}],
                     playerName: person.Name,
                     birth: isValidDate(person.Birthdate) ? new Date(person.Birthdate) : null,
                     docId: person.IdCardNr,
@@ -291,6 +293,15 @@ export default class PlayerDetails extends Component {
         }
     }
 
+    validateRole() {
+        if (this.state.roleId === null || this.state.roleId === '') return 'error';
+        return null;
+    }
+
+    handleRoleSelect(evt) {
+        this.setState({ roleId: evt.target.value });
+    }
+
     onChangeBirthdate = date => this.setState({ birth: date })
 
     render() {
@@ -306,7 +317,9 @@ export default class PlayerDetails extends Component {
                 handleGenderSelect={this.handleGenderSelect.bind(this)}
                 handlePhoto={this.handlePhoto.bind(this)}
                 handleEdit={this.handleEdit.bind(this)}
-                handleDoc={this.handleDoc.bind(this)} /> :
+                handleDoc={this.handleDoc.bind(this)} 
+                validateRole={this.validateRole.bind(this)}
+                handleRoleSelect={this.handleRoleSelect.bind(this)} /> :
             <div />;
 
         return (
@@ -482,6 +495,8 @@ function FormPlayer(props) {
 
     const selectSteps = props.steps.map((s) => <option key={s.Id} value={s.Id}>{s.Description}</option>);
 
+    const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
+
     return (<div>
         <FormGroup controlId="selectStep">
             <ControlLabel>Escalão</ControlLabel>
@@ -500,6 +515,18 @@ function FormPlayer(props) {
             {docUploaders}
             {editButton}
         </div>
+        { props.roleId != 1 ?
+            <FormGroup controlId="selectRole" validationState={props.validateRole()}>
+                <ControlLabel>Função</ControlLabel>
+                <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
+                    onChange={props.handleRoleSelect} value={props.roleId}
+                    disabled={props.roles.length <= 1 && props.roleId != ''}>
+                    <option value="0">Escolha...</option>
+                    {selectRoles}
+                </FormControl>
+                <FormControl.Feedback />
+            </FormGroup>
+            : ''}
         <FieldGroup
             id="formName"
             type="text"

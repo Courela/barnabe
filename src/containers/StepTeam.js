@@ -159,10 +159,10 @@ export default class StepTeam extends Component {
                     <div>
                         <Table
                             columns={[
-                                { Header: "Nome", id: 'Id', Cell: (row) => this.linkToPlayer(row.original) },
-                                { Header: "Cartão Cidadão", accessor: "person.IdCardNr" },
-                                { Header: "Data Nascimento", Cell: (row) => dateFormat(row.original.person.Birthdate) },
-                                { Header: "", accessor: 'Id', Cell: (row) => this.playerActions(row.original) }
+                                { Header: 'Nome', id: 'id', accessor: 'person.Name', Cell: (row) => this.linkToPlayer(row.original) },
+                                { Header: 'Função', id: 'role', accessor: 'role.Description' },
+                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.IdCardNr' },
+                                { Header: '', accessor: 'Id', Cell: (row) => this.playerActions(row.original) }
                             ]}
                             data={this.state.staff}
                             onFetchData={this.getStaff}  />

@@ -551,17 +551,17 @@ function FormPlayer(props) {
             readOnly={true}
             maxLength="30"
         />
-        <FormGroup controlId="formBirthdate">
-            <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
-            <div>
-                <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
-                    required={true} locale="pt-PT" disabled={!props.isEditing || props.isSubmitting}
-                    minDate={getStepDate('MinDate', new Date('1900-01-01T00:00:00.000Z'))}
-                    maxDate={getStepDate('MaxDate', new Date())}
-                    calendarClassName="date-picker-form-control" />
-            </div>
-        </FormGroup>
-
+        { props.roleId == 1 ?
+            <FormGroup controlId="formBirthdate">
+                <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
+                <div>
+                    <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
+                        required={true} locale="pt-PT" disabled={!props.isEditing || props.isSubmitting}
+                        minDate={getStepDate('MinDate', new Date('1900-01-01T00:00:00.000Z'))}
+                        maxDate={getStepDate('MaxDate', new Date())}
+                        calendarClassName="date-picker-form-control" />
+                </div>
+            </FormGroup> : ''}
         <FormGroup controlId="selectGender">
             <ControlLabel>Género</ControlLabel>
             <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}

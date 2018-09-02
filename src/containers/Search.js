@@ -29,7 +29,7 @@ export default class Seach extends Component {
 
         this.handleControlChange = this.handleControlChange.bind(this);
         this.getTeams = this.getTeams.bind(this);
-        this.getSteps = this.getSteps.bind(this);
+        //this.getSteps = this.getSteps.bind(this);
         this.linkToPlayer = this.linkToPlayer.bind(this);
         this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -38,13 +38,13 @@ export default class Seach extends Component {
 
     componentDidMount() {
         this.getTeams();
-        this.getSteps();
+        //this.getSteps();
         this.fillSearchCriteria(this.props);
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('Next: ', nextProps);
-        console.log('Actual: ', this.props);
+        //console.log('Next: ', nextProps);
+        //console.log('Actual: ', this.props);
         if (nextProps.location.search !== this.props.location.search) {
             this.fillSearchCriteria(nextProps);
         }
@@ -53,7 +53,7 @@ export default class Seach extends Component {
     fillSearchCriteria(props) {
         const { season, teamId, stepId } = queryString.parse(props.location.search);
         if (season && teamId && stepId) {
-            console.log('Set state: ', season, teamId, stepId);
+            //console.log('Set state: ', season, teamId, stepId);
             this.setState({
                 season: parseInt(season),
                 teamId: parseInt(teamId),
@@ -71,13 +71,29 @@ export default class Seach extends Component {
             .catch(errors.handleError);
     }
 
-    getSteps() {
-        const url = settings.API_URL + '/api/steps';
-        axios.get(url)
-            .then(results => {
-                this.setState({ steps: results.data });
-            })
-            .catch(errors.handleError);
+    // getSteps() {
+    //     const url = settings.API_URL + '/api/steps';
+    //     axios.get(url)
+    //         .then(results => {
+    //             this.setState({ steps: results.data });
+    //         })
+    //         .catch(errors.handleError);
+    // }
+
+    handleTeamChange(evt) {
+        const teamId = evt.target.value;
+        const { season } = this.state;
+        if (season && teamId) {
+            axios.get(settings.API_URL + '/api/seasons/'+ season + '/teams/' + teamId + '/steps')
+                .then(result => {
+                    this.setState({ steps: result.data, stepId: 0, data: [], exportDataUrl: null });
+                })
+                .catch(errors.handleError);
+        }
+
+        this.setState({ [evt.target.name]: teamId });
+
+        if(evt) { evt.preventDefault(); }
     }
 
     handleControlChange(evt) {
@@ -105,13 +121,16 @@ export default class Seach extends Component {
             .then(result => {
                 //console.log(result.data);
                 if (result.data && result.data.length > 0) {
-                    this.setState({ data: result.data });
+                    this.setState({ data: result.data, exportDataUrl: null });
                 }
                 else {
-                    this.setState({ data: [] });
+                    this.setState({ data: [], exportDataUrl: null });
                 }
             })
-            .catch(errors.handleError);
+            .catch(err => { 
+                this.setState({ data: [], exportDataUrl: null });
+                errors.handleError(err);
+            });
     }
 
     linkToPlayer(row) {
@@ -176,7 +195,7 @@ export default class Seach extends Component {
                 <FormGroup controlId="selectTeam">
                     <ControlLabel>Equipa</ControlLabel>
                     <FormControl name="teamId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleControlChange} value={teamId}>
+                        onChange={this.handleTeamChange.bind(this)} value={teamId}>
                         <option value="0">Escolha...</option>
                         {selectTeams}
                     </FormControl>

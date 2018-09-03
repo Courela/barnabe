@@ -24,6 +24,7 @@ export default class Seach extends Component {
             teamId: 0,
             stepId: 0,
             data: [],
+            staff: [],
             exportDataUrl: null
         };
 
@@ -131,6 +132,21 @@ export default class Seach extends Component {
                 this.setState({ data: [], exportDataUrl: null });
                 errors.handleError(err);
             });
+
+            axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff')
+            .then(result => {
+                //console.log(result.data);
+                if (result.data && result.data.length > 0) {
+                    this.setState({ staff: result.data, exportDataUrl: null });
+                }
+                else {
+                    this.setState({ staff: [], exportDataUrl: null });
+                }
+            })
+            .catch(err => { 
+                this.setState({ staff: [], exportDataUrl: null });
+                errors.handleError(err);
+            });
     }
 
     linkToPlayer(row) {
@@ -211,6 +227,7 @@ export default class Seach extends Component {
                     <FormControl.Feedback />
                 </FormGroup>
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
+                <h3>Jogadores</h3>
                 <Table columns={columns} data={this.state.data}/>
                 {this.state.data.length > 0 ?
                     <Button bsStyle="primary" onClick={this.prepareExport.bind(this)}>Exportar</Button> : ''
@@ -218,6 +235,17 @@ export default class Seach extends Component {
                 {this.state.exportDataUrl ?
                     <a href={this.state.exportDataUrl} download="export.csv" target="_blank" rel="noopener noreferrer">Download</a>
                     : ''}
+
+                <h3>Equipa Técnica</h3>
+                    <div>
+                        <Table
+                            columns={[
+                                { Header: 'Nome', id: 'id', accessor: 'person.Name', Cell: (row) => this.linkToPlayer(row) },
+                                { Header: 'Função', id: 'role', accessor: 'role.Description' },
+                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.IdCardNr' }
+                            ]}
+                            data={this.state.staff} />
+                    </div>
                 </Form>
             </div>);
     }

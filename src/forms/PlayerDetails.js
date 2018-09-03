@@ -471,14 +471,14 @@ function FormPlayer(props) {
             {photoUploader}    
             { props.roleId == 1 ? docUploader : '' } 
         </div> :
-        ( props.isSeasonActive && props.roleId == 1 ?
+        ( /* props.isSeasonActive */ props.season == 2018 && props.roleId == 1 ?
             <Fragment>
                 <p style={{ margin: '2px'}}><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
                     {props.docExists ? ' submetida.' : ' em falta!'}
                 </span></p>
             </Fragment> : '' );
 
-    const showEditButton = props.isSeasonActive && (!props.personId || !props.isEditing);
+    const showEditButton = /* props.isSeasonActive */ props.season && (!props.personId || !props.isEditing);
     const editButton = showEditButton ?
         <div className="column" style={{ float: 'right' }}>
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>

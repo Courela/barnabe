@@ -146,7 +146,7 @@ export default class StepTeam extends Component {
                     <h3>Jogadores</h3>
                     <PlayersTable players={this.state.players} getPlayers={this.getPlayers}
                         linkToPlayer={this.linkToPlayer} playerActions={this.playerActions}
-                        isSeasonActive={this.state.isSeasonActive} />
+                        isSeasonActive={this.state.isSeasonActive} season={this.state.season} />
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
@@ -204,7 +204,7 @@ function PlayersTable(props) {
         { Header: "", id: "actions", accessor: 'Id', Cell: (row) => props.playerActions(row.original) }
     ];
 
-    if (props.isSeasonActive) {
+    if (props.season == 2018) {
         columns.splice(0, 0, { Header: "", id: 'icon', accessor: "Id", width: 25, Cell: (row) => statusIcon(row.original) });
     }
 

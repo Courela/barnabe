@@ -19,7 +19,8 @@ import ManageSeasons from '../forms/ManageSeasons';
 import Search from '../containers/Search';
 import Statistics from '../containers/Statistics';
 import ManagePersons from '../containers/ManagePersons';
-import GameSheets from '../containers/GameSheets';
+import MatchSheet from '../containers/MatchSheet';
+import TeamSheet from '../containers/TeamSheet';
 
 export default class MainContent extends Component {
     render() {
@@ -101,9 +102,13 @@ export default class MainContent extends Component {
                 exact: true,
                 component: Search
             },{
-                path: '/admin/game-sheets',
+                path: '/admin/match-sheet',
                 exact: true,
-                component: GameSheets
+                component: MatchSheet
+            },{
+                path: '/admin/team-sheet',
+                exact: true,
+                component: TeamSheet
             },{
                 path: '/admin/seasons/:year/teams/:teamId/steps/:stepId/players/:playerId',
                 exact: true,

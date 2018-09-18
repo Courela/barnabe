@@ -8,7 +8,7 @@ import atob from 'atob';
 import settings from '../settings';
 import errors from '../components/Errors';
 
-export default class GameSheets extends Component {
+export default class TeamSheet extends Component {
     constructor(props) {
         super(props);
 
@@ -20,7 +20,8 @@ export default class GameSheets extends Component {
             teamId: 0,
             stepId: 0,
             data: [],
-            exportDataUrl: null
+            exportDataUrl: null,
+            loading: false
         };
 
         this.handleControlChange = this.handleControlChange.bind(this);
@@ -111,16 +112,18 @@ export default class GameSheets extends Component {
     }
 
     fetchResults() {
-        const { season, teamId, stepId } = this.state;
-        axios.get(settings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId)
-            .then(result => {
-                const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
-                var buf = Buffer.from(result.data.src.replace(FILE_REGEX, ''), 'base64');
-                var blob = new Blob([buf], { type: "application/pdf" });
-                var url = window.URL.createObjectURL(blob);
-                this.setState({ exportDataUrl: url });
-            })
-            .catch(err => console.error(err));
+        this.setState({ loading: true }, () => {
+            const { season, teamId, stepId } = this.state;
+            axios.get(settings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId)
+                .then(result => {
+                    const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
+                    var buf = Buffer.from(result.data.src.replace(FILE_REGEX, ''), 'base64');
+                    var blob = new Blob([buf], { type: "application/pdf" });
+                    var url = window.URL.createObjectURL(blob);
+                    this.setState({ loading: false, exportDataUrl: url });
+                })
+                .catch(err => console.error(err));
+            });
     }
 
     render() {
@@ -131,7 +134,7 @@ export default class GameSheets extends Component {
 
         return (
             <div>
-                <Form inline>
+                <Form>
                     <FormGroup controlId="selectSeason">
                         <ControlLabel>Época</ControlLabel>
                         <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
@@ -160,10 +163,11 @@ export default class GameSheets extends Component {
                         </FormControl>
                         <FormControl.Feedback />
                     </FormGroup>
-                    <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Gerar</Button>
+                    <Button bsStyle="primary" type="submit" onClick={this.handleSubmit} disabled={this.state.loading}>Gerar</Button>
+                    <span style={{ display: this.state.loading ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
 
                     {this.state.exportDataUrl ?
-                        <a href={this.state.exportDataUrl} download="ficha_jogo.pdf" target="_blank" rel="noopener noreferrer">Download</a>
+                        <a href={this.state.exportDataUrl} download="ficha_equipa.pdf" target="_blank" rel="noopener noreferrer">Download</a>
                         : ''}
                 </Form>
             </div>);

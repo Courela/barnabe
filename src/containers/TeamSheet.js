@@ -96,7 +96,7 @@ export default class TeamSheet extends Component {
         //console.log(evt);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal });
+        this.setState({ [fieldName]: fieldVal, exportDataUrl: null });
     }
 
     handleSubmit(evt) {

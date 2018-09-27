@@ -40,6 +40,7 @@ export default class PlayerForm extends Component {
             email: '',
             isResident: false,
             isLocalBorn: false,
+            isLocalTown: false,
             voterNr: '',
             caretakerName: '',
             caretakerDocId: '',
@@ -227,7 +228,8 @@ export default class PlayerForm extends Component {
                             email: caretakerRequired ? null : this.state.email,
                             phoneNr: caretakerRequired ? null : this.state.phoneNr,
                             voterNr: caretakerRequired ? null : this.state.voterNr,
-                            isLocalBorn: this.state.isLocalBorn
+                            isLocalBorn: this.state.isLocalBorn,
+                            isLocalTown: this.state.isLocalTown
                         },
                         caretaker: caretakerRequired ? {
                             name: this.state.caretakerName,
@@ -276,7 +278,8 @@ export default class PlayerForm extends Component {
                             phoneNr: person.Phone ? person.Phone : '',
                             birth: person.Birthdate ? new Date(person.Birthdate) : null,
                             voterNr: person.VoterNr,
-                            isLocalBorn: person.LocalBorn ? true : false
+                            isLocalBorn: person.LocalBorn ? person.LocalBorn : false,
+                            isLocalTown: person.LocalTown ? person.LocalTown : false
                         });
                     } else {
                         console.log('No person found');
@@ -568,6 +571,11 @@ function PlayerDetails(props) {
                 <Checkbox checked={props.isLocalBorn}
                     name="isLocalBorn" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Natural da freguesia (registado como nascido na freguesia) ?</span>
+                </Checkbox> : ''}
+        {props.roleId && props.roleId == 1 ?
+                <Checkbox checked={props.isLocalTown} disabled={!props.isEditing || props.isSubmitting}
+                    name="isLocalTown" onChange={props.handleCheckboxToggle} >
+                    <span style={{ fontWeight: '700' }}>Residente na ex-freguesia de Pêro Pinheiro/Montelavar ?</span>
                 </Checkbox> : ''}
         <FieldGroup
             id="formFoto"

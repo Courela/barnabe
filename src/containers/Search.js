@@ -55,12 +55,14 @@ export default class Seach extends Component {
         const { season, teamId, stepId } = queryString.parse(props.location.search);
         if (season && teamId && stepId) {
             //console.log('Set state: ', season, teamId, stepId);
-            this.setState({
-                season: parseInt(season),
-                teamId: parseInt(teamId),
-                stepId: parseInt(stepId)
-            }, () => this.fetchResults());
-        }
+            this.getSteps(parseInt(season), parseInt(teamId), parseInt(stepId), () => {
+                this.setState({
+                    season: parseInt(season),
+                    teamId: parseInt(teamId),
+                    stepId: parseInt(stepId)
+                }, () => this.fetchResults());
+            });
+        }   
     }
 
     getTeams() {
@@ -81,15 +83,19 @@ export default class Seach extends Component {
     //         .catch(errors.handleError);
     // }
 
+    getSteps(season, teamId, stepId = 0, callback = null) {
+        axios.get(settings.API_URL + '/api/seasons/'+ season + '/teams/' + teamId + '/steps')
+                .then(result => {
+                    this.setState({ steps: result.data, stepId: stepId, data: [], exportDataUrl: null }, callback);
+                })
+                .catch(errors.handleError);
+    }
+
     handleTeamChange(evt) {
         const teamId = evt.target.value;
         const { season } = this.state;
         if (season && teamId) {
-            axios.get(settings.API_URL + '/api/seasons/'+ season + '/teams/' + teamId + '/steps')
-                .then(result => {
-                    this.setState({ steps: result.data, stepId: 0, data: [], exportDataUrl: null });
-                })
-                .catch(errors.handleError);
+            this.getSteps(season, teamId);
         }
 
         this.setState({ [evt.target.name]: teamId });

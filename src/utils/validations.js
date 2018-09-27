@@ -41,7 +41,7 @@ function isValidDate(date) {
 function isResident(player) {
     //console.log('Row:',row);
     const { person, caretaker } = player;
-    const result = caretaker && caretaker.VoterNr ? '' : (person.VoterNr ? '' : 'Sim');
+    const result = person.LocalBorn || player.Resident || (caretaker && caretaker.VoterNr) ? '' : (person.VoterNr ? '' : 'Sim');
     return result;
 }
 

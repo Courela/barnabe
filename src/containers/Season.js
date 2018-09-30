@@ -42,7 +42,8 @@ export default class Season extends Component {
             .then(result => {
                 //console.log(result);
                 if (result.data) {
-                    const isSeasonActive = result.data.IsActive && !this.isSignUpExpired(result.data.SignUpDueDate);
+                    const isSeasonActive = result.data.IsActive &&
+                        (!this.isSignUpExpired(result.data.SignUpDueDate) || !this.isSignUpExpired(result.data.SignUpExtraDueDate));
                     const startDate = result.data.StartDate;
                     let eighteenDate = null;
                     if (isValidDate(startDate)) {

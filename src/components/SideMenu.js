@@ -143,8 +143,8 @@ function AnonymousMenu(props) {
 }
 function AuthenticatedMenu(props) {
     const stepOptions = [
-        <MenuItem key={"/seasons/" + props.season + "/add-step"}>Inscrever escalão</MenuItem>,
-        <MenuItem key={"/seasons/" + props.season + "/remove-step"}>Remover escalão</MenuItem>
+        // <MenuItem key={"/seasons/" + props.season + "/add-step"}>Inscrever escalão</MenuItem>,
+        // <MenuItem key={"/seasons/" + props.season + "/remove-step"}>Remover escalão</MenuItem>
     ];
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>

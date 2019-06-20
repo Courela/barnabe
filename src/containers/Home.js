@@ -8,8 +8,8 @@ export default class Home extends Component {
             <div className="Home">
                 <div className="lander">
                     <h1>Página de Inscrições</h1>
-                    <h3><p>13ª Edição: início a 21 de Setembro de 2018</p></h3>
-                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: 3 de Setembro de 2018</p></h4>
+                    <h3><p>14ª Edição: início a 20 de Setembro de 2019</p></h3>
+                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: 2 de Setembro de 2019</p></h4>
                 </div>     
 <p>Para participar no torneio, as coletividades interessadas terão de inscrever os escalões e respectivos jogadores e equipa técnica 
 neste site.<br />
@@ -22,11 +22,11 @@ e posteriormente digitalizada, sendo ambos carregados na página de inscrição 
 
 <p>Os escalões disponíveis para inscrição são os seguintes:</p>
 <ul>
-    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 22/11/2009 e 31/12/2013 (Dos 5 aos 8 anos);</li>
-    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 22/11/2005 e 21/11/2009 (Dos 9 aos 12 anos);</li>
-    <li><strong>II Escalão</strong> - masculino para nascidos entre 22-11-2000 a 21-11-2005 (Dos 13 aos 17 anos);</li>
-    <li><strong>III Escalão</strong> - masculino para nascidos antes de 21-11-2000 (+ de 17 anos);</li>
-    <li><strong>Escalão Feminino</strong> - para nascidas antes de 21-11-2005 ( + de 12 anos).</li>
+    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 21/11/2010 e 31/12/2014 (Dos 5 aos 8 anos);</li>
+    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 21/11/2006 e 20/11/2010 (Dos 9 aos 12 anos);</li>
+    <li><strong>II Escalão</strong> - masculino para nascidos entre 21-11-2001 a 20-11-2006 (Dos 13 aos 17 anos);</li>
+    <li><strong>III Escalão</strong> - masculino para nascidos antes de 20-11-2001 (+ de 17 anos);</li>
+    <li><strong>Escalão Feminino</strong> - para nascidas antes de 20-11-2006 (+ de 12 anos).</li>
 </ul>
 
 <p>Para mais informações sobre o torneio consulte o 
@@ -36,7 +36,7 @@ e posteriormente digitalizada, sendo ambos carregados na página de inscrição 
 <p>Acompanhem-nos na página do torneio e também no Facebook e no Twitter.</p>
                 <h2>Links</h2>
                 <ul>
-                    <li><a href="https://leverade.com/manager/barnabe" target="_blank" rel="noopener noreferrer">Página do torneio</a></li>
+                    <li><a href="https://tacabarnabe.pt" target="_blank" rel="noopener noreferrer">Página do torneio</a></li>
                     <li><a href="https://www.facebook.com/tacabarnabe" target="_blank" rel="noopener noreferrer">Facebook</a></li>
                     <li><a href="https://twitter.com/tacabarnabe" target="_blank" rel="noopener noreferrer">Twitter</a></li>
                 </ul>

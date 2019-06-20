@@ -3,9 +3,8 @@ import {
     FormGroup, FormControl, ControlLabel,
     Button
 } from 'react-bootstrap';
-import axios from 'axios';
-import settings from '../settings';
 import errors from '../components/Errors';
+import { signSteps, removeTeamStep, createTeamStep } from '../utils/communications';
 
 export default class AddStep extends Component {
     constructor(props, context) {
@@ -28,8 +27,7 @@ export default class AddStep extends Component {
         const year = this.props.match.params.year;
         const teamId = this.props.teamId;
 
-        const url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/signsteps';
-        axios.get(url)
+        signSteps(year, teamId)
             .then(results => {
                 this.setState({ steps: results.data.map(s => ({ id: s.Id, descr: s.Description })) });
             })
@@ -53,12 +51,10 @@ export default class AddStep extends Component {
             const year = this.props.match.params.year;
             const teamId = this.props.teamId;
 
-            let url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
             if (this.state.action === 'remove') {
                 const step = this.state.steps.find(s => s.id == stepId);
                 if (window.confirm('Tem a certeza que quer remover o escalão ' + step ? step.descr : stepId + '?')) {
-                    url = url + '/' + stepId; 
-                    axios.delete(url)
+                    removeTeamStep(year, teamId, stepId)
                         .then(res => { 
                             //this.props.history.push('/seasons/' + year);
                             //TODO Avoid whole page refresh
@@ -68,12 +64,7 @@ export default class AddStep extends Component {
                 }
             }
             else {
-                const data = { stepId: stepId };
-                axios.put(url, data, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
+                createTeamStep(year, teamId, stepId)
                     .then(res => { this.props.history.push('/seasons/' + year + '/steps/' + stepId); })
                     .catch(errors.handleError);
             }

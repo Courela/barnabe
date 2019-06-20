@@ -4,9 +4,8 @@ import React, { Component } from 'react';
 import Menu, { SubMenu, Item as MenuItem } from 'rc-menu/lib';
 import 'rc-menu/assets/index.css';
 import animate from 'css-animation/lib';
-import axios from 'axios';
-import settings from '../settings';
 import errors from './Errors';
+import { getTeams, getTeamSteps } from '../utils/communications';
 
 export default class SideMenu extends Component {
     constructor(props) {
@@ -50,7 +49,7 @@ export default class SideMenu extends Component {
     getTeams() {
         if (this.state.season > 0) {
             //console.log(settings.API_URL);
-            axios.get(settings.API_URL + '/api/teams?season=' + this.state.season)
+            getTeams(this.state.season)
                 .then((res) => this.setState({ teams: res.data }))
                 .catch(errors.handleError);
         }
@@ -91,7 +90,7 @@ export default class SideMenu extends Component {
     }
 
     getTeamSteps() {
-        axios.get(settings.API_URL + '/api/seasons/' + this.state.season + '/teams/' + this.props.teamId + '/steps')
+        getTeamSteps(this.state.season, this.props.teamId)
             .then((res) => this.setState({ steps: res.data }))
             .catch(errors.handleError);
     }

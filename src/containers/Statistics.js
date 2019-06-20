@@ -1,6 +1,5 @@
 import React from 'react';
-import axios from 'axios';
-import settings from '../settings';
+import { getStatistics } from '../utils/communications';
 
 export default class Statistics extends React.Component {
     constructor(props) {
@@ -12,8 +11,7 @@ export default class Statistics extends React.Component {
     }
 
     componentDidMount() {
-        const url = settings.API_URL + '/api/admin/statistics';
-        axios.get(url)
+        getStatistics()
             .then(res => {
                 console.log(res.data);
                 this.setState({ statistics: res.data });

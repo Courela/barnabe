@@ -5,6 +5,7 @@ import {
 import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';
+import { getSeasons } from '../utils/communications';
 
 export default class ManageSeasons extends Component {
     constructor(props, context) {
@@ -22,8 +23,7 @@ export default class ManageSeasons extends Component {
     }
 
     componentDidMount() {
-        const url = settings.API_URL + '/api/seasons';
-        axios.get(url)
+        getSeasons()
             .then(results => {
                 this.setState({ seasons: results.data.map(s => ({ id: s.Year, descr: s.Year })) });
             })

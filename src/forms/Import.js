@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
-import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
+import { getSeasons, getStep, getPlayers, copyPlayers } from '../utils/communications';
 
 export default class Import extends React.Component {
     constructor(props) {
@@ -14,13 +14,13 @@ export default class Import extends React.Component {
             season: props.match.params.year,
             stepId: props.match.params.stepId,
             teamId: props.teamId,
-            seasons: [2017],
+            seasons: [],
             selectedSeason: 0,
             //selected: {},
             selected: [],
             selectAll: 0,
             players: [],
-            stepName: null,
+            step: null,
             isSubmitting: false
         };
 
@@ -28,15 +28,27 @@ export default class Import extends React.Component {
         this.getPlayers = this.getPlayers.bind(this);
         this.handleSeasonSelect = this.handleSeasonSelect.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.isPlayerEligible = this.isPlayerEligible.bind(this);
     }
 
     componentDidMount() {
-        if (!this.state.stepName) {
-            axios.get(settings.API_URL + '/api/steps/' + this.state.stepId)
+        if (!this.state.step) {
+            getStep(this.state.stepId, this.state.season)
                 .then(result => {
                     //console.log(result);
                     if (result.data) {
-                        this.setState({ stepName: result.data.Description });
+                        this.setState({ step: result.data });
+                    }
+                })
+                .catch(errors.handleError);
+        }
+
+        if (this.state.seasons.length === 0) {
+            getSeasons()
+                .then((result) => {
+                    if (result.data && result.data.length > 0) {
+                        var seasons = result.data.filter((v,i,arr) => v.Year < this.state.season);
+                        this.setState({ seasons: seasons });
                     }
                 })
                 .catch(errors.handleError);
@@ -46,7 +58,7 @@ export default class Import extends React.Component {
     getPlayers() {
         if (this.state.players.length === 0) {
             const { selectedSeason, teamId, stepId } = this.state;
-            axios.get(settings.API_URL + '/api/seasons/' + selectedSeason + '/teams/' + teamId + '/steps/' + stepId + '/players')
+            getPlayers(selectedSeason, teamId, stepId)
                 .then(result => {
                     //console.log(result);
                     if (result.data && result.data.length > 0) {
@@ -69,12 +81,7 @@ export default class Import extends React.Component {
     handleSubmit(evt) {
         console.log('Selected: ', this.state.selected);
         const { season, teamId, stepId } = this.state;
-        const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/import-players';
-        const data = {
-            selectedSeason: this.state.selectedSeason,
-            playerIds: this.state.selected
-        }
-        axios.post(url, data)
+        copyPlayers(season, teamId, stepId, this.state.selectedSeason, this.state.selected)
             .then(result => {
                 console.log(result);
                 alert('Jogadores importados com sucesso.');
@@ -112,7 +119,9 @@ export default class Import extends React.Component {
 
         if (this.state.selectAll === 0) {
             this.state.players.forEach(x => {
-                newSelected.push(x.Id);
+                if (this.isPlayerEligible(x)) {
+                    newSelected.push(x.Id);
+                }
             });
         }
 
@@ -122,19 +131,23 @@ export default class Import extends React.Component {
         });
     }
 
+    isPlayerEligible(player) {
+        return player.person.Birthdate >= this.state.step.MinDate;
+    }
+
     render() {
         const columns = [
             {
                 id: "checkbox",
                 accessor: "",
                 Cell: ({ original }) => {
-                    return (
+                    return (this.isPlayerEligible(original) ? 
                         <input
                             type="checkbox"
                             className="checkbox"
                             checked={this.state.selected.indexOf(original.Id) >= 0}
                             onChange={() => this.toggleRow(original.Id)}
-                        />
+                        /> : <span />
                     );
                 },
                 Header: x => {
@@ -161,7 +174,8 @@ export default class Import extends React.Component {
             },
             {
                 Header: "Data Nascimento",
-                id: "Id",
+                id: "birthdate", 
+                accessor: "person.Birthdate",
                 Cell: (row) => dateFormat(row.original.person.Birthdate)
             },
             {
@@ -170,11 +184,11 @@ export default class Import extends React.Component {
             }
         ];
 
-        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s}>{s}</option>);
+        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
 
         return (
             <div>
-                <h1>Importar Jogadores - {this.state.stepName}</h1>
+                <h1>Importar Jogadores - {this.state.step ? this.state.step.Description : ''}</h1>
                 <FormGroup controlId="selectSeason" validationState={this.validateSeason()}>
                     <ControlLabel>Época</ControlLabel>
                     <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}

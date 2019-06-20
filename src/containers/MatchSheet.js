@@ -3,10 +3,9 @@ import queryString from 'query-string'
 import {
     FormGroup, FormControl, ControlLabel, Button, Form
 } from 'react-bootstrap';
-import axios from 'axios';
-import atob from 'atob';
-import settings from '../settings';
+//import atob from 'atob';
 import errors from '../components/Errors';
+import { getSeasons, getTeams, getSteps, getGameTemplate } from '../utils/communications';
 
 export default class MatchSheet extends Component {
     constructor(props) {
@@ -26,16 +25,14 @@ export default class MatchSheet extends Component {
         };
 
         this.handleControlChange = this.handleControlChange.bind(this);
-        this.getTeams = this.getTeams.bind(this);
-        //this.getSteps = this.getSteps.bind(this);
+        this.getFilters = this.getFilters.bind(this);
         this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.fetchResults = this.fetchResults.bind(this);
     }
 
-    componentDidMount() {
-        this.getTeams();
-        this.getSteps();
+    async componentDidMount() {
+        await this.getFilters();
         this.fillSearchCriteria(this.props);
     }
 
@@ -52,30 +49,20 @@ export default class MatchSheet extends Component {
         if (season && homeTeamId && awayTeamId && stepId) {
             //console.log('Set state: ', season, teamId, stepId);
             this.setState({
-                season: parseInt(season),
-                homeTeamId: parseInt(homeTeamId),
-                awayTeamId: parseInt(awayTeamId),
-                stepId: parseInt(stepId)
+                season: parseInt(season, 10),
+                homeTeamId: parseInt(homeTeamId, 10),
+                awayTeamId: parseInt(awayTeamId, 10),
+                stepId: parseInt(stepId, 10)
             }, () => this.fetchResults());
         }
     }
 
-    getTeams() {
-        const url = settings.API_URL + '/api/teams';
-        axios.get(url)
-            .then(results => {
-                this.setState({ teams: results.data });
-            })
-            .catch(errors.handleError);
-    }
-
-    getSteps() {
-        const url = settings.API_URL + '/api/steps';
-        axios.get(url)
-            .then(results => {
-                this.setState({ steps: results.data });
-            })
-            .catch(errors.handleError);
+    async getFilters() {
+        var seasons = await getSeasons().then(results => results.data);
+        var activeSeason = seasons.filter(s => s.IsActive)[0];
+        var teams = await getTeams().then(results => results.data);
+        var steps = await getSteps().then(results => results.data);
+        this.setState({ seasons: seasons, teams: teams, steps: steps, season: activeSeason.Year });
     }
 
     // handleTeamChange(evt) {
@@ -116,7 +103,8 @@ export default class MatchSheet extends Component {
     fetchResults() {
         this.setState({ loading: true }, () => {
             const { season, homeTeamId, awayTeamId, stepId } = this.state;
-            axios.get(settings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId)
+            //axios.get(settings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId)
+            getGameTemplate(season, homeTeamId, awayTeamId, stepId)
                 .then(result => {
                     const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
                     var buf = Buffer.from(result.data.src.replace(FILE_REGEX, ''), 'base64');
@@ -131,6 +119,7 @@ export default class MatchSheet extends Component {
     render() {
         const { season, homeTeamId, awayTeamId, stepId } = this.state;
 
+        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
         const selectTeams = this.state.teams.map((t, idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
         const selectSteps = this.state.steps.map((s, idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
@@ -142,8 +131,7 @@ export default class MatchSheet extends Component {
                         <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
                             onChange={this.handleControlChange} value={season}>
                             <option value="0">Escolha...</option>
-                            <option value="2017">2017</option>
-                            <option value="2018">2018</option>
+                            {selectSeasons}
                         </FormControl>
                         <FormControl.Feedback />
                     </FormGroup>

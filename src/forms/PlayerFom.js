@@ -4,13 +4,12 @@ import {
     Button, Panel, Image, Checkbox
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
-import axios from 'axios';
-import settings from '../settings';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
 import { validateNotEmpty, isValidEmail, isValidPhone, 
     isCaretakerRequired } from '../utils/validations';
 import { FieldGroup } from '../utils/controls';
+import { getRoles, getTeamSteps, getStep, getPerson, createPlayer } from '../utils/communications';
 
 export default class PlayerForm extends Component {
     constructor(props, context) {
@@ -61,8 +60,7 @@ export default class PlayerForm extends Component {
         const teamId = this.props.teamId;
 
         if (this.state.stepId > 0) {
-            const url = settings.API_URL + '/api/seasons/' + this.state.season + '/steps/' + this.state.stepId;
-            axios.get(url)
+            getStep(this.state.stepId, this.state.season)
                 .then(results => {
                     const single = results.data;
                     //console.log(single);
@@ -82,8 +80,7 @@ export default class PlayerForm extends Component {
                 .catch(errors.handleError);
         }
         else {
-            const url = settings.API_URL + '/api/seasons/' + year + '/teams/' + teamId + '/steps';
-            axios.get(url)
+            getTeamSteps(year, teamId)
                 .then(results => {
                     if (this.state.stepId > 0) {
                         const single = results.data.filter((s => s.Id == this.state.stepId));
@@ -118,8 +115,7 @@ export default class PlayerForm extends Component {
 
     getRoles() {
         const isStaff = this.props.location.pathname.includes('staff');
-        const url = settings.API_URL + '/api/roles';
-        axios.get(url)
+        getRoles()
             .then(results => {
                 //console.log('Roles: ');
                 //console.log(results);
@@ -242,8 +238,7 @@ export default class PlayerForm extends Component {
                         comments: this.state.comments,
                         doc: this.state.doc
                     };
-                    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
-                    axios.put(url, data)
+                    createPlayer(season, teamId, stepId, data)
                         .then(result => {
                             console.log(result);
                             const playerId = result.data.Id;
@@ -265,7 +260,7 @@ export default class PlayerForm extends Component {
         }
         else {
             console.log('Search person with docId ' + this.state.docId);
-            axios.get(settings.API_URL + '/api/persons?docId=' + this.state.docId)
+            getPerson(this.state.docId)
                 .then(result => {
                     const person = result.data;
                     console.log('Person result: ' + JSON.stringify(person));

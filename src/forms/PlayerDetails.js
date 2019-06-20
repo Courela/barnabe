@@ -4,14 +4,13 @@ import {
     Button, Checkbox, Panel, Image
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
-import axios from 'axios';
 import queryString from 'query-string';
-import settings from '../settings';
 import errors from '../components/Errors';
 import { validateNotEmpty, isValidEmail, isValidPhone, 
     isValidDate, isCaretakerRequired } from '../utils/validations';
 import { FieldGroup } from '../utils/controls';
 import '../styles/PlayerForm.css'
+import { getPlayer, updatePlayer, getPhoto } from '../utils/communications';
 
 export default class PlayerDetails extends Component {
     constructor(props, context) {
@@ -80,8 +79,7 @@ export default class PlayerDetails extends Component {
     fetchPlayer() {
         const { season, teamId, stepId, playerId } = this.state;
 
-        const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
-        axios.get(url)
+        getPlayer(season, teamId, stepId, playerId)
             .then(results => {
                 //console.log('Player: ', results);
                 const { player, photo } = results.data;
@@ -114,7 +112,7 @@ export default class PlayerDetails extends Component {
                     if (!photo.existsLocally) {
                         console.log("Getting photo...");
                         setTimeout(() => {
-                            axios.get(url + '/photo')
+                            getPhoto(season, teamId, stepId, playerId)
                                 .then(result => {
                                     console.log("Photo loaded", result.data.existsLocally);
                                     if (result.data && result.data.existsLocally) {
@@ -210,8 +208,7 @@ export default class PlayerDetails extends Component {
                             voterNr: this.state.isResident && caretakerRequired ? this.state.voterNr : null
                         } : null
                     };
-                    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
-                    axios.patch(url, data)
+                    updatePlayer(season, teamId, stepId, playerId, data)
                         .then(result => {
                             //console.log(result);
                             this.fetchPlayer();

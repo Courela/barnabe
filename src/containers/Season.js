@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { Route } from "react-router-dom";
-import axios from 'axios';
-//import LeftMenu from "../components/LeftMenu";
 import MainContent from '../components/MainContent';
 import SideMenu from '../components/SideMenu';
-import settings from '../settings';
 import errors from '../components/Errors';
 import { isValidDate } from '../utils/validations';
 import "../styles/Season.css";
+import { getSeason } from '../utils/communications';
 
 export default class Season extends Component {
     constructor(props) {
@@ -37,8 +35,7 @@ export default class Season extends Component {
     }
 
     getSeason(year) {
-        const url = settings.API_URL + '/api/seasons/' + year;
-        axios.get(url)
+        getSeason(year)
             .then(result => {
                 //console.log(result);
                 if (result.data) {

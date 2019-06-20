@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
-import axios from 'axios';
 import queryString from 'query-string';
-import settings from '../settings';
 import errors from '../components/Errors';
 import { FieldGroup } from '../utils/controls';
+import { searchPersons } from '../utils/communications';
 
 export default class ManagePersons extends Component {
     constructor(props) {
@@ -47,7 +46,7 @@ export default class ManagePersons extends Component {
 
     fetchResults() {
         const { docId } = this.state;
-        axios.get(settings.API_URL + '/api/persons?docId=' + docId + '&multiple=true')
+        searchPersons(docId)
             .then(result => {
                 //console.log(result);
                 if (result.data) {

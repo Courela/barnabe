@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { ButtonToolbar, Button, Image } from 'react-bootstrap';
-import axios from 'axios';
-import settings from '../settings';
 import errors from '../components/Errors';
+import { getPlayer } from '../utils/communications';
 
 export default class Player extends Component {
     constructor(props) {
@@ -22,7 +21,7 @@ export default class Player extends Component {
 
     componentDidMount(){
         const { season, teamId, stepId, playerId } = this.state;
-        axios.get(settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId)
+        getPlayer(season, teamId, stepId, playerId)
             .then(result => {
                 //console.log(result.data);
                 this.setState({ 

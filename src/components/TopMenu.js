@@ -2,8 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import axios from 'axios';
-import settings from '../settings';
+import { getSeasons, logout } from '../utils/communications';
 
 export default class TopMenu extends Component {
     constructor(props) {
@@ -19,7 +18,7 @@ export default class TopMenu extends Component {
 
     componentDidMount() {
         if (this.state.seasons.length === 0) {
-            axios.get(settings.API_URL + '/api/seasons')
+            getSeasons()
                 .then((result) => {
                     if (result.data && result.data.length > 0) {
                         this.setState({ seasons: result.data });
@@ -34,7 +33,7 @@ export default class TopMenu extends Component {
     handleLogout(event) {
         event.preventDefault();
         if (this.props.userHasAuthenticated) {
-            axios.post(settings.API_URL + '/api/logout');
+            logout();
             sessionStorage.clear();
             this.props.userHasAuthenticated(false, null, null);
         }

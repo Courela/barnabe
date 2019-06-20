@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import settings from '../settings';
 import errors from '../components/Errors';
+import { getTeam } from '../utils/communications';
 
 export default class SeasonMain extends Component {
     constructor(props) {
@@ -37,8 +36,7 @@ export default class SeasonMain extends Component {
     getTeam() {
         const { team, teamId } = this.state; 
         if (!team || team.Id !== teamId) {
-            const url = settings.API_URL + '/api/teams/' + teamId;
-            axios.get(url)
+            getTeam(teamId)
                 .then(res => {
                     console.log('Team result: ', res.data);
                     this.setState({ team: res.data });

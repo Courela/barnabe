@@ -1,12 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { ButtonToolbar, Button, Glyphicon, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import axios from 'axios';
 import Table from '../components/Table';
-import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
-import { isValidEmail, isValidPhone, isResident, isValidPlayer } from '../utils/validations';
+import { isResident, isValidPlayer } from '../utils/validations';
+import { getPlayers, getStep, getStaff, removePlayer } from '../utils/communications';
 
 export default class StepTeam extends Component {
     constructor(props) {
@@ -16,7 +15,6 @@ export default class StepTeam extends Component {
 
         this.state = {
             season: season,
-            isSeasonActive: props.isSeasonActive,
             teamId: props.teamId,
             stepId: props.match.params.stepId,
             stepName: null,
@@ -36,11 +34,6 @@ export default class StepTeam extends Component {
     componentDidMount() {
         this.getPlayers();
         this.getStaff();
-
-        const isSeasonActive = this.props.isSeasonActive;
-        if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {
-            this.setState({ isSeasonActive: isSeasonActive });
-        }
     }
 
     componentWillReceiveProps(newProps) {
@@ -54,7 +47,7 @@ export default class StepTeam extends Component {
     getPlayers() {
         if (this.state.players.length === 0) {
             const { season, teamId, stepId } = this.state;
-            axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players')
+            getPlayers(season, teamId, stepId)
                 .then(result => {
                     //console.log(result);
                     if (result.data && result.data.length > 0) {
@@ -63,7 +56,7 @@ export default class StepTeam extends Component {
                 })
                 .then(res => {
                     if (!this.state.stepName) {
-                        axios.get(settings.API_URL + '/api/steps/' + this.state.stepId)
+                        getStep(this.state.stepId)
                             .then(result => {
                                 if (result.data) {
                                     this.setState({ stepName: result.data.Description });
@@ -79,7 +72,7 @@ export default class StepTeam extends Component {
     getStaff() {
         if (this.state.staff.length === 0) {
             const { season, teamId, stepId } = this.state;
-            axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff')
+            getStaff(season, teamId, stepId)
                 .then(result => {
                     //console.log(result);
                     if (result.data && result.data.length > 0) {
@@ -96,8 +89,8 @@ export default class StepTeam extends Component {
     }
 
     playerActions(player) {
-        const { season, stepId, isSeasonActive } = this.state;
-        if (isSeasonActive) {
+        const { season, stepId } = this.state;
+        if (this.props.isSeasonActive) {
             const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.Id + '?edit=1';
             const removeFn = (evt) => this.removePlayer(player.Id, player.person.Name);
             return (
@@ -113,7 +106,7 @@ export default class StepTeam extends Component {
     async removePlayer(id, name) {
         const { season, teamId, stepId } = this.state;
         if (window.confirm('Tem a certeza que quer remover o jogador ' + name + '?')) {
-            await axios.delete(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + id);
+            await removePlayer(season, teamId, stepId, id);
             this.setState({ players: [], staff: [] }, () => {
                 this.getPlayers();
                 this.getStaff();
@@ -136,7 +129,7 @@ export default class StepTeam extends Component {
             <Fragment>
                 <h2>{this.state.stepName}</h2>
                 <div style={{ float: 'right' }}>
-                    {this.state.isSeasonActive && this.state.stepName ?
+                    {this.props.isSeasonActive && this.state.stepName ?
                         <ButtonToolbar>
                             <Button bsStyle="success" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import'}>Importar épocas anteriores</Button>
                             <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
@@ -146,11 +139,11 @@ export default class StepTeam extends Component {
                     <h3>Jogadores</h3>
                     <PlayersTable players={this.state.players} getPlayers={this.getPlayers}
                         linkToPlayer={this.linkToPlayer} playerActions={this.playerActions}
-                        isSeasonActive={this.state.isSeasonActive} season={this.state.season} />
+                        isSeasonActive={this.props.isSeasonActive} season={this.state.season} />
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
-                        {this.state.isSeasonActive && this.state.stepName ?
+                        {this.props.isSeasonActive && this.state.stepName ?
                             <ButtonToolbar>
                                 <Button bsStyle="primary" onClick={this.handleNewStaff}>Adicionar Elemento</Button>
                             </ButtonToolbar> : ''}
@@ -188,13 +181,6 @@ function PlayersTable(props) {
         }
     };
 
-    // const isResident = (row) => {
-    //     console.log('Row:',row);
-    //     const { person, caretaker } = row.original;
-    //     const result = caretaker && caretaker.VoterNr ? '' : (person.VoterNr ? '' : 'Sim');
-    //     return result;
-    // }
-
     let columns = [
         { Header: "Nome", id: 'id', accessor: "person.Name", Cell: (row) => props.linkToPlayer(row.original) },
         { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
@@ -204,7 +190,7 @@ function PlayersTable(props) {
         { Header: "", id: "actions", accessor: 'Id', Cell: (row) => props.playerActions(row.original) }
     ];
 
-    if (props.season == 2018) {
+    if (props.isSeasonActive) {
         columns.splice(0, 0, { Header: "", id: 'icon', accessor: "Id", width: 25, Cell: (row) => statusIcon(row.original) });
     }
 

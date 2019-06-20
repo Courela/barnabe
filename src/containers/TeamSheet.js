@@ -3,10 +3,9 @@ import queryString from 'query-string'
 import {
     FormGroup, FormControl, ControlLabel, Button, Form
 } from 'react-bootstrap';
-import axios from 'axios';
-import atob from 'atob';
-import settings from '../settings';
+//import atob from 'atob';
 import errors from '../components/Errors';
+import { getSeasons, getTeams, getTeamSteps, getTeamTemplate } from '../utils/communications';
 
 export default class TeamSheet extends Component {
     constructor(props) {
@@ -25,15 +24,15 @@ export default class TeamSheet extends Component {
         };
 
         this.handleControlChange = this.handleControlChange.bind(this);
-        this.getTeams = this.getTeams.bind(this);
+        this.getFilters = this.getFilters.bind(this);
         //this.getSteps = this.getSteps.bind(this);
         this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.fetchResults = this.fetchResults.bind(this);
     }
 
-    componentDidMount() {
-        this.getTeams();
+    async componentDidMount() {
+        await this.getFilters();
         //this.getSteps();
         this.fillSearchCriteria(this.props);
     }
@@ -51,43 +50,48 @@ export default class TeamSheet extends Component {
         if (season && teamId && stepId) {
             //console.log('Set state: ', season, teamId, stepId);
             this.setState({
-                season: parseInt(season),
-                teamId: parseInt(teamId),
-                stepId: parseInt(stepId)
+                season: parseInt(season, 10),
+                teamId: parseInt(teamId, 10),
+                stepId: parseInt(stepId, 10)
             }, () => this.fetchResults());
         }
     }
 
-    getTeams() {
-        const url = settings.API_URL + '/api/teams';
-        axios.get(url)
-            .then(results => {
-                this.setState({ teams: results.data });
-            })
-            .catch(errors.handleError);
+    async getFilters() {
+        var seasons = await getSeasons().then(results => results.data);
+        var teams = await getTeams().then(results => results.data);
+        var activeSeason = seasons.filter(s => s.IsActive)[0];
+        this.setState({ seasons: seasons, teams: teams, season: activeSeason.Year });
     }
 
-    // getSteps() {
-    //     const url = settings.API_URL + '/api/steps';
-    //     axios.get(url)
-    //         .then(results => {
-    //             this.setState({ steps: results.data });
-    //         })
-    //         .catch(errors.handleError);
-    // }
-
-    handleTeamChange(evt) {
-        const teamId = evt.target.value;
-        const { season } = this.state;
+    handleSeasonChange(evt) {
+        const season = evt.target.value;
+        const { teamId } = this.state;
         if (season && teamId) {
-            axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps')
+            getTeamSteps(season, teamId)
                 .then(result => {
                     this.setState({ steps: result.data, stepId: 0, data: [], exportDataUrl: null });
                 })
                 .catch(errors.handleError);
         }
 
-        this.setState({ [evt.target.name]: teamId });
+        this.handleControlChange(evt);
+
+        if(evt) { evt.preventDefault(); }
+    }
+
+    handleTeamChange(evt) {
+        const teamId = evt.target.value;
+        const { season } = this.state;
+        if (season && teamId) {
+            getTeamSteps(season, teamId)
+                .then(result => {
+                    this.setState({ steps: result.data, stepId: 0, data: [], exportDataUrl: null });
+                })
+                .catch(errors.handleError);
+        }
+
+        this.handleControlChange(evt);
 
         if (evt) { evt.preventDefault(); }
     }
@@ -114,7 +118,7 @@ export default class TeamSheet extends Component {
     fetchResults() {
         this.setState({ loading: true }, () => {
             const { season, teamId, stepId } = this.state;
-            axios.get(settings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId)
+            getTeamTemplate(season, teamId, stepId)
                 .then(result => {
                     const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
                     var buf = Buffer.from(result.data.src.replace(FILE_REGEX, ''), 'base64');
@@ -129,6 +133,7 @@ export default class TeamSheet extends Component {
     render() {
         const { season, teamId, stepId } = this.state;
 
+        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
         const selectTeams = this.state.teams.map((t, idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
         const selectSteps = this.state.steps.map((s, idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
@@ -138,10 +143,9 @@ export default class TeamSheet extends Component {
                     <FormGroup controlId="selectSeason">
                         <ControlLabel>Época</ControlLabel>
                         <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
-                            onChange={this.handleControlChange} value={season}>
+                            onChange={this.handleSeasonChange.bind(this)} value={season}>
                             <option value="0">Escolha...</option>
-                            <option value="2017">2017</option>
-                            <option value="2018">2018</option>
+                            {selectSeasons}
                         </FormControl>
                         <FormControl.Feedback />
                     </FormGroup>

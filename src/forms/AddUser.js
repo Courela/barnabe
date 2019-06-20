@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import {
     FormGroup, FormControl, ControlLabel, HelpBlock, Button
 } from 'react-bootstrap';
-import axios from 'axios';
-import settings from '../settings';
 import errors from '../components/Errors';
+import { getTeams, createUser } from '../utils/communications';
 
 export default class AddUser extends Component {
     constructor(props, context) {
@@ -24,8 +23,7 @@ export default class AddUser extends Component {
     }
 
     componentDidMount() {
-        const url = settings.API_URL + '/api/teams';
-        axios.get(url)
+        getTeams()
             .then(results => {
                 this.setState({ teams: results.data.map(s => ({ id: s.Id, descr: s.Name })) });
             })
@@ -50,13 +48,8 @@ export default class AddUser extends Component {
 
     handleSubmit(evt) {
         if (this.state.teamId > 0) {
-            const url = settings.API_URL + '/api/admin/users';
-            const data = {
-                username: this.state.username,
-                password: this.state.password,
-                teamId: this.state.teamId
-            };
-            axios.put(url, data)
+            const { username, password, teamId } = this.state;
+            createUser(username, password, teamId)
                 .then(result => {
                     console.log(result);
                     alert('Utilizador criado com sucesso.');

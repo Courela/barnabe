@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import axios from 'axios';
-import settings from '../settings';
 import "../styles/Login.css";
 //import errors from '../components/Errors';
+import { login } from '../utils/communications';
 
 export default class Login extends Component {
     constructor(props) {
@@ -79,15 +78,7 @@ export default class Login extends Component {
 }
 
 async function validateUser(username, password) {
-    const promise = axios.post(
-        settings.API_URL + '/api/authenticate',
-        { username: username, password: password },
-        {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    );
+    const promise = login(username, password);
     return await promise.then(response => {
         console.log(response);
         return response.data;

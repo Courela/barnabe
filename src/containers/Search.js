@@ -5,12 +5,11 @@ import {
     FormGroup, FormControl, ControlLabel, Button, Form,
     Glyphicon, Tooltip, OverlayTrigger
 } from 'react-bootstrap';
-import axios from 'axios';
 import Table from '../components/Table';
-import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
 import { isResident, isValidPlayer } from '../utils/validations';
+import { getTeams, getTeamSteps, getPlayers, getStaff, exportPlayers, getSeasons } from '../utils/communications';
 
 export default class Seach extends Component {
     constructor(props) {
@@ -29,7 +28,7 @@ export default class Seach extends Component {
         };
 
         this.handleControlChange = this.handleControlChange.bind(this);
-        this.getTeams = this.getTeams.bind(this);
+        this.getSeasons = this.getSeasons.bind(this);
         //this.getSteps = this.getSteps.bind(this);
         this.linkToPlayer = this.linkToPlayer.bind(this);
         this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
@@ -37,8 +36,8 @@ export default class Seach extends Component {
         this.fetchResults = this.fetchResults.bind(this);
     }
 
-    componentDidMount() {
-        this.getTeams();
+    async componentDidMount() {
+        await this.getSeasons();
         //this.getSteps();
         this.fillSearchCriteria(this.props);
     }
@@ -55,23 +54,20 @@ export default class Seach extends Component {
         const { season, teamId, stepId } = queryString.parse(props.location.search);
         if (season && teamId && stepId) {
             //console.log('Set state: ', season, teamId, stepId);
-            this.getSteps(parseInt(season), parseInt(teamId), parseInt(stepId), () => {
+            this.getSteps(parseInt(season, 10), parseInt(teamId, 10), parseInt(stepId, 10), () => {
                 this.setState({
-                    season: parseInt(season),
-                    teamId: parseInt(teamId),
-                    stepId: parseInt(stepId)
+                    season: parseInt(season, 10),
+                    teamId: parseInt(teamId, 10),
+                    stepId: parseInt(stepId, 10)
                 }, () => this.fetchResults());
             });
         }   
     }
 
-    getTeams() {
-        const url = settings.API_URL + '/api/teams';
-        axios.get(url)
-            .then(results => {
-                this.setState({ teams: results.data });
-            })
-            .catch(errors.handleError);
+    async getSeasons() {
+        var seasons = await getSeasons().then(results => results.data);
+        var teams = await getTeams().then(results => results.data);
+        this.setState({ seasons: seasons, teams: teams });
     }
 
     // getSteps() {
@@ -84,11 +80,23 @@ export default class Seach extends Component {
     // }
 
     getSteps(season, teamId, stepId = 0, callback = null) {
-        axios.get(settings.API_URL + '/api/seasons/'+ season + '/teams/' + teamId + '/steps')
-                .then(result => {
-                    this.setState({ steps: result.data, stepId: stepId, data: [], exportDataUrl: null }, callback);
-                })
-                .catch(errors.handleError);
+        getTeamSteps(season, teamId)
+            .then(result => {
+                this.setState({ steps: result.data, stepId: stepId, data: [], exportDataUrl: null }, callback);
+            })
+            .catch(errors.handleError);
+    }
+
+    handleSeasonChange(evt) {
+        const season = evt.target.value;
+        const { teamId } = this.state;
+        if (season && teamId) {
+            this.getSteps(season, teamId);
+        }
+
+        this.handleControlChange(evt);
+
+        if(evt) { evt.preventDefault(); }
     }
 
     handleTeamChange(evt) {
@@ -98,7 +106,7 @@ export default class Seach extends Component {
             this.getSteps(season, teamId);
         }
 
-        this.setState({ [evt.target.name]: teamId });
+        this.handleControlChange(evt);
 
         if(evt) { evt.preventDefault(); }
     }
@@ -124,7 +132,7 @@ export default class Seach extends Component {
 
     fetchResults() {
         const { season, teamId, stepId } = this.state;
-        axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players')
+        getPlayers(season, teamId, stepId)
             .then(result => {
                 //console.log(result.data);
                 if (result.data && result.data.length > 0) {
@@ -139,7 +147,7 @@ export default class Seach extends Component {
                 errors.handleError(err);
             });
 
-            axios.get(settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff')
+        getStaff(season, teamId, stepId)
             .then(result => {
                 //console.log(result.data);
                 if (result.data && result.data.length > 0) {
@@ -162,7 +170,7 @@ export default class Seach extends Component {
 
     prepareExport() {
         const { season, teamId, stepId } = this.state;
-        axios.get(settings.API_URL + '/api/admin/export?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId)
+        exportPlayers(season, teamId, stepId)
             .then(result => {
                 var blob = new Blob([result.data.data], {type: "txt/csv"});
                 var url = window.URL.createObjectURL(blob);
@@ -189,6 +197,7 @@ export default class Seach extends Component {
 
         const { season, teamId, stepId } = this.state;
 
+        const selectSeasons = this.state.seasons.map((s,idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
         const selectTeams = this.state.teams.map((t,idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
         const selectSteps = this.state.steps.map((s,idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
 
@@ -207,10 +216,9 @@ export default class Seach extends Component {
                 <FormGroup controlId="selectSeason">
                     <ControlLabel>Época</ControlLabel>
                     <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleControlChange} value={season}>
+                        onChange={this.handleSeasonChange.bind(this)} value={season}>
                         <option value="0">Escolha...</option>
-                        <option value="2017">2017</option>
-                        <option value="2018">2018</option>
+                        {selectSeasons}
                     </FormControl>
                     <FormControl.Feedback />
                 </FormGroup>

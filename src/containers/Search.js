@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import queryString from 'query-string'
+import queryString from 'query-string';
 import {
     FormGroup, FormControl, ControlLabel, Button, Form,
     Glyphicon, Tooltip, OverlayTrigger

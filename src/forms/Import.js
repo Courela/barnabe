@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import queryString from 'query-string';
 import settings from '../settings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
-import { getSeasons, getStep, getPlayers, copyPlayers } from '../utils/communications';
+import { getSeasons, getStep, getPlayers, copyPlayers, getStaff } from '../utils/communications';
 
 export default class Import extends React.Component {
     constructor(props) {
@@ -14,6 +15,7 @@ export default class Import extends React.Component {
             season: props.match.params.year,
             stepId: props.match.params.stepId,
             teamId: props.teamId,
+            role: props.location.search ? queryString.parse(props.location.search).role : null,
             seasons: [],
             selectedSeason: 0,
             //selected: {},
@@ -31,34 +33,35 @@ export default class Import extends React.Component {
         this.isPlayerEligible = this.isPlayerEligible.bind(this);
     }
 
-    componentDidMount() {
-        if (!this.state.step) {
-            getStep(this.state.stepId, this.state.season)
-                .then(result => {
-                    //console.log(result);
-                    if (result.data) {
-                        this.setState({ step: result.data });
+    async componentDidMount() {
+        var step = this.state.step;
+        if (!step) {
+            step = await getStep(this.state.stepId, this.state.season)
+                .then(result => result.data)
+                .catch(errors.handleError);
+        }
+
+        var seasons = this.state.seasons;
+        if (this.state.seasons.length === 0) {
+            seasons = await getSeasons()
+                .then((result) => {
+                    if (result.data && result.data.length > 0) {
+                        return result.data.filter((v,i,arr) => v.Year < this.state.season);
                     }
                 })
                 .catch(errors.handleError);
         }
 
-        if (this.state.seasons.length === 0) {
-            getSeasons()
-                .then((result) => {
-                    if (result.data && result.data.length > 0) {
-                        var seasons = result.data.filter((v,i,arr) => v.Year < this.state.season);
-                        this.setState({ seasons: seasons });
-                    }
-                })
-                .catch(errors.handleError);
-        }
+        this.setState({ step: step, seasons: seasons });
     }
 
     getPlayers() {
         if (this.state.players.length === 0) {
-            const { selectedSeason, teamId, stepId } = this.state;
-            getPlayers(selectedSeason, teamId, stepId)
+            const { selectedSeason, teamId, stepId, role } = this.state;
+            console.log('Role: ', role);
+            (role === 'staff' ? 
+                getStaff(selectedSeason, teamId, stepId) :
+                getPlayers(selectedSeason, teamId, stepId))
                 .then(result => {
                     //console.log(result);
                     if (result.data && result.data.length > 0) {
@@ -80,11 +83,11 @@ export default class Import extends React.Component {
 
     handleSubmit(evt) {
         console.log('Selected: ', this.state.selected);
-        const { season, teamId, stepId } = this.state;
+        const { season, teamId, stepId, role } = this.state;
         copyPlayers(season, teamId, stepId, this.state.selectedSeason, this.state.selected)
             .then(result => {
                 console.log(result);
-                alert('Jogadores importados com sucesso.');
+                alert((role === 'staff' ? 'Membros da Equipa Técnica': 'Jogadores' ) + ' importados com sucesso.');
                 this.props.history.push('/seasons/' + season + '/steps/' + stepId);
             })
             .catch((err) => {
@@ -132,7 +135,7 @@ export default class Import extends React.Component {
     }
 
     isPlayerEligible(player) {
-        return player.person.Birthdate >= this.state.step.MinDate;
+        return this.state.role === 'staff' || player.person.Birthdate >= this.state.step.MinDate;
     }
 
     render() {

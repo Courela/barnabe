@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import queryString from 'query-string'
-import {
-    FormGroup, FormControl, ControlLabel, Button, Form
-} from 'react-bootstrap';
+import queryString from 'query-string';
+import { Button, Form } from 'react-bootstrap';
 //import atob from 'atob';
-import errors from '../components/Errors';
-import { getSeasons, getTeams, getTeamSteps, getTeamTemplate } from '../utils/communications';
+import { SeasonSelect, TeamSelect, StepSelect } from '../../components/Controls';
+import errors from '../../components/Errors';
+import { getSeasons, getTeams, getTeamSteps, getTeamTemplate } from '../../utils/communications';
 
 export default class TeamSheet extends Component {
     constructor(props) {
@@ -60,7 +59,7 @@ export default class TeamSheet extends Component {
     async getFilters() {
         var seasons = await getSeasons().then(results => results.data);
         var teams = await getTeams().then(results => results.data);
-        var activeSeason = seasons.filter(s => s.IsActive)[0];
+        var activeSeason = seasons.find(s => s.IsActive);
         this.setState({ seasons: seasons, teams: teams, season: activeSeason.Year });
     }
 
@@ -133,40 +132,12 @@ export default class TeamSheet extends Component {
     render() {
         const { season, teamId, stepId } = this.state;
 
-        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
-        const selectTeams = this.state.teams.map((t, idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
-        const selectSteps = this.state.steps.map((s, idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
-
         return (
             <div>
                 <Form>
-                    <FormGroup controlId="selectSeason">
-                        <ControlLabel>Época</ControlLabel>
-                        <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
-                            onChange={this.handleSeasonChange.bind(this)} value={season}>
-                            <option value="0">Escolha...</option>
-                            {selectSeasons}
-                        </FormControl>
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    <FormGroup controlId="selectTeam">
-                        <ControlLabel>Equipa</ControlLabel>
-                        <FormControl name="teamId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                            onChange={this.handleTeamChange.bind(this)} value={teamId}>
-                            <option value="0">Escolha...</option>
-                            {selectTeams}
-                        </FormControl>
-                        <FormControl.Feedback />
-                    </FormGroup>
-                    <FormGroup controlId="selectStep">
-                        <ControlLabel>Escalão</ControlLabel>
-                        <FormControl name="stepId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                            onChange={this.handleControlChange} value={stepId}>
-                            <option value="0">Escolha...</option>
-                            {selectSteps}
-                        </FormControl>
-                        <FormControl.Feedback />
-                    </FormGroup>
+                    <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
+                    <TeamSelect teams={this.state.teams} value={teamId} onChange={this.handleTeamChange.bind(this)} />
+                    <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
                     <Button bsStyle="primary" type="submit" onClick={this.handleSubmit} disabled={this.state.loading}>Gerar</Button>
                     <span style={{ display: this.state.loading ? 'inline' : 'none' }}><img src="/show_loader.gif" alt="" style={{ height: '40px', width: '40px' }} /></span>
 

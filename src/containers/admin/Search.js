@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import queryString from 'query-string';
-import {
-    FormGroup, FormControl, ControlLabel, Button, Form,
-    Glyphicon, Tooltip, OverlayTrigger
-} from 'react-bootstrap';
-import Table from '../components/Table';
-import errors from '../components/Errors';
-import { dateFormat } from '../utils/formats';
-import { isResident, isValidPlayer } from '../utils/validations';
-import { getTeams, getTeamSteps, getPlayers, getStaff, exportPlayers, getSeasons } from '../utils/communications';
+import {  Button, Form, Glyphicon, Tooltip, OverlayTrigger} from 'react-bootstrap';
+import { SeasonSelect, TeamSelect, StepSelect } from '../../components/Controls';
+import Table from '../../components/Table';
+import errors from '../../components/Errors';
+import { dateFormat } from '../../utils/formats';
+import { isResident, isValidPlayer } from '../../utils/validations';
+import { getTeams, getTeamSteps, getPlayers, getStaff, exportPlayers, getSeasons } from '../../utils/communications';
 
 export default class Seach extends Component {
     constructor(props) {
@@ -197,10 +195,6 @@ export default class Seach extends Component {
 
         const { season, teamId, stepId } = this.state;
 
-        const selectSeasons = this.state.seasons.map((s,idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
-        const selectTeams = this.state.teams.map((t,idx) => <option key={idx} value={t.Id}>{t.ShortDescription}</option>);
-        const selectSteps = this.state.steps.map((s,idx) => <option key={idx} value={s.Id}>{s.Description}</option>);
-
         let columns = [
             { Header: "", id: 'icon', width: 25, Cell: (row) => statusIcon(row.original) },
             { Header: "Nome", id: 'id', accessor: "person.Name", Cell: (row) => this.linkToPlayer(row) },
@@ -211,35 +205,10 @@ export default class Seach extends Component {
         ];
 
         return (
-            <div>
-                <Form inline>
-                <FormGroup controlId="selectSeason">
-                    <ControlLabel>Época</ControlLabel>
-                    <FormControl name="season" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleSeasonChange.bind(this)} value={season}>
-                        <option value="0">Escolha...</option>
-                        {selectSeasons}
-                    </FormControl>
-                    <FormControl.Feedback />
-                </FormGroup>
-                <FormGroup controlId="selectTeam">
-                    <ControlLabel>Equipa</ControlLabel>
-                    <FormControl name="teamId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleTeamChange.bind(this)} value={teamId}>
-                        <option value="0">Escolha...</option>
-                        {selectTeams}
-                    </FormControl>
-                    <FormControl.Feedback />
-                </FormGroup>
-                <FormGroup controlId="selectStep">
-                    <ControlLabel>Escalão</ControlLabel>
-                    <FormControl name="stepId" componentClass="select" placeholder="select" style={{ width: 200 }}
-                        onChange={this.handleControlChange} value={stepId}>
-                        <option value="0">Escolha...</option>
-                        {selectSteps}
-                    </FormControl>
-                    <FormControl.Feedback />
-                </FormGroup>
+            <Form inline>
+                <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
+                <TeamSelect teams={this.state.teams} value={teamId} onChange={this.handleTeamChange.bind(this)} />
+                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
                 <h3>Jogadores</h3>
                 <Table columns={columns} data={this.state.data}/>
@@ -260,7 +229,6 @@ export default class Seach extends Component {
                             ]}
                             data={this.state.staff} />
                     </div>
-                </Form>
-            </div>);
+            </Form>);
     }
 }

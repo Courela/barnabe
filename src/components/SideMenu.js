@@ -136,8 +136,6 @@ function AnonymousMenu(props) {
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
             {props.teamsMenu()}
-            <MenuItem key={"/seasons/" + props.season + "/results"}>Resultados</MenuItem>
-            <MenuItem key={"/seasons/" + props.season + "/standings"}>Classificação</MenuItem>
         </Menu>);
 }
 function AuthenticatedMenu(props) {
@@ -160,7 +158,7 @@ function AdminMenu(props) {
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
             <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
             <MenuItem key={"/admin/users"}>Crir Utilizador</MenuItem>
-            <MenuItem key={"/admin/seasons"}>Gerir Épocas</MenuItem>
+            <MenuItem key={"/admin/manage-steps"}>Gerir escalões</MenuItem>
             <MenuItem key={"/admin/search"}>Procurar</MenuItem>
             <SubMenu title="Fichas de Jogo">
                 <MenuItem key={"/admin/match-sheet"}>Jogo</MenuItem>

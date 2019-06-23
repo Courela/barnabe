@@ -3,7 +3,6 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import Home from "./containers/Home";
 import NotFound from "./containers/NotFound";
 import Login from "./containers/Login";
-import Torneio from "./containers/Torneio";
 import Season from "./containers/Season";
 import AppliedRoute from "./components/AppliedRoute";
 import Documents from "./containers/Documents";
@@ -17,10 +16,9 @@ export default ({ childProps }) => {
         <AppliedRoute key={2 + childProps.year} path="/admin" component={Season} props={childProps} />,
         <AppliedRoute key={3 + childProps.year} path="/seasons/:year/steps*" component={Season} props={childProps} />,
         <AppliedRoute key={4 + childProps.year} path="/seasons/:year" component={Season} props={childProps} />,
-        <AppliedRoute key={5 + childProps.year} path="/torneio" exact component={Torneio} props={childProps} />,
-        <AppliedRoute key={6 + childProps.year} path="/login" exact component={Login} props={childProps} />,
-        <AppliedRoute key={7 + childProps.year} path="/documents" exact component={Documents} props={childProps} />,
-        <AppliedRoute key={8 + childProps.year} path="/" exact component={Home} props={childProps} />,
+        <AppliedRoute key={5 + childProps.year} path="/login" exact component={Login} props={childProps} />,
+        <AppliedRoute key={6 + childProps.year} path="/documents" exact component={Documents} props={childProps} />,
+        <AppliedRoute key={7 + childProps.year} path="/" exact component={Home} props={childProps} />,
         <Route key="99" component={NotFound} />,
     ];
 

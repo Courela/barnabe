@@ -3,7 +3,7 @@ import {
     FormGroup, FormControl, ControlLabel, HelpBlock, Button
 } from 'react-bootstrap';
 import axios from 'axios';
-import settings from '../settings';
+import settings from '../../settings';
 
 export default class GoogleApiForm extends Component {
     constructor(props, context) {

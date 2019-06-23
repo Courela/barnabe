@@ -3,9 +3,9 @@ import {
     FormGroup, FormControl, ControlLabel, Button
 } from 'react-bootstrap';
 import axios from 'axios';
-import settings from '../settings';
-import errors from '../components/Errors';
-import { getSeasons } from '../utils/communications';
+import settings from '../../settings';
+import errors from '../../components/Errors';
+import { getSeasons } from '../../utils/communications';
 
 export default class ManageSeasons extends Component {
     constructor(props, context) {

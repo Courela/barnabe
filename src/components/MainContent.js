@@ -1,26 +1,22 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import SeasonMain from '../containers/SeasonMain';
-import Team from '../containers/Team';
 import Player from '../containers/Player';
 import NotFound from '../containers/NotFound';
-import Results from '../containers/Results';
-import Standings from '../containers/Standings';
 import StepTeam from '../containers/StepTeam';
 import Documents from '../containers/Documents';
-import PlayerForm from '../forms/PlayerFom';
-import StepForm from '../forms/StepForm';
-import GoogleApiForm from '../forms/GoogleApiForm';
-import AddUser from '../forms/AddUser';
-//import ImportPlayers from '../forms/ImportPlayers';
+import PlayerForm from '../forms/PlayerForm';
+import StepForm from '../forms/admin/StepForm';
+import GoogleApiForm from '../forms/admin/GoogleApiForm';
+import AddUser from '../forms/admin/AddUser';
 import ImportPlayers from '../forms/Import';
 import PlayerDetails from '../forms/PlayerDetails';
-import ManageSeasons from '../forms/ManageSeasons';
-import Search from '../containers/Search';
-import Statistics from '../containers/Statistics';
-import ManagePersons from '../containers/ManagePersons';
-import MatchSheet from '../containers/MatchSheet';
-import TeamSheet from '../containers/TeamSheet';
+import ManageSeasons from '../forms/admin/ManageSeasons';
+import Search from '../containers/admin/Search';
+import Statistics from '../containers/admin/Statistics';
+import ManagePersons from '../containers/admin/ManagePersons';
+import MatchSheet from '../containers/admin/MatchSheet';
+import TeamSheet from '../containers/admin/TeamSheet';
 
 export default class MainContent extends Component {
     render() {
@@ -28,16 +24,6 @@ export default class MainContent extends Component {
         let stepId = 0;
 
         const authenticatedRoutesArr = [{
-            path: '/seasons/:year/remove-step',
-            exact: true,
-            //component: AddStep,
-            render: (props) => { return (<StepForm {...props} teamId={this.props.teamId} />) }
-        },{
-            path: '/seasons/:year/add-step',
-            exact: true,
-            //component: AddStep,
-            render: (props) => { return (<StepForm {...props} teamId={this.props.teamId} />) }
-        }, {
             path: '/seasons/:year/steps/:stepId/import',
             exact: true,
             render: (props) => {
@@ -76,22 +62,23 @@ export default class MainContent extends Component {
             authenticatedRoutesArr.push({
                 path: '/admin',
                 exact: true,
-                //component: AddStep,
                 render: (props) => { return (<Statistics {...props} />) }
             },{
                 path: '/admin/drive',
                 exact: true,
-                //component: AddStep,
                 render: (props) => { return (<GoogleApiForm {...props} />) }
             },{
                 path: '/admin/users',
                 exact: true,
-                //component: AddStep,
                 render: (props) => { return (<AddUser {...props} />) }
             },{
+                path: '/admin/manage-steps',
+                exact: true,
+                component: StepForm
+            }, 
+            {
                 path: '/admin/seasons',
                 exact: true,
-                //component: AddStep,
                 render: (props) => { return (<ManageSeasons {...props} />) }
             },{
                 path: '/admin/manage-persons',
@@ -133,11 +120,8 @@ export default class MainContent extends Component {
             });
 
         const anonymousRoutes = [
-            <Route key="1" path="/seasons/:year/results" exact component={Results} />,
-            <Route key="2" path="/seasons/:year/standings" exact component={Standings} />,
-            <Route key="3" path="/seasons/:year/teams/:teamId" exact component={Team} />,
-            <Route key="4" path="/seasons/:year/players/:playerId" exact component={Player} />,
-            <Route key="5" path="/seasons/:year" exact render={(props) => <div>Edição {props.match.params.year}</div>} />,
+            <Route key="1" path="/seasons/:year/players/:playerId" exact component={Player} />,
+            <Route key="2" path="/seasons/:year" exact render={(props) => <div>Edição {props.match.params.year}</div>} />,
             //<Route key="6" path="/seasons/:year/teams/:teamId/*steps/:stepId?" render={(props) => <Redirect push to={'/login?redirect=' + props.match.url} />} />,
             <Route key="99" component={NotFound} />
         ];

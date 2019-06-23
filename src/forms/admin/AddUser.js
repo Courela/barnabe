@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {
     FormGroup, FormControl, ControlLabel, HelpBlock, Button
 } from 'react-bootstrap';
-import errors from '../components/Errors';
-import { getTeams, createUser } from '../utils/communications';
+import errors from '../../components/Errors';
+import { getTeams, createUser } from '../../utils/communications';
 
 export default class AddUser extends Component {
     constructor(props, context) {

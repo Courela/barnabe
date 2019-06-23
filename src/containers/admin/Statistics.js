@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStatistics } from '../utils/communications';
+import { getStatistics } from '../../utils/communications';
 
 export default class Statistics extends React.Component {
     constructor(props) {

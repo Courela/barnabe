@@ -17,6 +17,7 @@ import Statistics from '../containers/admin/Statistics';
 import ManagePersons from '../containers/admin/ManagePersons';
 import MatchSheet from '../containers/admin/MatchSheet';
 import TeamSheet from '../containers/admin/TeamSheet';
+import Users from '../containers/admin/Users';
 
 export default class MainContent extends Component {
     render() {
@@ -32,14 +33,13 @@ export default class MainContent extends Component {
         }, {
             path: '/seasons/:year/steps/:stepId',
             exact: true,
-            render: (props) => {
-                return (<StepTeam {...props} isSeasonActive={this.props.isSeasonActive} teamId={this.props.teamId} />);
-            }
+            render: (props) => <StepTeam {...props} teamId={this.props.teamId} 
+                            isSeasonActive={this.props.isSeasonActive} isSignUpExpired={this.props.isSignUpExpired} />
         }, {
             path: '/seasons/:year/steps/:stepId/players/:playerId',
             exact: true,
-            render: (props) => <PlayerDetails {...props} isSeasonActive={this.props.isSeasonActive} 
-                                    teamId={this.props.teamId} eighteenDate={this.props.eighteenDate}/>,
+            render: (props) => <PlayerDetails {...props} teamId={this.props.teamId} eighteenDate={this.props.eighteenDate}
+                                    isSeasonActive={this.props.isSeasonActive} isSignUpExpired={this.props.isSignUpExpired}/>
         }, {
             path: '/seasons/:year/steps/:stepId/player',
             exact: true,
@@ -55,7 +55,8 @@ export default class MainContent extends Component {
         }, {
             path: '/seasons/:year',
             exact: true,
-            render: (props) => <SeasonMain {...props} isSeasonActive={this.props.isSeasonActive} teamId={this.props.teamId} />
+            render: (props) => <SeasonMain {...props} teamId={this.props.teamId} 
+                                    isSeasonActive={this.props.isSeasonActive} isSignUpExpired={this.props.isSignUpExpired}/>
         }];
 
         if (this.props.isAuthenticated && !this.props.teamId) {
@@ -69,6 +70,10 @@ export default class MainContent extends Component {
                 render: (props) => { return (<GoogleApiForm {...props} />) }
             },{
                 path: '/admin/users',
+                exact: true,
+                render: (props) => { return (<Users {...props} />) }
+            },{
+                path: '/admin/users/add',
                 exact: true,
                 render: (props) => { return (<AddUser {...props} />) }
             },{

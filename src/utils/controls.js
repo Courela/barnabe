@@ -3,9 +3,11 @@ import {
     FormGroup, FormControl, ControlLabel, HelpBlock
 } from 'react-bootstrap';
 
-function FieldGroup({ id, label, help, ...props }) {
+function FieldGroup({ id, label, help, validationState, validationArgs, ...props }) {
+    var state = validationState ? (validationArgs ? validationState(validationArgs) : validationState()) : null;
     return (
-        <FormGroup controlId={id} validationState={props.validationState ? (props.validationArgs ? props.validationState(...props.validationArgs) : props.validationState()) : null}>
+        <FormGroup controlId={id} 
+            validationState={state}>
             <ControlLabel>{label}</ControlLabel>
             <FormControl {...props} />
             {help && <HelpBlock>{help}</HelpBlock>}

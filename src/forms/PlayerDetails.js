@@ -386,25 +386,13 @@ function FormPlayer(props) {
                 validationState={validatePhone}
             />
             { props.roleId == 1 ?
-                <Checkbox checked={props.isResident} disabled={!props.isEditing || props.isSubmitting}
-                    name="isResident" onChange={props.handleCheckboxToggle} >
-                    <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
-                </Checkbox> : ''}
-            {props.isResident ?
-                <FieldGroup
-                    id="formVoterNr"
-                    type="text"
-                    name="voterNr"
-                    label={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
-                    placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
-                    value={props.voterNr}
-                    onChange={props.handleControlChange}
-                    readOnly={!props.isEditing || props.isSubmitting}
-                    maxLength="10"
-                /> : ''}
-            {props.isResident && props.isEditing ?
                 <Fragment>
-                    Se não sabe o Nr de Eleitor pode obtê-lo aqui:&nbsp;
+                    <Checkbox checked={props.isResident} disabled={!props.isEditing || props.isSubmitting}
+                        name="isResident" onChange={props.handleCheckboxToggle} >
+                        <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
+                    </Checkbox>
+                    Para efeitos de valição do estatuto de residente será usada a morada registada no
+                    Cartão do Cidadão (usada para efeitos de votação eleitoral). Pode validar a morada aqui:&nbsp;
                     <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
                 </Fragment> : ''}
         </Fragment>;
@@ -471,14 +459,14 @@ function FormPlayer(props) {
             {photoUploader}    
             { props.roleId == 1 ? docUploader : '' } 
         </div> :
-        ( /* props.isSeasonActive */ props.season == 2018 && props.roleId == 1 ?
+        ( props.isSeasonActive && props.roleId == 1 ?
             <Fragment>
                 <p style={{ margin: '2px'}}><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
                     {props.docExists ? ' submetida.' : ' em falta!'}
                 </span></p>
             </Fragment> : '' );
 
-    const showEditButton = /* props.isSeasonActive */ props.season && (!props.personId || !props.isEditing);
+    const showEditButton = props.isSeasonActive  && (!props.personId || !props.isEditing);
     const editButton = showEditButton ?
         <div className="column" style={{ float: 'right' }}>
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>
@@ -580,7 +568,7 @@ function FormPlayer(props) {
         { props.roleId == 1 ?
                 <Checkbox checked={props.isLocalTown} disabled={!props.isEditing || props.isSubmitting}
                     name="isLocalTown" onChange={props.handleCheckboxToggle} >
-                    <span style={{ fontWeight: '700' }}>Residente na ex-freguesia de Pêro Pinheiro/Montelavar ?</span>
+                    <span style={{ fontWeight: '700' }}>Residente na freguesia ?</span>
                 </Checkbox> : ''}
         {caretakerCtrls}
         {caretakerRequired ? <div /> : commonFields}

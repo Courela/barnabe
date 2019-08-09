@@ -143,6 +143,11 @@ export function removePlayer(season, teamId, stepId, playerId) {
     return deleteRequest(url);
 }
 
+export function getUsers() {
+    const url = settings.API_URL + '/api/admin/users';
+    return getRequest(url);
+}
+
 export function createUser(username, password, teamId) {
     const url = settings.API_URL + '/api/admin/users';
     const data = {

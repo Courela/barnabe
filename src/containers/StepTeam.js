@@ -90,7 +90,7 @@ export default class StepTeam extends Component {
 
     playerActions(player) {
         const { season, stepId } = this.state;
-        if (this.props.isSeasonActive) {
+        if (this.props.isSeasonActive && !this.props.isSignUpExpired) {
             const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.Id + '?edit=1';
             const removeFn = (evt) => this.removePlayer(player.Id, player.person.Name);
             return (
@@ -129,7 +129,7 @@ export default class StepTeam extends Component {
             <Fragment>
                 <h2>{this.state.stepName}</h2>
                 <div style={{ float: 'right' }}>
-                    {this.props.isSeasonActive && this.state.stepName ?
+                    {this.props.isSeasonActive && !this.props.isSignUpExpired && this.state.stepName ?
                         <ButtonToolbar>
                             <Button bsStyle="success" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import?role=players'}>Importar épocas anteriores</Button>
                             <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>

@@ -446,23 +446,13 @@ function PlayerDetails(props) {
                 validationArgs={[]}
             />
             {props.roleId && props.roleId == 1 ?
-                <Checkbox checked={props.isResident}
-                    name="isResident" onChange={props.handleCheckboxToggle} >
-                    <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
-                </Checkbox> : ''}
-            {props.isResident ?
                 <Fragment>
-                    <FieldGroup
-                        id="formVoterNr"
-                        type="text"
-                        name="voterNr"
-                        label={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
-                        placeholder={caretakerRequired ? "Nr de Eleitor do Responsável" : "Nr de Eleitor"}
-                        value={props.voterNr}
-                        onChange={props.handleControlChange}
-                        maxLength="10"
-                    />
-                    Se não sabe o Nr de Eleitor pode obtê-lo aqui:&nbsp;
+                    <Checkbox checked={props.isResident}
+                        name="isResident" onChange={props.handleCheckboxToggle} >
+                        <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
+                    </Checkbox>
+                    Para efeitos de valição do estatuto de residente será usada a morada registada no
+                    Cartão do Cidadão (usada para efeitos de votação eleitoral). Pode validar a morada aqui:&nbsp;
                     <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
                 </Fragment> : ''}
         </Fragment>;
@@ -570,7 +560,7 @@ function PlayerDetails(props) {
         {props.roleId && props.roleId == 1 ?
                 <Checkbox checked={props.isLocalTown} disabled={!props.isEditing || props.isSubmitting}
                     name="isLocalTown" onChange={props.handleCheckboxToggle} >
-                    <span style={{ fontWeight: '700' }}>Residente na ex-freguesia de Pêro Pinheiro/Montelavar ?</span>
+                    <span style={{ fontWeight: '700' }}>Residente na freguesia ?</span>
                 </Checkbox> : ''}
         <FieldGroup
             id="formFoto"

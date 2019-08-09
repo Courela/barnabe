@@ -157,7 +157,10 @@ function AdminMenu(props) {
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
             <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
-            <MenuItem key={"/admin/users"}>Crir Utilizador</MenuItem>
+            <SubMenu title="Utilizadores">
+                <MenuItem key={"/admin/users/add"}>Criar</MenuItem>
+                <MenuItem key={"/admin/users"}>Listar</MenuItem>
+            </SubMenu>
             <MenuItem key={"/admin/manage-steps"}>Gerir escalões</MenuItem>
             <MenuItem key={"/admin/search"}>Procurar</MenuItem>
             <SubMenu title="Fichas de Jogo">

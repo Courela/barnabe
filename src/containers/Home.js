@@ -22,15 +22,15 @@ e posteriormente digitalizada, sendo ambos carregados na página de inscrição 
 
 <p>Os escalões disponíveis para inscrição são os seguintes:</p>
 <ul>
-    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 21/11/2010 e 31/12/2014 (Dos 5 aos 8 anos);</li>
-    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 21/11/2006 e 20/11/2010 (Dos 9 aos 12 anos);</li>
-    <li><strong>II Escalão</strong> - masculino para nascidos entre 21-11-2001 a 20-11-2006 (Dos 13 aos 17 anos);</li>
-    <li><strong>III Escalão</strong> - masculino para nascidos antes de 20-11-2001 (+ de 17 anos);</li>
-    <li><strong>Escalão Feminino</strong> - para nascidas antes de 20-11-2006 (+ de 12 anos).</li>
+    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 22/11/2010 e 31/12/2014 (Dos 5 aos 8 anos);</li>
+    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 22/11/2006 e 21/11/2010 (Dos 8 aos 12 anos);</li>
+    <li><strong>II Escalão</strong> - masculino para nascidos entre 22-11-2001 a 21-11-2006 (Dos 13 aos 17 anos);</li>
+    <li><strong>III Escalão</strong> - masculino para nascidos antes de 21-11-2001 (+ de 17 anos);</li>
+    <li><strong>Escalão Feminino</strong> - para nascidas antes de 21-11-2006 (+ de 12 anos).</li>
 </ul>
 
 <p>Para mais informações sobre o torneio consulte o 
-    <a href="https://drive.google.com/open?id=1HdbvEZwIiopL1azo8i7w75XAQBbyiFAI" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
+    <a href="https://drive.google.com/file/d/1GpnPTyuPhzyLk6DuPl2u8o4VGFNiFM9d/view?usp=sharing" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
 <p>Qualquer problema ou questão relacionada com a página de inscrições, envie um mail para <a href="mailto:courela+tacabarnabe@gmail.com">courela+tacabarnabe@gmail.com</a>.</p>
 
 <p>Acompanhem-nos na página do torneio e também no Facebook e no Twitter.</p>

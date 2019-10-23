@@ -311,6 +311,7 @@ export default class PlayerDetails extends Component {
 
         const formDetails = this.state.playerId ?
             <FormPlayer {...this.state}
+                location={this.props.location}
                 onChangeBirthdate={this.onChangeBirthdate}
                 handleControlChange={this.handleControlChange.bind(this)}
                 handleCheckboxToggle={this.handleCheckboxToggle.bind(this)}
@@ -466,7 +467,8 @@ function FormPlayer(props) {
                 </span></p>
             </Fragment> : '' );
 
-    const showEditButton = props.isSeasonActive  && (!props.personId || !props.isEditing);
+    const isAdmin = props.location.pathname.includes('admin');
+    const showEditButton = (props.isSeasonActive || isAdmin) && (!props.personId || !props.isEditing);
     const editButton = showEditButton ?
         <div className="column" style={{ float: 'right' }}>
             <Button bsStyle="primary" onClick={props.handleEdit}>Editar</Button>

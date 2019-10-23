@@ -156,13 +156,18 @@ function AuthenticatedMenu(props) {
 function AdminMenu(props) {
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
-            <MenuItem key={"/admin/drive"}>Google Drive</MenuItem>
+            {/* <MenuItem key={"/admin/drive"}>Google Drive</MenuItem> */}
             <SubMenu title="Utilizadores">
                 <MenuItem key={"/admin/users/add"}>Criar</MenuItem>
                 <MenuItem key={"/admin/users"}>Listar</MenuItem>
             </SubMenu>
+            <SubMenu title="Jogadores">
+                <MenuItem key={"/admin/players/add"}>Inscrever</MenuItem>
+                <MenuItem key={"/admin/players/search"}>Procurar</MenuItem>
+            </SubMenu>
+            <MenuItem key={"/admin/seasons"}>Épocas</MenuItem>
             <MenuItem key={"/admin/manage-steps"}>Gerir escalões</MenuItem>
-            <MenuItem key={"/admin/search"}>Procurar</MenuItem>
+            <MenuItem key={"/admin/listing"}>Listar</MenuItem>
             <SubMenu title="Fichas de Jogo">
                 <MenuItem key={"/admin/match-sheet"}>Jogo</MenuItem>
                 <MenuItem key={"/admin/team-sheet"}>Equipa</MenuItem>

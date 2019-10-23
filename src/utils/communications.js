@@ -69,6 +69,11 @@ export function getTeamSteps(season, teamId) {
     return getRequest(url);
 }
 
+export function getTeamsByStep(season, stepId) {
+    const url = settings.API_URL + '/api/teams?season=' + season + '&stepId=' + stepId;
+    return getRequest(url);
+}
+
 export function removeTeamStep(season, teamId, stepId) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId;
     return deleteRequest(url);
@@ -170,6 +175,17 @@ export function logout() {
 export function getStatistics() {
     const url = settings.API_URL + '/api/admin/statistics';
     return getRequest(url);
+}
+
+export function addSeason(year, isActive, signUpDueDate, startDate) {
+    const url = settings.API_URL + '/api/admin/seasons';
+    const data = {
+        year: year,
+        isActive: isActive,
+        signUpDueDate: signUpDueDate,
+        startDate: startDate
+    };
+    return putRequest(url, data);
 }
 
 function getRequest(url) {

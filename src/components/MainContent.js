@@ -18,6 +18,8 @@ import ManagePersons from '../containers/admin/ManagePersons';
 import MatchSheet from '../containers/admin/MatchSheet';
 import TeamSheet from '../containers/admin/TeamSheet';
 import Users from '../containers/admin/Users';
+import Listing from '../containers/admin/Listing';
+import AddPlayer from '../forms/admin/AddPlayer';
 
 export default class MainContent extends Component {
     render() {
@@ -77,6 +79,14 @@ export default class MainContent extends Component {
                 exact: true,
                 render: (props) => { return (<AddUser {...props} />) }
             },{
+                path: '/admin/players/add',
+                exact: true,
+                render: (props) => { return (<AddPlayer {...props} />) }
+            },{
+                path: '/admin/players/search',
+                exact: true,
+                component: Search
+            },{
                 path: '/admin/manage-steps',
                 exact: true,
                 component: StepForm
@@ -90,9 +100,9 @@ export default class MainContent extends Component {
                 exact: true,
                 component: ManagePersons
             },{
-                path: '/admin/search',
+                path: '/admin/listing',
                 exact: true,
-                component: Search
+                component: Listing
             },{
                 path: '/admin/match-sheet',
                 exact: true,

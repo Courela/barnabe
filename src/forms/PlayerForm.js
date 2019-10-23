@@ -21,12 +21,12 @@ export default class PlayerForm extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
 
-        const stepId = props.match.params.stepId;
+        const stepId = props.match.params.stepId || props.stepId;
 
         this.state = {
             steps: [],
             roles: [],
-            season: props.match.params.year,
+            season: props.match.params.year || props.season,
             teamId: props.teamId,
             stepId: stepId,
             personId: null,
@@ -242,7 +242,8 @@ export default class PlayerForm extends Component {
                         .then(result => {
                             console.log(result);
                             const playerId = result.data.Id;
-                            this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId);
+                            const isAdmin = this.props.location.pathname.includes('admin');
+                            this.props.history.push((isAdmin ? '/admin' : '') + '/seasons/' + season + (isAdmin ? '/teams/' + teamId : '') + '/steps/' + stepId + '/players/' + playerId);
                             // if (result.data && result.data.length > 0) {
                             //     this.setState({ data: result.data });
                             // }

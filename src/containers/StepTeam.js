@@ -187,7 +187,6 @@ function PlayersTable(props) {
         { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
         { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.IdCardNr" },
         { Header: "Estrangeiro", id: "foreign", Cell: (row) => isResident(row.original) },
-        { Header: "Nr Eleitor", id: "voterNr", accessor: "person.VoterNr", Cell: (row) => row.original.caretaker && row.original.caretaker.VoterNr ? row.original.caretaker.VoterNr : row.original.person.VoterNr },
         { Header: "", id: "actions", accessor: 'Id', Cell: (row) => props.playerActions(row.original) }
     ];
 

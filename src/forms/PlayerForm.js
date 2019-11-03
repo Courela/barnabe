@@ -20,6 +20,7 @@ export default class PlayerForm extends Component {
         this.validateStep = this.validateStep.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
+        this.handleReset = this.handleReset.bind(this);
 
         const stepId = props.match.params.stepId || props.stepId;
 
@@ -56,7 +57,7 @@ export default class PlayerForm extends Component {
     }
 
     getSteps() {
-        const year = this.props.match.params.year;
+        const year = this.props.match.params.year || this.props.season;
         const teamId = this.props.teamId;
 
         if (this.state.stepId > 0) {
@@ -104,7 +105,9 @@ export default class PlayerForm extends Component {
                                 id: s.Id,
                                 descr: s.Description,
                                 gender: s.Gender,
-                                isCaretakerRequired: s.IsCaretakerRequired
+                                isCaretakerRequired: s.IsCaretakerRequired,
+                                minDate: s.MinDate,
+                                maxDate: s.MaxDate
                             }))
                         });
                     }
@@ -172,7 +175,7 @@ export default class PlayerForm extends Component {
     }
 
     validateStep() {
-        if (this.state.stepId <= 0) return 'error';
+        if (!this.state.stepId || this.state.stepId <= 0) return 'error';
         return null;
     }
 
@@ -261,7 +264,7 @@ export default class PlayerForm extends Component {
         }
         else {
             console.log('Search person with docId ' + this.state.docId);
-            getPerson(this.state.docId)
+            getPerson(this.state.docId, true)
                 .then(result => {
                     const person = result.data;
                     console.log('Person result: ' + JSON.stringify(person));
@@ -270,12 +273,15 @@ export default class PlayerForm extends Component {
                         this.setState({
                             personId: person.Id,
                             name: person.Name,
-                            email: person.Email ? person.Email : '',
-                            phoneNr: person.Phone ? person.Phone : '',
+                            gender: person.Gender,
+                            email: person.Email ? person.Email : (person.caretaker ? person.caretaker.Email : ''),
+                            phoneNr: person.Phone ? person.Phone : (person.caretaker ? person.caretaker.Phone : ''),
                             birth: person.Birthdate ? new Date(person.Birthdate) : null,
                             voterNr: person.VoterNr,
                             isLocalBorn: person.LocalBorn ? person.LocalBorn : false,
-                            isLocalTown: person.LocalTown ? person.LocalTown : false
+                            isLocalTown: person.LocalTown ? person.LocalTown : false,
+                            caretakerDocId: person.caretaker ? person.caretaker.IdCardNr : '',
+                            caretakerName: person.caretaker ? person.caretaker.Name : '',
                         });
                     } else {
                         console.log('No person found');
@@ -347,6 +353,30 @@ export default class PlayerForm extends Component {
 
     handleCancel = () => this.props.history.goBack();
 
+    handleReset() {
+        this.setState(
+            {
+                personId: null,
+                name: '',
+                gender: '',
+                birth: null,
+                docId: '',
+                phoneNr: '',
+                email: '',
+                isResident: false,
+                isLocalBorn: false,
+                isLocalTown: false,
+                voterNr: '',
+                caretakerName: '',
+                caretakerDocId: '',
+                photoSrc: null,
+                comments: '',
+                doc: null,
+                isSubmitting: false
+            }
+        );
+    }
+
     render() {
         const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.descr}</option>);
 
@@ -390,7 +420,16 @@ export default class PlayerForm extends Component {
                         maxLength="30"
                         validationState={validateNotEmpty}
                         validationArgs={this.state.docId}
+                        value={this.state.docId}
+                        disabled={this.state.personId !== null || this.state.isSubmitting}
                     />
+                    {this.state.personId !== null ?
+                        <div style={{ display: 'flex', flexDirection: 'row-reverse', padding: '5px' }}> 
+                            <Button bsStyle="primary" disabled={this.state.isSubmitting}
+                                onClick={this.handleReset} style={{ margin: '3px' }}>Limpar</Button>
+                        </div> :
+                            ''
+                    }
                     {formDetails}
                     <div style={{ display: 'flex', flexDirection: 'row-reverse', padding: '5px' }}>
                         <Button bsStyle="primary" disabled={this.state.isSubmitting}
@@ -496,15 +535,17 @@ function PlayerDetails(props) {
     const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
 
     const getStepDate = (prop, defaultDate) => {
-        //console.log('Date: ', prop, defaultDate);
+        console.log('Date: ', prop, defaultDate);
         let result = defaultDate;
-        if (props.roleId == 1) {
+        if (props.roleId === 1) {
+            console.log('Props Steps: ', props.steps);
+            console.log('Step selection: ', props.stepId);
             const step = props.steps.find((s) => s.id == props.stepId);
             if (step) {
                 result = new Date(step[prop]);
             }
         }
-        //console.log('Date result: ', result);
+        console.log('Date result: ', result);
         return result;
     };
 

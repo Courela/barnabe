@@ -99,8 +99,8 @@ export function getPhoto(season, teamId, stepId, playerId) {
     return getRequest(url);
 }
 
-export function getPerson(docId) {
-    const url = settings.API_URL + '/api/persons?docId=' + docId;
+export function getPerson(docId, includeCaretaker) {
+    const url = settings.API_URL + '/api/persons?docId=' + docId + (includeCaretaker ? '&caretaker=true' : '');
     return getRequest(url);
 }
 

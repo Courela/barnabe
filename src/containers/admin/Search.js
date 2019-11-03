@@ -201,7 +201,8 @@ export default class Seach extends Component {
             { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
             { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.IdCardNr" },
             { Header: "Estrangeiro", id: "foreign", accessor: "person.VoterNr", Cell: (row) => isResident(row.original) },
-            { Header: "Nr Eleitor", id: "voterNr", accessor: "person.VoterNr", Cell: (row) => row.original.caretaker && row.original.caretaker.VoterNr ? row.original.caretaker.VoterNr : row.original.person.VoterNr }
+            { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
+            { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
         ];
 
         return (
@@ -225,7 +226,9 @@ export default class Seach extends Component {
                             columns={[
                                 { Header: 'Nome', id: 'id', accessor: 'person.Name', Cell: (row) => this.linkToPlayer(row) },
                                 { Header: 'Função', id: 'role', accessor: 'role.Description' },
-                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.IdCardNr' }
+                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.IdCardNr' },
+                                { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
+                                { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
                             ]}
                             data={this.state.staff} />
                     </div>

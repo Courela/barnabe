@@ -274,8 +274,8 @@ export default class PlayerForm extends Component {
                             personId: person.Id,
                             name: person.Name,
                             gender: person.Gender,
-                            email: person.Email ? person.Email : (person.caretaker ? person.caretaker.Email : ''),
-                            phoneNr: person.Phone ? person.Phone : (person.caretaker ? person.caretaker.Phone : ''),
+                            email: person.Email ? person.Email : (person.caretaker && person.caretaker.Email ? person.caretaker.Email : ''),
+                            phoneNr: person.Phone ? person.Phone : (person.caretaker && person.caretaker.Phone ? person.caretaker.Phone : ''),
                             birth: person.Birthdate ? new Date(person.Birthdate) : null,
                             voterNr: person.VoterNr,
                             isLocalBorn: person.LocalBorn ? person.LocalBorn : false,
@@ -450,12 +450,12 @@ function PlayerDetails(props) {
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
     const validateEmail = () => {
-        if (props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
+        if (props.email && props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
         return null;
     };
 
     const validatePhone = () => {
-        if (props.phoneNr !== '' && !props.phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/)) return 'error';
+        if (props.phoneNr && props.phoneNr !== '' && !props.phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/)) return 'error';
         return null;
     };
 

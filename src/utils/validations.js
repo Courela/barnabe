@@ -49,8 +49,8 @@ function isValidPlayer(player) {
     let result = false;
     console.log('Valid player: ', player);
     
-    const { Name, Gender, Birthdate, IdCardNr, Phone, Email, VoterNr } = player.person;
-    const { Resident, PhotoFilename, DocFilename, caretaker } = player;
+    const { Name, Gender, Birthdate, IdCardNr, Phone, Email /*, VoterNr*/ } = player.person;
+    const { /*Resident,*/ PhotoFilename, DocFilename, caretaker } = player;
 
     result = Name && Gender && Birthdate && IdCardNr && isValidEmail(Email) && isValidPhone(Phone);
     result = result && (!caretaker || (caretaker && caretaker.Name)); 

@@ -43,7 +43,7 @@ async function CallApi(url) {
         .then(res => res.data)
         .catch(err => {
             console.error(err);
-            throw 'Unexpected error!';
+            throw { msg: 'Unexpected error!' };
         });
     return apiResponse;
 }

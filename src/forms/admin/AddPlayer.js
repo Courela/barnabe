@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {
-    FormGroup, FormControl, ControlLabel, HelpBlock, Button
+    FormGroup, FormControl, ControlLabel /*, HelpBlock, Button */
 } from 'react-bootstrap';
 import errors from '../../components/Errors';
-import { getTeams, getSteps, createUser, getSeasons } from '../../utils/communications';
+import { getTeams, /* getSteps, createUser, */ getSeasons } from '../../utils/communications';
 import PlayerForm from '../PlayerForm';
 
 export default class AddPlayer extends Component {

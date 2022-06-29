@@ -64,7 +64,7 @@ export default class PlayerForm extends Component {
             getStep(this.state.stepId, this.state.season)
                 .then(results => {
                     const single = results.data;
-                    //console.log(single);
+                    //console.log("getSteps response: ", single);
                     const steps = [single].map(s => ({
                         id: s.Id,
                         descr: s.Description,

@@ -25,17 +25,18 @@ export default class SideMenu extends Component {
         this.teamsMenu = this.teamsMenu.bind(this);
         this.stepsMenu = this.stepsMenu.bind(this);
         this.buildTeamsMenuItems = this.buildTeamsMenuItems.bind(this);
-        this.getTeamSteps = this.getTeamSteps.bind(this);
     }
 
     componentDidMount() {
         //console.log('SideMenu: ' + this.props.isAuthenticated +';' +  this.props.teamId);
-        if (this.props.teamId) {
+        if (this.props.teamId && parseInt(this.props.teamId, 10) > 0) {
             if (this.props.isAuthenticated) {
                 this.getTeamSteps();
             } else {
                 this.getTeams();
             }
+        } else {
+            this.getTeams();
         }
     }
 
@@ -157,6 +158,7 @@ function AdminMenu(props) {
     return (
         <Menu onSelect={props.handleSelect} onOpenChange={props.onOpenChange} mode="inline" openAnimation={animation}>
             {/* <MenuItem key={"/admin/drive"}>Google Drive</MenuItem> */}
+            <MenuItem key={"/admin/db"}>Base de Dados</MenuItem>
             <SubMenu title="Utilizadores">
                 <MenuItem key={"/admin/users/add"}>Criar</MenuItem>
                 <MenuItem key={"/admin/users"}>Listar</MenuItem>

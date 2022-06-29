@@ -66,7 +66,7 @@ class App extends Component {
     }
 
     render() {
-        //console.log('App props: ', this.props);
+        console.log('App props: ', this.props);
         const year = this.props.match && this.props.match.params && this.props.match.params.year ? this.props.match.params.year : 0;
 
         const childProps = {

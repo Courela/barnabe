@@ -65,6 +65,9 @@ export function createTeamStep(season, teamId, stepId) {
 }
 
 export function getTeamSteps(season, teamId) {
+    if (!teamId || teamId == 'undefined') {
+        debugger;
+    }
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
     return getRequest(url);
 }
@@ -174,6 +177,11 @@ export function logout() {
 
 export function getStatistics() {
     const url = settings.API_URL + '/api/admin/statistics';
+    return getRequest(url);
+}
+
+export function getDbPing() {
+    const url = settings.API_URL + '/api/admin/ping';
     return getRequest(url);
 }
 

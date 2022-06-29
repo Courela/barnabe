@@ -16,7 +16,7 @@ function isCaretakerRequired(steps, stepId, roleId, birthdate, eighteenDate) {
     let result = false;
     if (roleId && roleId == 1) {
         console.log('Steps: ', steps);
-        const filter = steps.filter(s => s.Id == stepId || s.id == stepId);
+        const filter = steps.filter(s => s ? s.Id == stepId || s.id == stepId : false);
         console.log('Filter: ', stepId, filter);
         if (filter && filter.length > 0) {
             //TODO Uniform steps array

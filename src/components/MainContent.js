@@ -20,6 +20,7 @@ import TeamSheet from '../containers/admin/TeamSheet';
 import Users from '../containers/admin/Users';
 import Listing from '../containers/admin/Listing';
 import AddPlayer from '../forms/admin/AddPlayer';
+import Db from '../containers/admin/Db'
 
 export default class MainContent extends Component {
     render() {
@@ -70,6 +71,10 @@ export default class MainContent extends Component {
                 path: '/admin/drive',
                 exact: true,
                 render: (props) => { return (<GoogleApiForm {...props} />) }
+            },{
+                path: '/admin/db',
+                exact: true,
+                render: (props) => { return (<Db {...props} />) }
             },{
                 path: '/admin/users',
                 exact: true,

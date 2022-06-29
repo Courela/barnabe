@@ -81,14 +81,13 @@ export default class PlayerDetails extends Component {
 
         getPlayer(season, teamId, stepId, playerId)
             .then(results => {
-                //console.log('Player: ', results);
-                const { player, photo } = results.data;
-                const { person, caretaker } = player;
+                console.log('Player: ', results);
+                const { player, photo, person, caretaker, role, step } = results.data;
                 const voterNr = caretaker && caretaker.VoterNr ? caretaker.VoterNr : (person.VoterNr ? person.VoterNr : '');
                 this.setState({
                     personId: person.Id,
                     roleId: player.RoleId,
-                    roles: [{id: player.role.Id, descr: player.role.Description}],
+                    roles: [{id: role.Id, descr: role.Description}],
                     playerName: person.Name,
                     birth: isValidDate(person.Birthdate) ? new Date(person.Birthdate) : null,
                     docId: person.IdCardNr,
@@ -103,13 +102,13 @@ export default class PlayerDetails extends Component {
                     caretakerName: caretaker ? caretaker.Name : '',
                     caretakerDocId: caretaker ? caretaker.IdCardNr : '',
                     comments: player.Comments,
-                    stepDescr: player.step.Description,
+                    stepDescr: step.Description,
                     steps: [player.step],
-                    photoSrc: photo.src,
+                    photoSrc: photo ? photo.src : null,
                     newPhotoUpload: false,
                     docExists: player.DocFilename ? true : false
                 }, () => {
-                    if (!photo.existsLocally) {
+                    if (photo && !photo.existsLocally) {
                         console.log("Getting photo...");
                         setTimeout(() => {
                             getPhoto(season, teamId, stepId, playerId)
@@ -476,14 +475,16 @@ function FormPlayer(props) {
 
     const getStepDate = (prop, defaultDate) => {
         let result = defaultDate;
-        const step = props.steps.find((s) => s.Id == props.stepId);
+        const step = props.steps.find((s) => s ? s.Id == props.stepId : false);
         if (step) {
             result = new Date(step[prop]);
         }
         return result;
     };
 
-    const selectSteps = props.steps.map((s) => <option key={s.Id} value={s.Id}>{s.Description}</option>);
+    const selectSteps = props.steps.map((s, i) => s && s.Id ? 
+                    <option key={s.Id} value={s.Id}>{s.Description}</option> : 
+                    <option key={i}></option>);
 
     const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
 

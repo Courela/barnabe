@@ -41,7 +41,7 @@ export default class ManageSeasons extends Component {
     }
 
     validateSeason() {
-        if (this.state.year === '' || parseInt(this.state.year) <= 0) return 'error';
+        if (this.state.year === '' || parseInt(this.state.year, 10) <= 0) return 'error';
         return null;
     }
 
@@ -51,7 +51,7 @@ export default class ManageSeasons extends Component {
 
     handleSeasonSelect(evt) {
         const year = evt.target.value;
-        var selectedSeason = this.state.seasons.find(e => e.Year === parseInt(year));
+        var selectedSeason = this.state.seasons.find(e => e.Year === parseInt(year, 10));
         this.setState({ 
             season: selectedSeason != null ? selectedSeason : {},
             year: year,
@@ -90,7 +90,7 @@ export default class ManageSeasons extends Component {
         }
         if (this.state.key === 2) {
             const { year, status, signUpDueDate, startDate } = this.state;
-            addSeason(parseInt(year), status, signUpDueDate, startDate);
+            addSeason(parseInt(year, 10), status, signUpDueDate, startDate);
         }
         evt.preventDefault();
     }

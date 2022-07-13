@@ -26,9 +26,7 @@ export default class ManagePersons extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log('Next: ', nextProps);
-        console.log('Actual: ', this.props);
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.location.search !== this.props.location.search) {
             this.fillSearchCriteria(nextProps);
         }
@@ -37,7 +35,6 @@ export default class ManagePersons extends Component {
     fillSearchCriteria(props) {
         const { docId } = queryString.parse(props.location.search);
         if (docId) {
-            //console.log('Set state: ', season, teamId, stepId);
             this.setState({
                 docId: docId
             }, () => this.fetchResults());
@@ -48,7 +45,6 @@ export default class ManagePersons extends Component {
         const { docId } = this.state;
         searchPersons(docId)
             .then(result => {
-                //console.log(result);
                 if (result.data) {
                     this.setState({ data: result.data });
                 }
@@ -62,7 +58,6 @@ export default class ManagePersons extends Component {
     handleControlChange(evt) {
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        //console.log(fieldName, fieldVal);
         this.setState({ [fieldName]: fieldVal });
     }
 

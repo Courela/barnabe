@@ -28,7 +28,7 @@ export default class Season extends Component {
         }
     }
 
-    componentWillReceiveProps(newProps) {
+    UNSAFE_componentWillReceiveProps(newProps) {
         const year = newProps.match.params.year;
         if (year && year !== this.state.year) {
             this.getSeason(year);
@@ -38,7 +38,6 @@ export default class Season extends Component {
     getSeason(year) {
         getSeason(year)
             .then(result => {
-                //console.log(result);
                 if (result.data) {
                     const isSeasonActive = result.data.IsActive; 
                     const startDate = result.data.StartDate;
@@ -67,7 +66,6 @@ export default class Season extends Component {
     }
 
     render() {
-        //console.log('Render Season');
         return (
             <div className="display-area">
                 <div>

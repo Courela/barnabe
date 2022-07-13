@@ -65,7 +65,7 @@ export function createTeamStep(season, teamId, stepId) {
 }
 
 export function getTeamSteps(season, teamId) {
-    if (!teamId || teamId == 'undefined') {
+    if (!teamId || teamId === 'undefined') {
         debugger;
     }
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';

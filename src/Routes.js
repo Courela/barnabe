@@ -8,10 +8,7 @@ import AppliedRoute from "./components/AppliedRoute";
 import Documents from "./containers/Documents";
 
 export default ({ childProps }) => {
-    //console.log('Render Routes: ' + childProps.isAuthenticated + " " + JSON.stringify(childProps));
-
     let routes = [];
-    //console.log('Child props', childProps);
     routes = [
         <AppliedRoute key={2 + childProps.year} path="/admin" component={Season} props={childProps} />,
         <AppliedRoute key={3 + childProps.year} path="/seasons/:year/steps*" component={Season} props={childProps} />,

@@ -24,7 +24,6 @@ import Db from '../containers/admin/Db'
 
 export default class MainContent extends Component {
     render() {
-        //console.log('MainContent props: ' + JSON.stringify(this.props));
         let stepId = 0;
 
         const authenticatedRoutesArr = [{
@@ -47,7 +46,7 @@ export default class MainContent extends Component {
             path: '/seasons/:year/steps/:stepId/player',
             exact: true,
             render: (props) => { return <PlayerForm {...props} teamId={this.props.teamId} 
-                                            eighteenDate={this.props.eighteenDate} roleId="1" /> }
+                                            eighteenDate={this.props.eighteenDate} roleId={1} /> }
         }, {
             path: '/seasons/:year/steps/:stepId/staff',
             exact: true,

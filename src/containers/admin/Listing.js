@@ -89,7 +89,6 @@ export default class Listing extends Component {
     }
 
     handleControlChange(evt) {
-        //console.log(evt);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
         this.setState({ [fieldName]: fieldVal });

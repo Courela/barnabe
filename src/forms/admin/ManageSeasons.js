@@ -67,7 +67,6 @@ export default class ManageSeasons extends Component {
     handleControlChange(evt) {
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        //console.log(fieldName, fieldVal);
         this.setState({ [fieldName]: fieldVal });
     }
 

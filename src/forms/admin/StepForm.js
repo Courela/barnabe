@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import { StepSelect, TeamSelect } from '../../components/Controls';
 import errors from '../../components/Errors';
-import { signSteps, removeTeamStep, createTeamStep, getActiveSeason, getTeams } from '../../utils/communications';
+import { signSteps, removeTeamStep, createTeamStep, getActiveSeason, getTeams, getTeamSteps } from '../../utils/communications';
 
 export default class StepForm extends Component {
     constructor(props, context) {
         super(props, context);
 
         this.handleTeamSelect = this.handleTeamSelect.bind(this);
+        this.handleTeamSelectRemove = this.handleTeamSelectRemove.bind(this);
         this.handleStepSelect = this.handleStepSelect.bind(this);
         this.validate = this.validate.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -41,6 +42,13 @@ export default class StepForm extends Component {
             .catch(errors.handleError);
     }
 
+    handleTeamSelectRemove(evt) {
+        var teamId = parseInt(evt.target.value, 10);
+        getTeamSteps(this.state.season, teamId)
+            .then(results => this.setState({ steps: results.data, teamId: teamId, stepId: 0 }))
+            .catch(errors.handleError);
+    }
+
     handleStepSelect(evt) {
         this.setState({ stepId: parseInt(evt.target.value, 10) });
     }
@@ -52,8 +60,6 @@ export default class StepForm extends Component {
 
     handleSubmit(evt) {
         var action = evt.target.name;
-        // console.log('Params: ', this.props.match.params);
-        // console.log('Props: ', this.props);
         const { season, teamId, stepId } = this.state; 
         if (stepId > 0) {
             var step = this.state.steps.find(s => s.Id === stepId);
@@ -85,7 +91,7 @@ export default class StepForm extends Component {
         return (
             <div>
                 <h1>Gerir Escalões - {this.state.season}</h1>
-                <Tabs>
+                <Tabs id="manage-steps">
                     <Tab eventKey={1} title="Adicionar">
                         <StepFormOptions action="add" bsStyle="success" label="Adicionar"
                             teams={this.state.teams} teamValue={this.state.teamId} 
@@ -99,7 +105,7 @@ export default class StepForm extends Component {
                         <StepFormOptions action="remove" bsStyle="danger" label="Remover"
                             teams={this.state.teams} teamValue={this.state.teamId} 
                             steps={this.state.steps} stepValue={this.state.stepId} 
-                            teamsOnChange={this.handleTeamSelect} teamsValidationState={this.validate('teamId')}
+                            teamsOnChange={this.handleTeamSelectRemove} teamsValidationState={this.validate('teamId')}
                             stepsOnChange={this.handleStepSelect} stepsValidationState={this.validate('stepId')}
                             onSubmit={this.handleSubmit}
                         />

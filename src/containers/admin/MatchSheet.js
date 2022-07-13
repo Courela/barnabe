@@ -34,9 +34,7 @@ export default class MatchSheet extends Component {
         this.fillSearchCriteria(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
-        //console.log('Next: ', nextProps);
-        //console.log('Actual: ', this.props);
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.location.search !== this.props.location.search) {
             this.fillSearchCriteria(nextProps);
         }
@@ -45,7 +43,6 @@ export default class MatchSheet extends Component {
     fillSearchCriteria(props) {
         const { season, homeTeamId, awayTeamId, stepId } = queryString.parse(props.location.search);
         if (season && homeTeamId && awayTeamId && stepId) {
-            //console.log('Set state: ', season, teamId, stepId);
             this.setState({
                 season: parseInt(season, 10),
                 homeTeamId: parseInt(homeTeamId, 10),
@@ -80,7 +77,6 @@ export default class MatchSheet extends Component {
     // }
 
     handleControlChange(evt) {
-        //console.log(evt);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
         this.setState({ [fieldName]: fieldVal, exportDataUrl: null });

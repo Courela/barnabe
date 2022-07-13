@@ -13,7 +13,6 @@ export default class Db extends React.Component {
     componentDidMount() {
         getDbPing()
             .then(res => {
-                console.log(res.data);
                 this.setState({ db: res.data.status });
             })
             .catch(err => console.error(err));

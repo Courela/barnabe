@@ -14,12 +14,12 @@ export default class AddPlayer extends Component {
         this.validateTeam = this.validateTeam.bind(this);
         this.handleSeasonSelect = this.handleSeasonSelect.bind(this);
         this.handleTeamSelect = this.handleTeamSelect.bind(this);
-     
+
         this.state = {
             seasons: [],
             teams: [],
             season: 0,
-            teamId: 0,
+            teamId: 0
         }
     }
 
@@ -80,7 +80,7 @@ export default class AddPlayer extends Component {
                     <FormControl.Feedback />
                 </FormGroup>
                 {season > 0 && teamId > 0 ?
-                    <PlayerForm {...this.props} season={season} teamId={teamId} stepId={stepId} eighteenDate={this.props.eighteenDate} roleId="1" /> :
+                    <PlayerForm {...this.props} season={season} teamId={teamId} stepId={stepId} eighteenDate={this.props.eighteenDate} roleId={1} /> :
                     <div /> }
             </div>);
     }

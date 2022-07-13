@@ -23,7 +23,6 @@ export default class Player extends Component {
         const { season, teamId, stepId, playerId } = this.state;
         getPlayer(season, teamId, stepId, playerId)
             .then(result => {
-                //console.log(result.data);
                 this.setState({ 
                     data: result.data.data[0],
                     photo: result.data.photo.toString()

@@ -31,9 +31,8 @@ export default class Login extends Component {
         console.log('Logged User: ' + user);
         if (user) {
             console.log('Login sucess!');
-            console.log('Location search: ', this.props.location.search);
             const redirectTo = this.props.location.search ? this.props.location.search.match('(?<=redirect=)/.+')[0] : null;
-            console.log('Redirect to: ', redirectTo);
+            //console.log('Redirect to: ', redirectTo);
             this.props.userHasAuthenticated(true, user, redirectTo);
         }
         else {
@@ -80,7 +79,7 @@ export default class Login extends Component {
 async function validateUser(username, password) {
     const promise = login(username, password);
     return await promise.then(response => {
-        console.log(response);
+        //console.log(response);
         return response.data;
     })
         .catch(() => null);

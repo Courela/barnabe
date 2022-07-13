@@ -42,7 +42,6 @@ export default class AddUser extends Component {
     handleControlChange(evt) {
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        //console.log(fieldName, fieldVal);
         this.setState({ [fieldName]: fieldVal });
     }
 
@@ -51,7 +50,6 @@ export default class AddUser extends Component {
             const { username, password, teamId } = this.state;
             createUser(username, password, teamId)
                 .then(result => {
-                    console.log(result);
                     alert('Utilizador criado com sucesso.');
                 })
                 .catch((err) => {

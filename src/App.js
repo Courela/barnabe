@@ -16,15 +16,10 @@ class App extends Component {
 
         const { cookies } = props;
 
-        console.log('Cookie');
-        console.log(cookies);
         const cookieSession = cookies.get('barnabe');
-        console.log(cookieSession);
         const user = sessionStorage.getItem('user');
         const teamId = sessionStorage.getItem('teamId');
         const username = sessionStorage.getItem('username');
-        console.log('User: ' + JSON.stringify(user));
-        console.log('TeamId: ' + teamId);
         this.state = {
             cookieName: cookieSession,
             isAuthenticated: user != null,
@@ -54,7 +49,6 @@ class App extends Component {
                     this.state.isAdmin ? '/admin' : "/seasons/" + new Date(Date.now()).getFullYear();
                 //console.log('Will redirect to: ', url)
                 this.props.history.push(url);
-                //this.forceUpdate(() => console.log('Updated: ' + JSON.stringify(this.props.history)));
             }
             else {
                 const url = redirectTo ? 
@@ -66,7 +60,6 @@ class App extends Component {
     }
 
     render() {
-        console.log('App props: ', this.props);
         const year = this.props.match && this.props.match.params && this.props.match.params.year ? this.props.match.params.year : 0;
 
         const childProps = {

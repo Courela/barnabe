@@ -21,7 +21,6 @@ export default class Users extends Component {
     getUsers() {
         getUsers()
             .then(result => {
-                //console.log(result);
                 if (result.data && result.data.length > 0) {
                     this.setState({ users: result.data });
                 }

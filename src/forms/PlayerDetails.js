@@ -21,7 +21,8 @@ export default class PlayerDetails extends Component {
         this.fetchPlayer = this.fetchPlayer.bind(this);
         this.validateForm = this.validateForm.bind(this);
 
-        const stepId = props.match.params.stepId;
+        const stepId = !isNaN(props.match.params.stepId) ? 
+            parseInt(props.match.params.stepId, 10) : null;
 
         const playerId = props.match.params.playerId;
         const queryStringValues = queryString.parse(this.props.location.search)
@@ -81,7 +82,6 @@ export default class PlayerDetails extends Component {
 
         getPlayer(season, teamId, stepId, playerId)
             .then(results => {
-                console.log('Player: ', results);
                 const { player, photo, person, caretaker, role, step } = results.data;
                 const voterNr = caretaker && caretaker.VoterNr ? caretaker.VoterNr : (person.VoterNr ? person.VoterNr : '');
                 this.setState({
@@ -103,17 +103,17 @@ export default class PlayerDetails extends Component {
                     caretakerDocId: caretaker ? caretaker.IdCardNr : '',
                     comments: player.Comments,
                     stepDescr: step.Description,
-                    steps: [player.step],
+                    steps: [step],
                     photoSrc: photo ? photo.src : null,
                     newPhotoUpload: false,
                     docExists: player.DocFilename ? true : false
                 }, () => {
                     if (photo && !photo.existsLocally) {
-                        console.log("Getting photo...");
+                        //console.log("Getting photo...");
                         setTimeout(() => {
                             getPhoto(season, teamId, stepId, playerId)
                                 .then(result => {
-                                    console.log("Photo loaded", result.data.existsLocally);
+                                    //console.log("Photo loaded", result.data.existsLocally);
                                     if (result.data && result.data.existsLocally) {
                                         this.setState({ photoSrc: result.data.src });
                                     }
@@ -134,13 +134,11 @@ export default class PlayerDetails extends Component {
     handleControlChange(evt) {
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        //console.log(fieldName, fieldVal);
         this.setState({ [fieldName]: fieldVal });
     }
 
     handleCheckboxToggle(evt) {
         let fieldName = evt.target.name;
-        //console.log(fieldName, fieldVal);
         this.setState({ [fieldName]: !this.state[fieldName] });
     }
 
@@ -156,7 +154,7 @@ export default class PlayerDetails extends Component {
                 docId && docId !== '' &&
                 isValidEmail(email) && isValidPhone(phoneNr);
                 
-        if (this.state.roleId == 1) {
+        if (this.state.roleId === 1) {
             result = result &&
                 gender && gender !== '' &&
                 birth && birth !== '';
@@ -209,7 +207,6 @@ export default class PlayerDetails extends Component {
                     };
                     updatePlayer(season, teamId, stepId, playerId, data)
                         .then(result => {
-                            //console.log(result);
                             this.fetchPlayer();
                             this.setState({ isEditing: false, isEditSuccess: true, isSubmitting: false });
                             //this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + playerId + '?success');
@@ -293,7 +290,7 @@ export default class PlayerDetails extends Component {
     }
 
     validateRole() {
-        if (this.state.roleId === null || this.state.roleId === '') return 'error';
+        if (this.state.roleId === null || this.state.roleId > 0) return 'error';
         return null;
     }
 
@@ -305,8 +302,8 @@ export default class PlayerDetails extends Component {
 
     render() {
         const title = this.state.isEditing ? 
-            (this.state.roleId == 1 ? "Editar Jogador" : "Editar Elemento Equipa Técnica") : 
-            (this.state.roleId == 1 ? "Ficha de Jogador" : "Ficha de Elemento Equipa Técnica");
+            (this.state.roleId === 1 ? "Editar Jogador" : "Editar Elemento Equipa Técnica") : 
+            (this.state.roleId === 1 ? "Ficha de Jogador" : "Ficha de Elemento Equipa Técnica");
 
         const formDetails = this.state.playerId ?
             <FormPlayer {...this.state}
@@ -326,7 +323,7 @@ export default class PlayerDetails extends Component {
             <div>
                 {this.state.isEditSuccess ?
                     <Alert bsStyle="success">
-                        <strong>{this.state.roleId == 1 ? "Jogador" : "Elemento "} alterado com sucesso.</strong>
+                        <strong>{this.state.roleId === 1 ? "Jogador" : "Elemento "} alterado com sucesso.</strong>
                     </Alert> : ''}
                 <h2>{title}</h2>
                 <form>
@@ -385,7 +382,7 @@ function FormPlayer(props) {
                 maxLength="16"
                 validationState={validatePhone}
             />
-            { props.roleId == 1 ?
+            { props.roleId === 1 ?
                 <Fragment>
                     <Checkbox checked={props.isResident} disabled={!props.isEditing || props.isSubmitting}
                         name="isResident" onChange={props.handleCheckboxToggle} >
@@ -409,7 +406,7 @@ function FormPlayer(props) {
                     name="caretakerName"
                     label="Nome do Responsável"
                     placeholder="Nome do Responsável"
-                    value={props.caretakerName}
+                    value={props.caretakerName || ''}
                     onChange={props.handleControlChange}
                     readOnly={!props.isEditing || props.isSubmitting}
                     validationState={validateNotEmpty}
@@ -422,7 +419,7 @@ function FormPlayer(props) {
                     name="caretakerDocId"
                     label="Nr Cartão Cidadão do Responsável"
                     placeholder="Nr Cartão Cidadão do Responsável"
-                    value={props.caretakerDocId}
+                    value={props.caretakerDocId || ''}
                     onChange={props.handleControlChange}
                     readOnly={!props.isEditing || props.isSubmitting}
                     validationState={validateNotEmpty}
@@ -457,9 +454,9 @@ function FormPlayer(props) {
     const docUploaders = props.isEditing ?
         <div className="column">
             {photoUploader}    
-            { props.roleId == 1 ? docUploader : '' } 
+            { props.roleId === 1 ? docUploader : '' } 
         </div> :
-        ( props.isSeasonActive && props.roleId == 1 ?
+        ( props.isSeasonActive && props.roleId === 1 ?
             <Fragment>
                 <p style={{ margin: '2px'}}><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
                     {props.docExists ? ' submetida.' : ' em falta!'}
@@ -475,7 +472,7 @@ function FormPlayer(props) {
 
     const getStepDate = (prop, defaultDate) => {
         let result = defaultDate;
-        const step = props.steps.find((s) => s ? s.Id == props.stepId : false);
+        const step = props.steps.find((s) => s ? s.Id === props.stepId : false);
         if (step) {
             result = new Date(step[prop]);
         }
@@ -506,12 +503,12 @@ function FormPlayer(props) {
             {docUploaders}
             {editButton}
         </div>
-        { props.roleId != 1 ?
+        { props.roleId && props.roleId !== 1 ?
             <FormGroup controlId="selectRole" validationState={props.validateRole()}>
                 <ControlLabel>Função</ControlLabel>
                 <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
                     onChange={props.handleRoleSelect} value={props.roleId}
-                    disabled={props.roles.length <= 1 && props.roleId != ''}>
+                    disabled={props.roles.length <= 1 && props.roleId > 0}>
                     <option value="0">Escolha...</option>
                     {selectRoles}
                 </FormControl>
@@ -522,8 +519,8 @@ function FormPlayer(props) {
             id="formName"
             type="text"
             name="playerName"
-            label={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
-            placeholder={props.roleId == 1 ? "Nome do Jogador" : "Nome" }
+            label={props.roleId === 1 ? "Nome do Jogador" : "Nome" }
+            placeholder={props.roleId === 1 ? "Nome do Jogador" : "Nome" }
             value={props.playerName}
             onChange={props.handleControlChange}
             readOnly={!props.isEditing || props.isSubmitting}
@@ -535,19 +532,19 @@ function FormPlayer(props) {
             id="formIdCard"
             type="text"
             name="docId"
-            label={props.roleId == 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
-            placeholder={props.roleId == 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
+            label={props.roleId === 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
+            placeholder={props.roleId === 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
             value={props.docId}
             onChange={props.handleControlChange}
             readOnly={true}
             maxLength="30"
         />
-        { props.roleId == 1 ?
+        { props.roleId === 1 ?
             <FormGroup controlId="formBirthdate">
-                <ControlLabel>Data Nascimento{ props.roleId == 1 ? " do Jogador" : ""}</ControlLabel>
+                <ControlLabel>Data Nascimento{ props.roleId === 1 ? " do Jogador" : ""}</ControlLabel>
                 <div>
                     <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
-                        required={true} locale="pt-PT" disabled={!props.isEditing || props.isSubmitting}
+                        required={true} locale="en-GB" disabled={!props.isEditing || props.isSubmitting}
                         minDate={getStepDate('MinDate', new Date('1900-01-01T00:00:00.000Z'))}
                         maxDate={getStepDate('MaxDate', new Date())}
                         calendarClassName="date-picker-form-control" />
@@ -563,12 +560,12 @@ function FormPlayer(props) {
             </FormControl>
             <FormControl.Feedback />
         </FormGroup>
-        { props.roleId == 1 ?
+        { props.roleId === 1 ?
                 <Checkbox checked={props.isLocalBorn} disabled={!props.isEditing || props.isSubmitting}
                     name="isLocalBorn" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Natural da freguesia (registado como nascido na freguesia) ?</span>
                 </Checkbox> : ''}
-        { props.roleId == 1 ?
+        { props.roleId === 1 ?
                 <Checkbox checked={props.isLocalTown} disabled={!props.isEditing || props.isSubmitting}
                     name="isLocalTown" onChange={props.handleCheckboxToggle} >
                     <span style={{ fontWeight: '700' }}>Residente na freguesia ?</span>

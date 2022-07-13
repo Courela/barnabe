@@ -36,8 +36,7 @@ export default class StepTeam extends Component {
         this.getStaff();
     }
 
-    componentWillReceiveProps(newProps) {
-        //console.log('New step: ', newProps.match.params.stepId);
+    UNSAFE_componentWillReceiveProps(newProps) {
         this.setState({ stepId: newProps.match.params.stepId, stepName: null, players: [], staff: [] }, () => {
             this.getPlayers();
             this.getStaff();
@@ -49,7 +48,6 @@ export default class StepTeam extends Component {
             const { season, teamId, stepId } = this.state;
             getPlayers(season, teamId, stepId)
                 .then(result => {
-                    //console.log(result);
                     if (result.data && result.data.length > 0) {
                         this.setState({ players: result.data });
                     }
@@ -74,7 +72,6 @@ export default class StepTeam extends Component {
             const { season, teamId, stepId } = this.state;
             getStaff(season, teamId, stepId)
                 .then(result => {
-                    //console.log(result);
                     if (result.data && result.data.length > 0) {
                         this.setState({ staff: result.data });
                     }
@@ -92,7 +89,7 @@ export default class StepTeam extends Component {
         const { season, stepId } = this.state;
         if (this.props.isSeasonActive && !this.props.isSignUpExpired) {
             const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.Id + '?edit=1';
-            const removeFn = (evt) => this.removePlayer(player.Id, player.person.Name);
+            const removeFn = () => this.removePlayer(player.Id, player.person.Name);
             return (
                 <Fragment>
                     <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>

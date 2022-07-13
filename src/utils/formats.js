@@ -1,5 +1,4 @@
 function dateFormat(date) {
-    //console.log(date);
     if (!date) { return ''; }
      
     const dateObj = new Date(date);

@@ -19,7 +19,6 @@ export default class SideMenu extends Component {
         };
 
         this.handleSelect = this.handleSelect.bind(this);
-        //this.onOpenChange = this.onOpenChange.bind(this);
         this.getTeams = this.getTeams.bind(this);
         this.getTeamSteps = this.getTeamSteps.bind(this);
         this.teamsMenu = this.teamsMenu.bind(this);
@@ -28,7 +27,6 @@ export default class SideMenu extends Component {
     }
 
     componentDidMount() {
-        //console.log('SideMenu: ' + this.props.isAuthenticated +';' +  this.props.teamId);
         if (this.props.teamId && parseInt(this.props.teamId, 10) > 0) {
             if (this.props.isAuthenticated) {
                 this.getTeamSteps();
@@ -40,8 +38,7 @@ export default class SideMenu extends Component {
         }
     }
 
-    componentWillReceiveProps(newProps) {
-        //console.log('New season: ', newProps.match.params.year);
+    UNSAFE_componentWillReceiveProps(newProps) {
         if (newProps.match.params.year) {
             this.setState({ season: newProps.match.params.year });
         }
@@ -49,7 +46,6 @@ export default class SideMenu extends Component {
 
     getTeams() {
         if (this.state.season > 0) {
-            //console.log(settings.API_URL);
             getTeams(this.state.season)
                 .then((res) => this.setState({ teams: res.data }))
                 .catch(errors.handleError);
@@ -58,13 +54,11 @@ export default class SideMenu extends Component {
 
     handleSelect(info) {
         if (info.key) {
-            //console.log('Url to navigate: ', info.key)
             this.props.history.push(info.key);
         }
     }
 
     onOpenChange(value) {
-        //console.log('onOpenChange', value);
     }
 
     teamsMenu() {
@@ -121,7 +115,6 @@ export default class SideMenu extends Component {
                 stepsMenu={this.stepsMenu} season={this.state.season} isSeasonActive={this.state.isSeasonActive}/> 
             );
 
-        //console.log('Side menu teamdId: ', this.props.teamId);
         const menu = this.props.isAuthenticated ?
             (this.props.teamId > 0 ? authenticatedMenu : <AdminMenu handleSelect={this.handleSelect} />) :
             anonymousMenu;

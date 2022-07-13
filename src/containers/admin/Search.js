@@ -40,9 +40,7 @@ export default class Seach extends Component {
         this.fillSearchCriteria(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
-        //console.log('Next: ', nextProps);
-        //console.log('Actual: ', this.props);
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.location.search !== this.props.location.search) {
             this.fillSearchCriteria(nextProps);
         }
@@ -51,7 +49,6 @@ export default class Seach extends Component {
     fillSearchCriteria(props) {
         const { season, teamId, stepId } = queryString.parse(props.location.search);
         if (season && teamId && stepId) {
-            //console.log('Set state: ', season, teamId, stepId);
             this.getSteps(parseInt(season, 10), parseInt(teamId, 10), parseInt(stepId, 10), () => {
                 this.setState({
                     season: parseInt(season, 10),
@@ -110,7 +107,6 @@ export default class Seach extends Component {
     }
 
     handleControlChange(evt) {
-        //console.log(evt);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
         this.setState({ [fieldName]: fieldVal });
@@ -132,7 +128,6 @@ export default class Seach extends Component {
         const { season, teamId, stepId } = this.state;
         getPlayers(season, teamId, stepId)
             .then(result => {
-                //console.log(result.data);
                 if (result.data && result.data.length > 0) {
                     this.setState({ data: result.data, exportDataUrl: null });
                 }
@@ -147,7 +142,6 @@ export default class Seach extends Component {
 
         getStaff(season, teamId, stepId)
             .then(result => {
-                //console.log(result.data);
                 if (result.data && result.data.length > 0) {
                     this.setState({ staff: result.data, exportDataUrl: null });
                 }

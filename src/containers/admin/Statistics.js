@@ -13,7 +13,6 @@ export default class Statistics extends React.Component {
     componentDidMount() {
         getStatistics()
             .then(res => {
-                console.log(res.data);
                 this.setState({ statistics: res.data });
             })
             .catch(err => console.error(err));

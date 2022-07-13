@@ -36,9 +36,7 @@ export default class TeamSheet extends Component {
         this.fillSearchCriteria(this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
-        //console.log('Next: ', nextProps);
-        //console.log('Actual: ', this.props);
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.location.search !== this.props.location.search) {
             this.fillSearchCriteria(nextProps);
         }
@@ -47,7 +45,6 @@ export default class TeamSheet extends Component {
     fillSearchCriteria(props) {
         const { season, teamId, stepId } = queryString.parse(props.location.search);
         if (season && teamId && stepId) {
-            //console.log('Set state: ', season, teamId, stepId);
             this.setState({
                 season: parseInt(season, 10),
                 teamId: parseInt(teamId, 10),
@@ -96,7 +93,6 @@ export default class TeamSheet extends Component {
     }
 
     handleControlChange(evt) {
-        //console.log(evt);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
         this.setState({ [fieldName]: fieldVal, exportDataUrl: null });

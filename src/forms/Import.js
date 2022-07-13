@@ -37,7 +37,9 @@ export default class Import extends React.Component {
         var step = this.state.step;
         if (!step) {
             step = await getStep(this.state.stepId, this.state.season)
-                .then(result => result.data)
+                .then(result => {
+                    return result.data;
+                })
                 .catch(errors.handleError);
         }
 
@@ -58,15 +60,14 @@ export default class Import extends React.Component {
     getPlayers() {
         if (this.state.players.length === 0) {
             const { selectedSeason, teamId, stepId, role } = this.state;
-            console.log('Role: ', role);
             (role === 'staff' ? 
                 getStaff(selectedSeason, teamId, stepId) :
                 getPlayers(selectedSeason, teamId, stepId))
                 .then(result => {
-                    //console.log(result);
                     if (result.data && result.data.length > 0) {
                         this.setState({ players: result.data });
                     }
+                    alert("Imported " + result.data.length + " persons.");
                 })
                 .catch(errors.handleError);
         }
@@ -82,11 +83,9 @@ export default class Import extends React.Component {
     }
 
     handleSubmit(evt) {
-        console.log('Selected: ', this.state.selected);
         const { season, teamId, stepId, role } = this.state;
         copyPlayers(season, teamId, stepId, this.state.selectedSeason, this.state.selected)
             .then(result => {
-                console.log(result);
                 alert((role === 'staff' ? 'Membros da Equipa Técnica': 'Jogadores' ) + ' importados com sucesso.');
                 this.props.history.push('/seasons/' + season + '/steps/' + stepId);
             })

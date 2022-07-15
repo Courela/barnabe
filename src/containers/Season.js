@@ -37,20 +37,26 @@ export default class Season extends Component {
 
     getSeason(year) {
         getSeason(year)
-            .then(result => {
-                if (result.data) {
-                    const isSeasonActive = result.data.IsActive; 
-                    const startDate = result.data.StartDate;
+            .then(season => {
+                //console.log("Season getSeason: ", season);
+                if (season) {
+                    const isSeasonActive = season.is_active; 
+                    const startDate = season.start_date;
                     let eighteenDate = null;
                     if (isValidDate(startDate)) {
+                        //console.log("Season startDate: ", startDate);
                         eighteenDate = new Date(startDate);
                         eighteenDate.setFullYear(eighteenDate.getFullYear() - 18);
+                        //console.log("Season eighteenDate: ", eighteenDate);
+                    }
+                    else {
+                        console.warn("Invalid startDate: ", startDate);
                     }
 
                     this.setState({ 
-                        year: result.data.Year, 
+                        year: season.year, 
                         isSeasonActive: isSeasonActive,
-                        isSignUpExpired: isSeasonActive && (this.isSignUpExpired(result.data.SignUpDueDate) || this.isSignUpExpired(result.data.SignUpExtraDueDate)),
+                        isSignUpExpired: isSeasonActive && (this.isSignUpExpired(season.sign_up_due_date) || this.isSignUpExpired(season.sign_up_extra_due_date)),
                         eighteenDate: eighteenDate
                     });
                     //this.setState({ stepName: result.data.Description });

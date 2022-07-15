@@ -14,11 +14,15 @@ function isValidPhone(phoneNr) {
 function isCaretakerRequired(steps, stepId, roleId, birthdate, eighteenDate) {
     let result = false;
     if (roleId && roleId === 1) {
-        const filter = steps.filter(s => s ? s.Id === stepId || s.id === stepId : false);
+        const filter = steps.filter(s => {
+            //TODO check use of ===
+            //console.log("isCaretakerRequired filter result: ", s.id == stepId);
+            // eslint-disable-next-line
+            return s.id == stepId;
+        });
         if (filter && filter.length > 0) {
             //TODO Uniform steps array
-            result = filter[0].IsCaretakerRequired ? filter[0].IsCaretakerRequired : false ||
-                filter[0].isCaretakerRequired ? filter[0].isCaretakerRequired : false;
+            result = filter[0].is_caretaker_required ? filter[0].is_caretaker_required : false;
             result = result || (isValidDate(birthdate) && eighteenDate && new Date(birthdate) > eighteenDate);
         }
     }
@@ -31,20 +35,20 @@ function isValidDate(date) {
 
 function isResident(player) {
     const { person, caretaker } = player;
-    const result = person.LocalBorn || player.Resident || (caretaker && caretaker.VoterNr) ? '' : (person.VoterNr ? '' : 'Sim');
+    const result = person.local_born || player.is_resident || (caretaker && caretaker.voter_nr) ? '' : (person.voter_nr ? '' : 'Sim');
     return result;
 }
 
 function isValidPlayer(player) {
     let result = false;
     
-    const { Name, Gender, Birthdate, IdCardNr, Phone, Email /*, VoterNr*/ } = player.person;
-    const { /*Resident,*/ PhotoFilename, DocFilename, caretaker } = player;
+    const { name, gender, birthdate, id_card_number, phone, email /*, voter_nr*/ } = player.person;
+    const { /*Resident,*/ photo_filename, doc_filename, caretaker } = player;
 
-    result = Name && Gender && Birthdate && IdCardNr && isValidEmail(Email) && isValidPhone(Phone);
-    result = result && (!caretaker || (caretaker && caretaker.Name)); 
+    result = name && gender && birthdate && id_card_number && isValidEmail(email) && isValidPhone(phone);
+    result = result && (!caretaker || (caretaker && caretaker.name)); 
     //result = result && (!Resident || (Resident && (VoterNr || (caretaker && caretaker.VoterNr))));
-    result = result && PhotoFilename && DocFilename;
+    result = result && photo_filename && doc_filename;
     return result;
 }
 

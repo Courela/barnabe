@@ -1,4 +1,18 @@
-function mapFromStepApi(stepApi) {
+export function mapFromSeasonApi(seasonApi) {
+    if (!seasonApi) {
+        return null;
+    }
+
+    return {
+        year: seasonApi.Year,
+        is_active: seasonApi.IsActive,
+        sign_up_due_date: seasonApi.SignUpDueDate,
+        start_date: seasonApi.StartDate,
+        sign_up_extra_due_date: seasonApi.SignUpExtraDueDate
+    };
+}
+
+export function mapFromStepApi(stepApi) {
     if (!stepApi) {
         return null;
     }
@@ -14,7 +28,7 @@ function mapFromStepApi(stepApi) {
     };
 }
 
-function mapFromRoleApi(roleApi) {
+export function mapFromRoleApi(roleApi) {
     if (!roleApi) {
         return null;
     }
@@ -25,9 +39,25 @@ function mapFromRoleApi(roleApi) {
     };
 }
 
-function mapPersonFromApi(personApi) {
+export function mapFromTeamApi(teamApi) {
+    if (!teamApi) {
+        return null;
+    }
+
+    return {
+        id: teamApi.Id,
+        short_description: teamApi.ShortDescription
+    };
+}
+
+export function mapPersonFromApi(personApi) {
     if (!personApi) {
         return null;
+    }
+
+    var caretaker = null;
+    if (personApi.Caretaker) {
+        caretaker = mapPersonFromApi(personApi.Caretaker);
     }
 
     return {
@@ -35,16 +65,18 @@ function mapPersonFromApi(personApi) {
         name: personApi.Name,
         gender: personApi.Gender,
         birthdate: personApi.Birthdate,
-        id_card_number: personApi.IdCardNumber,
+        id_card_number: personApi.IdCardNr,
         id_card_expire_date: personApi.IdCardExpireDate,
         voter_nr: personApi.VoterNr,
         phone: personApi.Phone,
         email: personApi.Email,
-        local_born: personApi.LocalBorn
+        local_born: personApi.LocalBorn,
+        local_town: personApi.LocalTown,
+        caretaker: caretaker
     };
 }
 
-function mapPlayerFromApi(playerApi) {
+export function mapPlayerFromApi(playerApi) {
     if (!playerApi) {
         return null;
     }
@@ -61,9 +93,9 @@ function mapPlayerFromApi(playerApi) {
         comments: playerApi.Comments,
         photo_filename: playerApi.PhotoFilename,
         doc_filename: playerApi.DocFilename,
-        step: mapFromStepApi(playerApi.step),
-        role: mapFromRoleApi(playerApi.role),
-        person: mapPersonFromApi(playerApi.person),
-        caretaker: mapPersonFromApi(playerApi.caretaker) 
+        step: mapFromStepApi(playerApi.Step),
+        role: mapFromRoleApi(playerApi.Role),
+        person: mapPersonFromApi(playerApi.Person),
+        caretaker: mapPersonFromApi(playerApi.Caretaker) 
     };
 }

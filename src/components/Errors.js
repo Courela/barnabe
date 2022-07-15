@@ -1,5 +1,5 @@
 function handleError(errResponse, errorMsgs) {
-    console.log(errResponse);
+    console.error(errResponse);
     let msg = 'Ocorreu um erro, tente outra vez mais tarde. ' +
         'Se o erro persistir contacte o administrador.';
 

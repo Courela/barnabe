@@ -22,7 +22,10 @@ export default class PlayerForm extends Component {
         this.handleCancel = this.handleCancel.bind(this);
         this.handleReset = this.handleReset.bind(this);
 
-        const stepId = props.match.params.stepId || props.stepId;
+        const stepId = props.match.params.stepId && !isNaN(props.match.params.stepId) ? 
+            props.match.params.stepId : 
+            !isNaN(props.stepId) ? 
+                parseInt(props.stepId, 10) : props.stepId;
 
         this.state = {
             steps: [],
@@ -62,50 +65,25 @@ export default class PlayerForm extends Component {
 
         if (this.state.stepId > 0) {
             getStep(this.state.stepId, this.state.season)
-                .then(results => {
-                    const single = results.data;
-                    const steps = [single].map(s => ({
-                        id: s.Id,
-                        descr: s.Description,
-                        gender: s.Gender,
-                        isCaretakerRequired: s.IsCaretakerRequired,
-                        minDate: s.MinDate,
-                        maxDate: s.MaxDate
-                    }));
+                .then(step => {
                     this.setState({
-                        steps: steps,
-                        gender: steps[0].gender
+                        steps: Array(1).fill(step),
+                        gender: step.gender
                     });
                 })
                 .catch(errors.handleError);
         }
         else {
             getTeamSteps(year, teamId)
-                .then(results => {
+                .then(steps => {
                     if (this.state.stepId > 0) {
-                        const single = results.data.filter((s => s.Id === this.state.stepId));
-                        const steps = single.map(s => ({
-                            id: s.Id,
-                            descr: s.Description,
-                            gender: s.Gender,
-                            isCaretakerRequired: s.IsCaretakerRequired,
-                            minDate: s.MinDate,
-                            maxDate: s.MaxDate
-                        }));
+                        const single = steps.filter((s => s.id === this.state.stepId));
                         this.setState({
-                            steps: steps,
-                            gender: steps[0].gender
+                            steps: single,
+                            gender: single[0].gender
                         });
                     }
                     else {
-                        const steps = results.data.map(s => ({
-                            id: s.Id,
-                            descr: s.Description,
-                            gender: s.Gender,
-                            isCaretakerRequired: s.IsCaretakerRequired,
-                            minDate: s.MinDate,
-                            maxDate: s.MaxDate
-                        }));
                         if (steps.length > 1) {
                             this.setState({
                                 steps: steps
@@ -126,27 +104,19 @@ export default class PlayerForm extends Component {
     getRoles() {
         const isStaff = this.props.location.pathname.includes('staff');
         getRoles()
-            .then(results => {
+            .then(roles => {
                 if (isStaff) {
-                    results.data.splice(results.data.indexOf(results.data.find(r => r.Id === 1)), 1);
+                    roles.splice(roles.indexOf(roles.find(r => r.id === 1)), 1);
                 }
 
                 if (this.props.roleId > 0) {
-                    const single = results.data.filter(r => r.Id === this.props.roleId);
-                    const roles = single.map(r => ({
-                        id: r.Id,
-                        descr: r.Description
-                    }));
+                    const singleRole = roles.filter(r => r.id === this.props.roleId);
                     this.setState({
-                        roles: roles,
-                        roleId: roles[0].id
+                        roles: singleRole,
+                        roleId: singleRole[0].id
                     });
                 }
                 else {
-                    const roles = results.data.map(r => ({
-                        id: r.Id,
-                        descr: r.Description
-                    }));
                     this.setState({ roles: roles });
                 }
             })
@@ -215,7 +185,7 @@ export default class PlayerForm extends Component {
         if (personId !== null) {
             if (this.validateForm()) {
                 console.log('Submitting player...');
-                console.log('handleSubmit birth: ', this.state.birth);
+                //console.log('handleSubmit birth: ', this.state.birth);
                 this.setState({ isSubmitting: true }, () => {
                     const data = {
                         role: this.state.roleId,
@@ -266,22 +236,21 @@ export default class PlayerForm extends Component {
         else {
             console.log('Search person with docId ' + this.state.docId);
             getPerson(this.state.docId, true)
-                .then(result => {
-                    console.log("PlayerForm response: ", result);
-                    const person = result.data;
-                    if (person.Id) {
+                .then(person => {
+                    //console.log("PlayerForm getPerson response: ", person);
+                    if (person.id) {
                         this.setState({
-                            personId: person.Id,
-                            name: person.Name,
-                            gender: person.Gender,
-                            email: person.Email ? person.Email : (person.caretaker && person.caretaker.Email ? person.caretaker.Email : ''),
-                            phoneNr: person.Phone ? person.Phone : (person.caretaker && person.caretaker.Phone ? person.caretaker.Phone : ''),
-                            birth: person.Birthdate ? new Date(person.Birthdate) : null,
-                            voterNr: person.VoterNr,
-                            isLocalBorn: person.LocalBorn ? person.LocalBorn : false,
-                            isLocalTown: person.LocalTown ? person.LocalTown : false,
-                            caretakerDocId: person.caretaker ? person.caretaker.IdCardNr : '',
-                            caretakerName: person.caretaker ? person.caretaker.Name : '',
+                            personId: person.id,
+                            name: person.name,
+                            gender: person.gender,
+                            email: person.email ? person.email : (person.caretaker && person.caretaker.email ? person.caretaker.Email : ''),
+                            phoneNr: person.phone ? person.phone : (person.caretaker && person.caretaker.phone ? person.caretaker.phone : ''),
+                            birth: person.birthdate ? new Date(person.birthdate) : null,
+                            voterNr: person.voter_nr,
+                            isLocalBorn: person.local_born ? person.local_born : false,
+                            isLocalTown: person.local_town ? person.local_town : false,
+                            caretakerDocId: person.caretaker ? person.caretaker.id_card_number : '',
+                            caretakerName: person.caretaker ? person.caretaker.name : '',
                         });
                     } else {
                         console.log('No person found');
@@ -382,7 +351,7 @@ export default class PlayerForm extends Component {
     }
 
     render() {
-        const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.descr}</option>);
+        const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.description}</option>);
 
         const formDetails = this.state.personId !== null ?
             <PlayerDetails {...this.state}
@@ -536,7 +505,7 @@ function PlayerDetails(props) {
         </Panel> :
         <div />;
 
-    const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
+    const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.description}</option>);
 
     const getStepDate = (prop, defaultDate) => {
         let result = defaultDate;
@@ -577,8 +546,8 @@ function PlayerDetails(props) {
             <div>
                 <DatePicker onChange={props.onChangeBirthdate} value={props.birth}
                     required={true} locale="pt-PT"
-                    minDate={getStepDate('minDate', new Date('1900-01-01T00:00:00.000Z'))}
-                    maxDate={getStepDate('maxDate', new Date())}
+                    minDate={getStepDate('min_date', new Date('1900-01-01T00:00:00.000Z'))}
+                    maxDate={getStepDate('max_date', new Date())}
                     calendarClassName="date-picker-form-control" />
             </div>
         </FormGroup>

@@ -1,5 +1,7 @@
 import axios from 'axios';
 import settings from '../settings';
+import errors from '../components/Errors';
+import {mapFromSeasonApi, mapFromRoleApi, mapFromStepApi, mapFromTeamApi, mapPersonFromApi, mapPlayerFromApi } from './mappings';
 
 const headers = {
     headers: {
@@ -9,27 +11,60 @@ const headers = {
 
 export function getSeasons() {
     const url = settings.API_URL + '/api/seasons';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var result = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    result.push(mapFromSeasonApi(el));
+                });
+            }
+            return result;
+        })
+        .catch(errors.handleError);
 }
 
 export function getRoles() {
     const url = settings.API_URL + '/api/roles';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var steps = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    steps.push(mapFromRoleApi(el));
+                });
+            }
+            return steps;
+        })
+        .catch(errors.handleError);
 }
 
 export function getSteps() {
     const url = settings.API_URL + '/api/steps';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var steps = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    steps.push(mapFromStepApi(el));
+                });
+            }
+            return steps;
+        })
+        .catch(errors.handleError);
 }
 
 export function getActiveSeason() {
     return getSeasons()
-        .then(res => res.data.find(s => s.IsActive));
+        .then(res => res.find(s => s.is_active))
+        .catch(errors.handleError);
 }
 
 export function getSeason(season) {
     const url = settings.API_URL + '/api/seasons/' + season;
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => mapFromSeasonApi(r.data))
+        .catch(errors.handleError);
 }
 
 export function getTeams(season) {
@@ -37,17 +72,39 @@ export function getTeams(season) {
     if (season) {
         url += '?season=' + season;
     }
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var teams = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    teams.push(mapFromTeamApi(el));
+                });
+            }
+            return teams;
+        })
+        .catch(errors.handleError);
 }
 
 export function getTeam(teamId) {
     const url = settings.API_URL + '/api/teams/' + teamId;
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => mapFromTeamApi(r.data))
+        .catch(errors.handleError);
 }
 
 export function signSteps(season, teamId) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/sign-steps';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var steps = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    steps.push(mapFromStepApi(el));
+                });
+            }
+            return steps;
+        })
+        .catch(errors.handleError);
 }
 
 export function getStep(stepId, season) {
@@ -56,7 +113,9 @@ export function getStep(stepId, season) {
         url += '/seasons/' + season;
     }
     url += '/steps/' + stepId;
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => mapFromStepApi(r.data))
+        .catch(errors.handleError);
 }
 
 export function createTeamStep(season, teamId, stepId) {
@@ -69,12 +128,32 @@ export function getTeamSteps(season, teamId) {
         debugger;
     }
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var steps = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    steps.push(mapFromStepApi(el));
+                });
+            }
+            return steps;
+        })
+        .catch(errors.handleError);
 }
 
 export function getTeamsByStep(season, stepId) {
     const url = settings.API_URL + '/api/teams?season=' + season + '&stepId=' + stepId;
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var teams = [];
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    teams.push(mapFromTeamApi(el));
+                });
+            }
+            return teams;
+        })
+        .catch(errors.handleError);
 }
 
 export function removeTeamStep(season, teamId, stepId) {
@@ -84,17 +163,39 @@ export function removeTeamStep(season, teamId, stepId) {
 
 export function getPlayers(season, teamId, stepId) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var result = []
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    result.push(mapPlayerFromApi(el));
+                });
+            }
+            return result;
+        })
+        .catch(errors.handleError);
 }
 
 export function getStaff(season, teamId, stepId) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var result = []
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    result.push(mapPlayerFromApi(el));
+                });
+            }
+            return result;
+        })
+        .catch(errors.handleError);
 }
 
 export function getPlayer(season, teamId, stepId, playerId) {
     const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId;
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => mapPlayerFromApi(r.data))
+        .catch(errors.handleError);
 }
 
 export function getPhoto(season, teamId, stepId, playerId) {
@@ -104,7 +205,9 @@ export function getPhoto(season, teamId, stepId, playerId) {
 
 export function getPerson(docId, includeCaretaker) {
     const url = settings.API_URL + '/api/persons?docId=' + docId + (includeCaretaker ? '&caretaker=true' : '');
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => mapPersonFromApi(r.data))
+        .catch(errors.handleError);
 }
 
 export function searchPersons(docId){
@@ -127,8 +230,18 @@ export function copyPlayers(season, teamId, stepId, fromSeason, playerIds) {
     const data = {
         selectedSeason: fromSeason,
         playerIds: playerIds
-    }
-    return postRequest(url, data);
+    };
+    return postRequest(url, data)
+        .then(r => {
+            var result = []
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    result.push(mapPlayerFromApi(el));
+                });
+            }
+            return result;
+        })
+        .catch(errors.handleError);
 }
 
 export function exportPlayers(season, teamId, stepId) {

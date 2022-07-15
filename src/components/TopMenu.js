@@ -19,10 +19,8 @@ export default class TopMenu extends Component {
     componentDidMount() {
         if (this.state.seasons.length === 0) {
             getSeasons()
-                .then((result) => {
-                    if (result.data && result.data.length > 0) {
-                        this.setState({ seasons: result.data });
-                    }
+                .then(result => {
+                    this.setState({ seasons: result });
                 })
                 .catch((err) => {
                     console.error(err);
@@ -96,12 +94,12 @@ export default class TopMenu extends Component {
 function SeasonDropDown(props) {
     let seasons = [];
     if (props.seasons.length > 0) {
-        const activeSeason = props.seasons.find(s => s.IsActive);
+        const activeSeason = props.seasons.find(s => s.is_active);
         const indexActive = props.seasons.indexOf(activeSeason);
 
-        seasons = props.seasons.map(s => s.Year);
+        seasons = props.seasons.map(s => s.year);
         seasons.splice(indexActive, 1);
-        seasons.splice(0, 0, activeSeason.Year, 0);
+        seasons.splice(0, 0, activeSeason.year, 0);
     }
 
     return (

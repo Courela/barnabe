@@ -26,10 +26,10 @@ export default class StepForm extends Component {
     async componentDidMount() {
         var { season, teams } = this.state;
         if (season === 0) {
-            season = await getActiveSeason().then(res => res.Year); 
+            season = await getActiveSeason().then(season => season.year); 
         }
         if (teams.length === 0) {
-            teams = await getTeams().then(res => res.data);
+            teams = await getTeams();
         }
 
         this.setState({ season: season, teams: teams });
@@ -38,14 +38,14 @@ export default class StepForm extends Component {
     handleTeamSelect(evt) {
         var teamId = parseInt(evt.target.value, 10);
         signSteps(this.state.season, teamId)
-            .then(results => this.setState({ steps: results.data, teamId: teamId, stepId: 0 }))
+            .then(steps => this.setState({ steps: steps, teamId: teamId, stepId: 0 }))
             .catch(errors.handleError);
     }
 
     handleTeamSelectRemove(evt) {
         var teamId = parseInt(evt.target.value, 10);
         getTeamSteps(this.state.season, teamId)
-            .then(results => this.setState({ steps: results.data, teamId: teamId, stepId: 0 }))
+            .then(steps => this.setState({ steps: steps, teamId: teamId, stepId: 0 }))
             .catch(errors.handleError);
     }
 
@@ -91,7 +91,8 @@ export default class StepForm extends Component {
         return (
             <div>
                 <h1>Gerir Escalões - {this.state.season}</h1>
-                <Tabs id="manage-steps">
+                <Tabs id="manage-steps" onSelect={() => this.setState({ steps: [], teamId: 0, stepId: 0 }) }
+                >
                     <Tab eventKey={1} title="Adicionar">
                         <StepFormOptions action="add" bsStyle="success" label="Adicionar"
                             teams={this.state.teams} teamValue={this.state.teamId} 

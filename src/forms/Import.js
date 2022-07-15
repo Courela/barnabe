@@ -36,19 +36,15 @@ export default class Import extends React.Component {
     async componentDidMount() {
         var step = this.state.step;
         if (!step) {
-            step = await getStep(this.state.stepId, this.state.season)
-                .then(result => {
-                    return result.data;
-                })
-                .catch(errors.handleError);
+            step = await getStep(this.state.stepId, this.state.season);
         }
 
         var seasons = this.state.seasons;
         if (this.state.seasons.length === 0) {
             seasons = await getSeasons()
-                .then((result) => {
-                    if (result.data && result.data.length > 0) {
-                        return result.data.filter((v,i,arr) => v.Year < this.state.season);
+                .then((r) => {
+                    if (r.length > 0) {
+                        return r.filter((v,i,arr) => v.year < this.state.season);
                     }
                 })
                 .catch(errors.handleError);
@@ -58,19 +54,15 @@ export default class Import extends React.Component {
     }
 
     getPlayers() {
-        if (this.state.players.length === 0) {
-            const { selectedSeason, teamId, stepId, role } = this.state;
-            (role === 'staff' ? 
-                getStaff(selectedSeason, teamId, stepId) :
-                getPlayers(selectedSeason, teamId, stepId))
-                .then(result => {
-                    if (result.data && result.data.length > 0) {
-                        this.setState({ players: result.data });
-                    }
-                    alert("Imported " + result.data.length + " persons.");
-                })
-                .catch(errors.handleError);
-        }
+        const { selectedSeason, teamId, stepId, role } = this.state;
+        (role === 'staff' ? 
+            getStaff(selectedSeason, teamId, stepId) :
+            getPlayers(selectedSeason, teamId, stepId))
+            .then(result => {
+                this.setState({ players: result });
+                // alert("Encontradas " + result.length + " pessoas.");
+            })
+            .catch(errors.handleError);
     }
 
     handleSeasonSelect(evt) {
@@ -84,15 +76,20 @@ export default class Import extends React.Component {
 
     handleSubmit(evt) {
         const { season, teamId, stepId, role } = this.state;
-        copyPlayers(season, teamId, stepId, this.state.selectedSeason, this.state.selected)
-            .then(result => {
-                alert((role === 'staff' ? 'Membros da Equipa Técnica': 'Jogadores' ) + ' importados com sucesso.');
-                this.props.history.push('/seasons/' + season + '/steps/' + stepId);
-            })
-            .catch((err) => {
-                errors.handleError(err);
-                this.setState({ isSubmitting: false });
-            });
+        if (this.state.selected && this.state.selected.length > 0) {
+            copyPlayers(season, teamId, stepId, this.state.selectedSeason, this.state.selected)
+                .then(result => {
+                    alert((role === 'staff' ? 'Membros da Equipa Técnica': 'Jogadores' ) + ' importados com sucesso.');
+                    this.props.history.push('/seasons/' + season + '/steps/' + stepId);
+                })
+                .catch((err) => {
+                    errors.handleError(err);
+                    this.setState({ isSubmitting: false });
+                });
+        }
+        else {
+            alert("Nenhum jogador seleccionado.");
+        }
         evt.preventDefault();
     }
 
@@ -134,7 +131,7 @@ export default class Import extends React.Component {
     }
 
     isPlayerEligible(player) {
-        return this.state.role === 'staff' || player.person.Birthdate >= this.state.step.MinDate;
+        return this.state.role === 'staff' || player.person.birthdate >= this.state.step.min_date;
     }
 
     render() {
@@ -147,8 +144,8 @@ export default class Import extends React.Component {
                         <input
                             type="checkbox"
                             className="checkbox"
-                            checked={this.state.selected.indexOf(original.Id) >= 0}
-                            onChange={() => this.toggleRow(original.Id)}
+                            checked={this.state.selected.indexOf(original.id) >= 0}
+                            onChange={() => this.toggleRow(original.id)}
                         /> : <span />
                     );
                 },
@@ -172,25 +169,25 @@ export default class Import extends React.Component {
             },
             {
                 Header: "Nome",
-                accessor: "person.Name"
+                accessor: "person.name"
             },
             {
                 Header: "Data Nascimento",
                 id: "birthdate", 
-                accessor: "person.Birthdate",
-                Cell: (row) => dateFormat(row.original.person.Birthdate)
+                accessor: "person.birthdate",
+                Cell: (row) => dateFormat(row.original.person.birthdate)
             },
             {
                 Header: "Cartão Cidadão",
-                accessor: "person.IdCardNr"
+                accessor: "person.id_card_number"
             }
         ];
 
-        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
+        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.year}>{s.year}</option>);
 
         return (
             <div>
-                <h1>Importar Jogadores - {this.state.step ? this.state.step.Description : ''}</h1>
+                <h1>Importar Jogadores - {this.state.step ? this.state.step.description : ''}</h1>
                 <FormGroup controlId="selectSeason" validationState={this.validateSeason()}>
                     <ControlLabel>Época</ControlLabel>
                     <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
@@ -203,7 +200,7 @@ export default class Import extends React.Component {
                 <ReactTable
                     data={this.state.players}
                     columns={columns}
-                    defaultSorted={[{ id: "Id", desc: false }]}
+                    defaultSorted={[{ id: "id", desc: false }]}
                     minRows={Math.max(Math.min(this.state.players.length, settings.DEFAULT_TABLE_PAGE_SIZE), 1)}
                     defaultPageSize={settings.DEFAULT_TABLE_PAGE_SIZE}
                 />

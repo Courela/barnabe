@@ -37,10 +37,7 @@ export default class StepTeam extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(newProps) {
-        this.setState({ stepId: newProps.match.params.stepId, stepName: null, players: [], staff: [] }, () => {
-            this.getPlayers();
-            this.getStaff();
-        });
+        this.setState({ stepId: newProps.match.params.stepId, stepName: null, players: [], staff: [] });
     }
 
     getPlayers() {
@@ -48,18 +45,12 @@ export default class StepTeam extends Component {
             const { season, teamId, stepId } = this.state;
             getPlayers(season, teamId, stepId)
                 .then(result => {
-                    if (result.data && result.data.length > 0) {
-                        this.setState({ players: result.data });
-                    }
+                    this.setState({ players: result });
                 })
                 .then(res => {
                     if (!this.state.stepName) {
                         getStep(this.state.stepId)
-                            .then(result => {
-                                if (result.data) {
-                                    this.setState({ stepName: result.data.Description });
-                                }
-                            })
+                            .then(step => this.setState({ stepName: step.description }))
                             .catch(errors.handleError);
                     }
                 })
@@ -72,9 +63,7 @@ export default class StepTeam extends Component {
             const { season, teamId, stepId } = this.state;
             getStaff(season, teamId, stepId)
                 .then(result => {
-                    if (result.data && result.data.length > 0) {
-                        this.setState({ staff: result.data });
-                    }
+                    this.setState({ staff: result });
                 })
                 .catch(errors.handleError);
         }
@@ -82,14 +71,14 @@ export default class StepTeam extends Component {
 
     linkToPlayer(player) {
         const { season, stepId } = this.state;
-        return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + player.Id}>{player.person.Name}</Link>);
+        return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + player.id}>{player.person.name}</Link>);
     }
 
     playerActions(player) {
         const { season, stepId } = this.state;
         if (this.props.isSeasonActive && !this.props.isSignUpExpired) {
-            const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.Id + '?edit=1';
-            const removeFn = () => this.removePlayer(player.Id, player.person.Name);
+            const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.id + '?edit=1';
+            const removeFn = () => this.removePlayer(player.id, player.person.name);
             return (
                 <Fragment>
                     <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>
@@ -122,6 +111,15 @@ export default class StepTeam extends Component {
     };
 
     render() {
+        var staff_columns = [
+            { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row.original) },
+            { Header: 'Função', id: 'role', accessor: 'role.description' },
+            { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.id_card_number' }
+        ];
+        if (this.props.isSeasonActive) {
+            staff_columns.push({ Header: '', accessor: 'Id', Cell: (row) => this.playerActions(row.original) });
+        }
+
         return (
             <Fragment>
                 <h2>{this.state.stepName}</h2>
@@ -149,12 +147,7 @@ export default class StepTeam extends Component {
                     <h3>Equipa Técnica</h3>
                     <div>
                         <Table
-                            columns={[
-                                { Header: 'Nome', id: 'id', accessor: 'person.Name', Cell: (row) => this.linkToPlayer(row.original) },
-                                { Header: 'Função', id: 'role', accessor: 'role.Description' },
-                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.IdCardNr' },
-                                { Header: '', accessor: 'Id', Cell: (row) => this.playerActions(row.original) }
-                            ]}
+                            columns={staff_columns}
                             data={this.state.staff}
                             onFetchData={this.getStaff}  />
                     </div>
@@ -180,15 +173,15 @@ function PlayersTable(props) {
     };
 
     let columns = [
-        { Header: "Nome", id: 'id', accessor: "person.Name", Cell: (row) => props.linkToPlayer(row.original) },
-        { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
-        { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.IdCardNr" },
-        { Header: "Estrangeiro", id: "foreign", Cell: (row) => isResident(row.original) },
-        { Header: "", id: "actions", accessor: 'Id', Cell: (row) => props.playerActions(row.original) }
+        { Header: "Nome", id: 'id', accessor: "person.name", Cell: (row) => props.linkToPlayer(row.original) },
+        { Header: "Data Nascimento", id: "birthdate", accessor: "person.birthdate", Cell: (row) => dateFormat(row.original.person.birthdate) },
+        { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.id_card_number" },
+        { Header: "Estrangeiro", id: "foreign", Cell: (row) => isResident(row.original) }
     ];
 
     if (props.isSeasonActive) {
         columns.splice(0, 0, { Header: "", id: 'icon', accessor: "Id", width: 25, Cell: (row) => statusIcon(row.original) });
+        columns.push({ Header: "", id: "actions", accessor: 'id', Cell: (row) => props.playerActions(row.original) });
     }
 
     return (<div>

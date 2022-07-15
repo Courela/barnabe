@@ -81,32 +81,32 @@ export default class PlayerDetails extends Component {
         const { season, teamId, stepId, playerId } = this.state;
 
         getPlayer(season, teamId, stepId, playerId)
-            .then(results => {
-                const { player, photo, person, caretaker, role, step } = results.data;
-                const voterNr = caretaker && caretaker.VoterNr ? caretaker.VoterNr : (person.VoterNr ? person.VoterNr : '');
+            .then(player => {
+                const { photo, person, caretaker, role, step } = player;
+                const voterNr = caretaker && caretaker.voter_nr ? caretaker.voter_nr : (person && person.voter_nr ? person.voter_nr : '');
                 this.setState({
-                    personId: person.Id,
-                    roleId: player.RoleId,
-                    roles: [{id: role.Id, descr: role.Description}],
-                    playerName: person.Name,
-                    birth: isValidDate(person.Birthdate) ? new Date(person.Birthdate) : null,
-                    docId: person.IdCardNr,
-                    gender: person.Gender,
-                    isResident: player.Resident ? true : false,
-                    isLocalBorn: person.LocalBorn ? true : false,
-                    isLocalTown: person.LocalTown ? true : false,
+                    personId: person.id,
+                    roleId: player.role_id,
+                    roles: [role],
+                    playerName: person.name,
+                    birth: isValidDate(person.birthdate) ? new Date(person.birthdate) : null,
+                    docId: person.id_card_number,
+                    gender: person.gender,
+                    isResident: player.resident ? true : false,
+                    isLocalBorn: person.local_born ? true : false,
+                    isLocalTown: person.local_town ? true : false,
                     voterNr: voterNr,
-                    phoneNr: caretaker && caretaker.Phone ? caretaker.Phone : (person.Phone ? person.Phone : ''),
-                    email: caretaker && caretaker.Email ? caretaker.Email : (person.Email ? person.Email : ''),
-                    caretakerId: player.CareTakerId,
-                    caretakerName: caretaker ? caretaker.Name : '',
-                    caretakerDocId: caretaker ? caretaker.IdCardNr : '',
-                    comments: player.Comments,
-                    stepDescr: step.Description,
+                    phoneNr: caretaker && caretaker.phone ? caretaker.phone : (person.phone ? person.phone : ''),
+                    email: caretaker && caretaker.email ? caretaker.email : (person.email ? person.email : ''),
+                    caretakerId: caretaker.Id,
+                    caretakerName: caretaker ? caretaker.name : '',
+                    caretakerDocId: caretaker ? caretaker.id_card_number : '',
+                    comments: player.comments,
+                    stepDescr: step.description,
                     steps: [step],
                     photoSrc: photo ? photo.src : null,
                     newPhotoUpload: false,
-                    docExists: player.DocFilename ? true : false
+                    docExists: player.doc_filename ? true : false
                 }, () => {
                     if (photo && !photo.existsLocally) {
                         //console.log("Getting photo...");
@@ -479,11 +479,11 @@ function FormPlayer(props) {
         return result;
     };
 
-    const selectSteps = props.steps.map((s, i) => s && s.Id ? 
-                    <option key={s.Id} value={s.Id}>{s.Description}</option> : 
+    const selectSteps = props.steps.map((s, i) => s && s.id ? 
+                    <option key={s.id} value={s.id}>{s.description}</option> : 
                     <option key={i}></option>);
 
-    const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.descr}</option>);
+    const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.description}</option>);
 
     return (<div>
         <FormGroup controlId="selectStep">
@@ -575,7 +575,7 @@ function FormPlayer(props) {
         <FormGroup controlId="formComments">
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"
-                name="comments" value={props.comments} onChange={props.handleControlChange}
+                name="comments" value={props.comments || ''} onChange={props.handleControlChange}
                 readOnly={!props.isEditing || props.isSubmitting} maxLength="2000" />
         </FormGroup>
     </div>);

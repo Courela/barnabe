@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 
 export function SeasonSelect(props) {
-    const selectSeasons = props.seasons.map(s => { return { value: (s.Year ? s.Year : s), description: (s.Year ? s.Year : s )}; });
+    const selectSeasons = props.seasons.map(s => { return { value: (s.year ? s.year : s), description: (s.year ? s.year : s )}; });
 
     return <Select controlId="selectSeason" name="season" label="Época" 
         options={selectSeasons} value={props.value} 
@@ -16,7 +16,7 @@ export function TeamSelect(props) {
     var name = props.name ? props.name : "teamId";
     var label = props.label ? props.label : "Equipa";
     
-    const selectTeams = props.teams.map(t => { return { value: t.Id, description: t.ShortDescription }; });
+    const selectTeams = props.teams.map(t => { return { value: t.id, description: t.short_description }; });
 
     return <Select controlId={controlId} name={name} label={label} 
         options={selectTeams} value={props.value} 
@@ -24,7 +24,7 @@ export function TeamSelect(props) {
 }
 
 export function StepSelect(props) {
-    const selectSteps = props.steps.map(s => { return { value: s.Id, description: s.Description }; });
+    const selectSteps = props.steps.map(s => { return { value: s.id, description: s.description }; });
  
     return <Select controlId="selectStep" name="stepId" label="Escalão" 
         options={selectSteps} value={props.value} 

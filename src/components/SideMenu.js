@@ -47,7 +47,7 @@ export default class SideMenu extends Component {
     getTeams() {
         if (this.state.season > 0) {
             getTeams(this.state.season)
-                .then((res) => this.setState({ teams: res.data }))
+                .then(teams => this.setState({ teams: teams }))
                 .catch(errors.handleError);
         }
     }
@@ -78,22 +78,22 @@ export default class SideMenu extends Component {
 
     buildTeamsMenuItems() {
         let menuItems = [];
-        this.state.teams.forEach(element => {
-            menuItems.push(<MenuItem key={"/seasons/" + this.state.season + "/teams/" + element.Id}>{element.ShortDescription}</MenuItem>);
+        this.state.teams.forEach(el => {
+            menuItems.push(<MenuItem key={"/seasons/" + this.state.season + "/teams/" + el.id}>{el.short_description}</MenuItem>);
         });
         return menuItems;
     }
 
     getTeamSteps() {
         getTeamSteps(this.state.season, this.props.teamId)
-            .then((res) => this.setState({ steps: res.data }))
+            .then(steps => this.setState({ steps: steps }))
             .catch(errors.handleError);
     }
 
     stepsMenu() {
         let menuItems = [];
         this.state.steps.forEach(el => {
-            menuItems.push(<MenuItem key={"/seasons/" + this.state.season + "/steps/" + el.StepId}>{el.Description}</MenuItem>);
+            menuItems.push(<MenuItem key={"/seasons/" + this.state.season + "/steps/" + el.id}>{el.description}</MenuItem>);
         });
 
         if (menuItems.length > 0) {

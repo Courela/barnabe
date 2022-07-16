@@ -1,10 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonToolbar, Button, Glyphicon, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { ButtonToolbar, Button } from 'react-bootstrap';
+import PlayersTable from './PlayersTable';
 import Table from '../components/Table';
 import errors from '../components/Errors';
-import { dateFormat } from '../utils/formats';
-import { isResident, isValidPlayer } from '../utils/validations';
 import { getPlayers, getStep, getStaff, removePlayer } from '../utils/communications';
 
 export default class StepTeam extends Component {
@@ -32,13 +31,28 @@ export default class StepTeam extends Component {
     }
 
     componentDidMount() {
+        this.updatePlayersAndStaff();
+    }
+
+    updatePlayersAndStaff() {
         this.getPlayers();
         this.getStaff();
     }
 
     UNSAFE_componentWillReceiveProps(newProps) {
-        this.setState({ stepId: newProps.match.params.stepId, stepName: null, players: [], staff: [] });
+        getStep(newProps.match.params.stepId)
+            .then(step => { 
+                this.setState({ stepId: newProps.match.params.stepId, stepName: step.description, players: [], staff: [] }, this.updatePlayersAndStaff);
+            })
+            .catch(errors.handleError);
     }
+
+    // static async getDerivedStateFromProps(props, state) {
+    //     let result = await getStep(props.match.params.stepId)
+    //         .then(step => { return { stepId: props.match.params.stepId, stepName: step.description }; })
+    //         .catch(errors.handleError);
+    //     return result;
+    // }
 
     getPlayers() {
         if (this.state.players.length === 0) {
@@ -93,10 +107,7 @@ export default class StepTeam extends Component {
         const { season, teamId, stepId } = this.state;
         if (window.confirm('Tem a certeza que quer remover o jogador ' + name + '?')) {
             await removePlayer(season, teamId, stepId, id);
-            this.setState({ players: [], staff: [] }, () => {
-                this.getPlayers();
-                this.getStaff();
-            });
+            this.setState({ players: [], staff: [] }, this.updatePlayersAndStaff);
         }
     }
 
@@ -149,45 +160,9 @@ export default class StepTeam extends Component {
                         <Table
                             columns={staff_columns}
                             data={this.state.staff}
-                            onFetchData={this.getStaff}  />
+                        />
                     </div>
                 </div>
             </Fragment>);
     }
-}
-
-function PlayersTable(props) {
-    const statusIcon = (player) => {
-        const tooltip = <Tooltip id="tooltip">Dados em falta!</Tooltip>;
-
-        const isValid = isValidPlayer(player);
-        if (isValid) {
-            return <Glyphicon glyph="ok-sign" style={{ color: 'green' }}/>
-        }
-        else {
-            return (
-                <OverlayTrigger placement="left" overlay={tooltip}>
-                    <Glyphicon glyph="remove-sign" style={{ color: 'red' }} />
-                </OverlayTrigger>);
-        }
-    };
-
-    let columns = [
-        { Header: "Nome", id: 'id', accessor: "person.name", Cell: (row) => props.linkToPlayer(row.original) },
-        { Header: "Data Nascimento", id: "birthdate", accessor: "person.birthdate", Cell: (row) => dateFormat(row.original.person.birthdate) },
-        { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.id_card_number" },
-        { Header: "Estrangeiro", id: "foreign", Cell: (row) => isResident(row.original) }
-    ];
-
-    if (props.isSeasonActive) {
-        columns.splice(0, 0, { Header: "", id: 'icon', accessor: "Id", width: 25, Cell: (row) => statusIcon(row.original) });
-        columns.push({ Header: "", id: "actions", accessor: 'id', Cell: (row) => props.playerActions(row.original) });
-    }
-
-    return (<div>
-        <Table
-            columns={columns}
-            data={props.players}
-            onFetchData={props.getPlayers} />
-    </div>);
 }

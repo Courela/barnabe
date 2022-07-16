@@ -20,10 +20,8 @@ export default class Users extends Component {
 
     getUsers() {
         getUsers()
-            .then(result => {
-                if (result.data && result.data.length > 0) {
-                    this.setState({ users: result.data });
-                }
+            .then(users => {
+                this.setState({ users: users });
             })
             .catch(errors.handleError);
     }
@@ -34,8 +32,8 @@ export default class Users extends Component {
                 <h2>Utilizadores</h2>
                 <Table
                     columns={[
-                        { Header: 'Nome de Utilizador', id: 'id', accessor: 'Username' },
-                        { Header: 'Colectividade', id: 'team', accessor: 'team.ShortDescription' }
+                        { Header: 'Nome de Utilizador', id: 'id', accessor: 'username' },
+                        { Header: 'Colectividade', id: 'team', accessor: 'team.short_description' }
                     ]}
                     data={this.state.users}
                     onFetchData={this.getUsers}  />

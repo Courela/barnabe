@@ -60,8 +60,8 @@ export default class Seach extends Component {
     }
 
     async getSeasons() {
-        var seasons = await getSeasons().then(results => results.data);
-        var teams = await getTeams().then(results => results.data);
+        var seasons = await getSeasons();
+        var teams = await getTeams();
         this.setState({ seasons: seasons, teams: teams });
     }
 
@@ -76,8 +76,8 @@ export default class Seach extends Component {
 
     getSteps(season, teamId, stepId = 0, callback = null) {
         getTeamSteps(season, teamId)
-            .then(result => {
-                this.setState({ steps: result.data, stepId: stepId, data: [], exportDataUrl: null }, callback);
+            .then(steps => {
+                this.setState({ steps: steps, stepId: stepId, data: [], exportDataUrl: null }, callback);
             })
             .catch(errors.handleError);
     }
@@ -127,13 +127,8 @@ export default class Seach extends Component {
     fetchResults() {
         const { season, teamId, stepId } = this.state;
         getPlayers(season, teamId, stepId)
-            .then(result => {
-                if (result.data && result.data.length > 0) {
-                    this.setState({ data: result.data, exportDataUrl: null });
-                }
-                else {
-                    this.setState({ data: [], exportDataUrl: null });
-                }
+            .then(players => {
+                this.setState({ data: players, exportDataUrl: null });
             })
             .catch(err => { 
                 this.setState({ data: [], exportDataUrl: null });
@@ -141,13 +136,8 @@ export default class Seach extends Component {
             });
 
         getStaff(season, teamId, stepId)
-            .then(result => {
-                if (result.data && result.data.length > 0) {
-                    this.setState({ staff: result.data, exportDataUrl: null });
-                }
-                else {
-                    this.setState({ staff: [], exportDataUrl: null });
-                }
+            .then(staff => {
+                this.setState({ staff: staff, exportDataUrl: null });
             })
             .catch(err => { 
                 this.setState({ staff: [], exportDataUrl: null });
@@ -157,7 +147,7 @@ export default class Seach extends Component {
 
     linkToPlayer(row) {
         const { season, teamId, stepId } = this.state;
-        return (<Link to={'/admin/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + row.original.Id}>{row.original.person.Name}</Link>);
+        return (<Link to={'/admin/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + row.original.id}>{row.original.person.name}</Link>);
     }
 
     prepareExport() {
@@ -191,10 +181,10 @@ export default class Seach extends Component {
 
         let columns = [
             { Header: "", id: 'icon', width: 25, Cell: (row) => statusIcon(row.original) },
-            { Header: "Nome", id: 'id', accessor: "person.Name", Cell: (row) => this.linkToPlayer(row) },
-            { Header: "Data Nascimento", id: "birthdate", accessor: "person.Birthdate", Cell: (row) => dateFormat(row.original.person.Birthdate) },
-            { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.IdCardNr" },
-            { Header: "Estrangeiro", id: "foreign", accessor: "person.VoterNr", Cell: (row) => isResident(row.original) },
+            { Header: "Nome", id: 'id', accessor: "person.name", Cell: (row) => this.linkToPlayer(row) },
+            { Header: "Data Nascimento", id: "birthdate", accessor: "person.birthdate", Cell: (row) => dateFormat(row.original.person.birthdate) },
+            { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.id_card_number" },
+            { Header: "Estrangeiro", id: "foreign", accessor: "person.voter_nr", Cell: (row) => isResident(row.original) },
             { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
             { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
         ];
@@ -218,9 +208,9 @@ export default class Seach extends Component {
                     <div>
                         <Table
                             columns={[
-                                { Header: 'Nome', id: 'id', accessor: 'person.Name', Cell: (row) => this.linkToPlayer(row) },
-                                { Header: 'Função', id: 'role', accessor: 'role.Description' },
-                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.IdCardNr' },
+                                { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row) },
+                                { Header: 'Função', id: 'role', accessor: 'role.description' },
+                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.id_card_number' },
                                 { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
                                 { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
                             ]}

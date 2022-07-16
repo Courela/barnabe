@@ -34,8 +34,8 @@ export default class ManageSeasons extends Component {
 
     componentDidMount() {
         getSeasons()
-            .then(results => {
-                this.setState({ seasons: results.data });
+            .then(seasons => {
+                this.setState({ seasons: seasons });
             })
             .catch(errors.handleError);
     }
@@ -46,18 +46,18 @@ export default class ManageSeasons extends Component {
     }
 
     handleTabSelect(key) {
-        this.setState({ key });
+        this.setState({ key, season: {}, year: '', status: 0, signUpDueDate: null, startDate: null });
       }
 
     handleSeasonSelect(evt) {
         const year = evt.target.value;
-        var selectedSeason = this.state.seasons.find(e => e.Year === parseInt(year, 10));
+        var selectedSeason = this.state.seasons.find(e => e.year === parseInt(year, 10));
         this.setState({ 
-            season: selectedSeason != null ? selectedSeason : {},
+            season: selectedSeason ? selectedSeason : {},
             year: year,
-            status: selectedSeason != null && selectedSeason.IsActive ? 1 : 0,
-            signUpDueDate: selectedSeason != null ? selectedSeason.SignUpDueDate : null,
-            startDate: selectedSeason != null ? selectedSeason.StartDate : null
+            status: selectedSeason && selectedSeason.is_active ? 1 : 0,
+            signUpDueDate: selectedSeason ? selectedSeason.sign_up_due_date : null,
+            startDate: selectedSeason ? selectedSeason.start_date : null
         });
     }
 
@@ -72,7 +72,7 @@ export default class ManageSeasons extends Component {
 
     handleSubmit(evt) {
         if (this.state.key === 1) {
-            if (this.state.season.Year) {
+            if (this.state.season.year) {
                 //const url = settings.API_URL + '/api/admin/seasons/activate';
                 // const data = {
                 //     season: this.state.season
@@ -95,7 +95,7 @@ export default class ManageSeasons extends Component {
     }
 
     render() {
-        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.Year}>{s.Year}</option>);
+        const selectSeasons = this.state.seasons.map((s, idx) => <option key={idx} value={s.year}>{s.year}</option>);
         return (
             <Tabs id='seasonTabs' activeKey={this.state.key} onSelect={this.handleTabSelect}>
                 <Tab eventKey={1} title="Ver">
@@ -103,13 +103,14 @@ export default class ManageSeasons extends Component {
                         <FormGroup controlId="selectSeason" validationState={this.validateSeason()}>
                             <ControlLabel>Época</ControlLabel>
                             <FormControl componentClass="select" placeholder="select"
+                                value={this.state.year}
                                 onChange={this.handleSeasonSelect}>
                                 <option value="0">Escolha...</option>
                                 {selectSeasons}
                             </FormControl>
                             <FormControl.Feedback />
                         </FormGroup>
-                        <div style={ { display: this.state.season.Year ? 'block' : 'none' } }>
+                        <div style={ { display: this.state.season.year ? 'block' : 'none' } }>
                             <SeasonDetails 
                                 onChangeSignUpDate={this.onChangeSignUpDate}
                                 onChangeStartDate={this.onChangeStartDate}

@@ -1,3 +1,18 @@
+import {Buffer} from 'buffer';
+
+export function mapFromUserApi(userApi) {
+    if (!userApi) {
+        return null;
+    }
+
+    return {
+        username: userApi.Username,
+        password: userApi.Password,
+        team_id: userApi.TeamId,
+        team: mapFromTeamApi(userApi.Team)
+    };
+}
+
 export function mapFromSeasonApi(seasonApi) {
     if (!seasonApi) {
         return null;
@@ -46,6 +61,7 @@ export function mapFromTeamApi(teamApi) {
 
     return {
         id: teamApi.Id,
+        name: teamApi.Name,
         short_description: teamApi.ShortDescription
     };
 }
@@ -72,7 +88,9 @@ export function mapPersonFromApi(personApi) {
         email: personApi.Email,
         local_born: personApi.LocalBorn,
         local_town: personApi.LocalTown,
-        caretaker: caretaker
+        caretaker: caretaker,
+        created_at: personApi.CreatedAt,
+        last_updated_at: personApi.LastUpdatedAt
     };
 }
 
@@ -92,10 +110,18 @@ export function mapPlayerFromApi(playerApi) {
         caretaker_id: playerApi.CareTakerId,
         comments: playerApi.Comments,
         photo_filename: playerApi.PhotoFilename,
+        photo: playerApi.Photo ? decodeBase64(playerApi.Photo) : null,
         doc_filename: playerApi.DocFilename,
         step: mapFromStepApi(playerApi.Step),
         role: mapFromRoleApi(playerApi.Role),
         person: mapPersonFromApi(playerApi.Person),
-        caretaker: mapPersonFromApi(playerApi.Caretaker) 
+        caretaker: mapPersonFromApi(playerApi.Caretaker),
+        created_at: playerApi.CreatedAt,
+        last_updated_at: playerApi.LastUpdatedAt
     };
+}
+
+function decodeBase64(data) {
+    let buff = Buffer.from(data, 'base64');  
+    return buff.toString('utf-8');
 }

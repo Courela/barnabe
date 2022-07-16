@@ -8,7 +8,6 @@ export default function Table(props) {
         columns={props.columns}
         data={props.data}
         minRows="0"
-        onFetchData={props.onFetchData}
         defaultPageSize={settings.DEFAULT_TABLE_PAGE_SIZE}
         className="-striped"
         previousText='Anterior'

@@ -32,9 +32,9 @@ export default class Listing extends Component {
     }
 
     async getSeasons() {
-        var seasons = await getSeasons().then(results => results.data);
-        var teams = await getTeams().then(results => results.data);
-        var steps = await getSteps().then(results => results.data);
+        var seasons = await getSeasons();
+        var teams = await getTeams();
+        var steps = await getSteps();
         this.setState({ seasons: seasons, teams: teams, steps: steps });
     }
 
@@ -43,7 +43,7 @@ export default class Listing extends Component {
         if (season > 0 && teamId > 0) {
             getTeamSteps(season, teamId)
                 .then(result => {
-                    this.setState({ stepsData: result.data });
+                    this.setState({ stepsData: result });
                 })
                 .catch(errors.handleError);
         }
@@ -54,7 +54,7 @@ export default class Listing extends Component {
         if (season > 0 && stepId > 0) {
             getTeamsByStep(season, stepId)
                 .then(result => {
-                    this.setState({ teamsData: result.data });
+                    this.setState({ teamsData: result });
                 })
                 .catch(errors.handleError);
         }
@@ -99,7 +99,7 @@ export default class Listing extends Component {
 
         return (
             <div>
-                <Tabs id='listingTabs'>
+                <Tabs id='listingTabs' onSelect={() => this.setState({ season: 0, teamId: 0, stepId: 0 })}>
                     <Tab eventKey={2} title="Colectividades">
                         <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
                         <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
@@ -107,7 +107,7 @@ export default class Listing extends Component {
                         <div>
                             <Table
                                 columns={[
-                                    { Header: 'Colectividade', id: 'id', accessor: 'ShortDescription' }
+                                    { Header: 'Colectividade', id: 'id', accessor: 'short_description' }
                                 ]}
                                 data={this.state.teamsData}
                                 onFetchData={this.getFilteredTeams}  />
@@ -120,7 +120,7 @@ export default class Listing extends Component {
                         <div>
                             <Table
                                 columns={[
-                                    { Header: 'Escalão', id: 'id', accessor: 'Description' }
+                                    { Header: 'Escalão', id: 'id', accessor: 'description' }
                                 ]}
                                 data={this.state.stepsData}
                                 onFetchData={this.getFilteredSteps}  />

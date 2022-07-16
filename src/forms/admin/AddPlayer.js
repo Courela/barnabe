@@ -25,13 +25,13 @@ export default class AddPlayer extends Component {
 
     componentDidMount() {
         getSeasons()
-            .then(results => {
-                this.setState({ seasons: results.data.map(s => ({ id: s.Year, descr: s.Year })) });
+            .then(seasons => {
+                this.setState({ seasons: seasons.map(s => ({ id: s.year, descr: s.year })) });
             })
         .catch(errors.handleError);
         getTeams()
-            .then(results => {
-                this.setState({ teams: results.data.map(s => ({ id: s.Id, descr: s.Name })) });
+            .then(teams => {
+                this.setState({ teams: teams.map(s => ({ id: s.id, descr: s.name })) });
             })
             .catch(errors.handleError);
     }
@@ -55,7 +55,7 @@ export default class AddPlayer extends Component {
     }
 
     render() {
-        const selectSeasons = this.state.seasons.map((t) => <option key={t.id} value={t.id}>{t.descr}</option>);
+        const selectSeasons = this.state.seasons.map((s) => <option key={s.id} value={s.id}>{s.descr}</option>);
         const selectTeams = this.state.teams.map((t) => <option key={t.id} value={t.id}>{t.descr}</option>);
 
         const { season, teamId, stepId } = this.state;

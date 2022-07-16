@@ -62,9 +62,9 @@ export default class StepForm extends Component {
         var action = evt.target.name;
         const { season, teamId, stepId } = this.state; 
         if (stepId > 0) {
-            var step = this.state.steps.find(s => s.Id === stepId);
+            var step = this.state.steps.find(s => s.id === stepId);
             if (action === 'remove') {
-                if (window.confirm('Tem a certeza que quer remover o escalão ' + (step ? step.Description : stepId) + '?')) {
+                if (window.confirm('Tem a certeza que quer remover o escalão ' + (step ? step.description : stepId) + '?')) {
                     removeTeamStep(season, teamId, stepId)
                         .then(res => { 
                             //this.props.history.push('/seasons/' + year);
@@ -77,7 +77,7 @@ export default class StepForm extends Component {
                 }
             }
             else {                
-                if (window.confirm('Tem a certeza que quer adicionar o escalão ' + (step ? step.Description : stepId) + '?')) {
+                if (window.confirm('Tem a certeza que quer adicionar o escalão ' + (step ? step.description : stepId) + '?')) {
                     createTeamStep(season, teamId, stepId)
                         .then(res => { alert('Escalão adicionado.'); })
                         .catch(errors.handleError);
@@ -91,8 +91,7 @@ export default class StepForm extends Component {
         return (
             <div>
                 <h1>Gerir Escalões - {this.state.season}</h1>
-                <Tabs id="manage-steps" onSelect={() => this.setState({ steps: [], teamId: 0, stepId: 0 }) }
-                >
+                <Tabs id="manage-steps" onSelect={() => this.setState({ steps: [], teamId: 0, stepId: 0 }) }>
                     <Tab eventKey={1} title="Adicionar">
                         <StepFormOptions action="add" bsStyle="success" label="Adicionar"
                             teams={this.state.teams} teamValue={this.state.teamId} 

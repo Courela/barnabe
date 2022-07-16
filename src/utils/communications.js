@@ -1,7 +1,15 @@
 import axios from 'axios';
 import settings from '../settings';
 import errors from '../components/Errors';
-import {mapFromSeasonApi, mapFromRoleApi, mapFromStepApi, mapFromTeamApi, mapPersonFromApi, mapPlayerFromApi } from './mappings';
+import { 
+    mapFromUserApi, 
+    mapFromSeasonApi, 
+    mapFromRoleApi, 
+    mapFromStepApi, 
+    mapFromTeamApi, 
+    mapPersonFromApi, 
+    mapPlayerFromApi 
+} from './mappings';
 
 const headers = {
     headers: {
@@ -198,10 +206,10 @@ export function getPlayer(season, teamId, stepId, playerId) {
         .catch(errors.handleError);
 }
 
-export function getPhoto(season, teamId, stepId, playerId) {
-    const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
-    return getRequest(url);
-}
+// export function getPhoto(season, teamId, stepId, playerId) {
+//     const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
+//     return getRequest(url);
+// }
 
 export function getPerson(docId, includeCaretaker) {
     const url = settings.API_URL + '/api/persons?docId=' + docId + (includeCaretaker ? '&caretaker=true' : '');
@@ -266,7 +274,17 @@ export function removePlayer(season, teamId, stepId, playerId) {
 
 export function getUsers() {
     const url = settings.API_URL + '/api/admin/users';
-    return getRequest(url);
+    return getRequest(url)
+        .then(r => {
+            var result = []
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    result.push(mapFromUserApi(el));
+                });
+            }
+            return result;
+        })
+        .catch(errors.handleError);
 }
 
 export function createUser(username, password, teamId) {

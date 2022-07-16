@@ -54,10 +54,10 @@ export default class TeamSheet extends Component {
     }
 
     async getFilters() {
-        var seasons = await getSeasons().then(results => results.data);
-        var teams = await getTeams().then(results => results.data);
-        var activeSeason = seasons.find(s => s.IsActive);
-        this.setState({ seasons: seasons, teams: teams, season: activeSeason.Year });
+        var seasons = await getSeasons();
+        var teams = await getTeams();
+        var activeSeason = seasons.find(s => s.is_active);
+        this.setState({ seasons: seasons, teams: teams, season: activeSeason.year });
     }
 
     handleSeasonChange(evt) {
@@ -65,8 +65,8 @@ export default class TeamSheet extends Component {
         const { teamId } = this.state;
         if (season && teamId) {
             getTeamSteps(season, teamId)
-                .then(result => {
-                    this.setState({ steps: result.data, stepId: 0, data: [], exportDataUrl: null });
+                .then(steps => {
+                    this.setState({ steps: steps, stepId: 0, data: [], exportDataUrl: null });
                 })
                 .catch(errors.handleError);
         }
@@ -81,8 +81,8 @@ export default class TeamSheet extends Component {
         const { season } = this.state;
         if (season && teamId) {
             getTeamSteps(season, teamId)
-                .then(result => {
-                    this.setState({ steps: result.data, stepId: 0, data: [], exportDataUrl: null });
+                .then(steps => {
+                    this.setState({ steps: steps, stepId: 0, data: [], exportDataUrl: null });
                 })
                 .catch(errors.handleError);
         }

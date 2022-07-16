@@ -24,8 +24,8 @@ export default class AddUser extends Component {
 
     componentDidMount() {
         getTeams()
-            .then(results => {
-                this.setState({ teams: results.data.map(s => ({ id: s.Id, descr: s.Name })) });
+            .then(teams => {
+                this.setState({ teams: teams });
             })
             .catch(errors.handleError);
     }
@@ -60,7 +60,7 @@ export default class AddUser extends Component {
     }
 
     render() {
-        const selectTeams = this.state.teams.map((t) => <option key={t.id} value={t.id}>{t.descr}</option>);
+        const selectTeams = this.state.teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>);
 
         return (
             <form>

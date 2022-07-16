@@ -53,11 +53,11 @@ export default class MatchSheet extends Component {
     }
 
     async getFilters() {
-        var seasons = await getSeasons().then(results => results.data);
-        var activeSeason = seasons.find(s => s.IsActive);
-        var teams = await getTeams().then(results => results.data);
-        var steps = await getSteps().then(results => results.data);
-        this.setState({ seasons: seasons, teams: teams, steps: steps, season: activeSeason.Year });
+        var seasons = await getSeasons();
+        var activeSeason = seasons.find(s => s.is_active);
+        var teams = await getTeams();
+        var steps = await getSteps();
+        this.setState({ seasons: seasons, teams: teams, steps: steps, season: activeSeason.year });
     }
 
     // handleTeamChange(evt) {

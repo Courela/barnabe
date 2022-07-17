@@ -308,8 +308,8 @@ export function login(username, password) {
         .catch(() => null);
 }
 
-export function logout() {
-    return postRequest(settings.API_URL + '/api/logout')
+export function logout(username) {
+    return postRequest(settings.API_URL + '/api/logout', { user: username })
         .catch(errors.handleError);
 }
 

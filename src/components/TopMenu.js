@@ -31,7 +31,7 @@ export default class TopMenu extends Component {
     async handleLogout(event) {
         event.preventDefault();
         if (this.props.userHasAuthenticated) {
-            await logout();
+            await logout(this.props.username);
             sessionStorage.clear();
             this.props.userHasAuthenticated(false, null, null);
         }

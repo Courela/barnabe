@@ -96,7 +96,8 @@ export default class PlayerDetails extends Component {
                     steps: [step],
                     photoSrc: photo,
                     newPhotoUpload: false,
-                    docExists: player.doc_filename ? true : false
+                    docExists: player.doc_filename ? true : false,
+                    doc: player.doc
                 });
                 window.scrollTo(0, 0);
             })

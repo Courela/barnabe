@@ -13,6 +13,14 @@ import '../styles/PlayerForm.css'
 export default function FormPlayer(props) {
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
+    const downloadDoc = (doc) => {
+        const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
+        const fileType = doc.match(FILE_REGEX);
+        var buf = Buffer.from(doc.replace(FILE_REGEX, ''), 'base64');
+        var blob = new Blob([buf], { type: fileType[1]+"/"+fileType[2] });
+        return window.URL.createObjectURL(blob);
+    };
+
     const photoUploader = <FieldGroup
             id="formFoto"
             type="file"
@@ -33,6 +41,9 @@ export default function FormPlayer(props) {
             accept="image/*,application/pdf"
         />;
 
+    const downloadDocLink = props.docExists && props.doc ? 
+        <p><a href={downloadDoc(props.doc)} target="_blank" rel="noopener noreferrer">Download</a></p> :
+         '';
     const docUploaders = props.isEditing ?
         <div className="column">
             {photoUploader}    
@@ -40,9 +51,12 @@ export default function FormPlayer(props) {
         </div> :
         ( props.isSeasonActive && props.roleId === 1 ?
             <Fragment>
-                <p style={{ margin: '2px'}}><span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
-                    {props.docExists ? ' submetida.' : ' em falta!'}
-                </span></p>
+                <p style={{ margin: '2px'}}>
+                    <span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
+                        {props.docExists ? ' submetida.' : ' em falta!'}
+                    </span>
+                    {downloadDocLink}
+                </p>
             </Fragment> : '' );
 
     const isAdmin = props.location.pathname.includes('admin');

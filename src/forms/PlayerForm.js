@@ -359,7 +359,7 @@ export default class PlayerForm extends Component {
         const selectSteps = this.state.steps.map((s) => <option key={s.id} value={s.id}>{s.description}</option>);
 
         const formDetails = this.state.personId !== null ?
-            <PlayerDetails {...this.state}
+            <Details {...this.state}
                 eighteenDate={this.props.eighteenDate}
                 onChangeBirthdate={this.onChangeBirthdate}
                 handleControlChange={this.handleControlChange.bind(this)}
@@ -424,7 +424,7 @@ export default class PlayerForm extends Component {
     }
 }
 
-function PlayerDetails(props) {
+function Details(props) {
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
     const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.description}</option>);

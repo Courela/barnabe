@@ -106,7 +106,10 @@ export default class MatchSheet extends Component {
                     var url = window.URL.createObjectURL(blob);
                     this.setState({ loading: false, exportDataUrl: url });
                 })
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error(err);
+                    this.setState({ loading: false });
+                });
         });
     }
 

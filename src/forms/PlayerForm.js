@@ -38,7 +38,7 @@ export default class PlayerForm extends Component {
             name: '',
             gender: '',
             birth: null,
-            docId: '',
+            idCardNr: '',
             phoneNr: '',
             email: '',
             isResident: false,
@@ -46,7 +46,7 @@ export default class PlayerForm extends Component {
             isLocalTown: false,
             voterNr: '',
             caretakerName: '',
-            caretakerDocId: '',
+            caretakerIdCardNr: '',
             photoSrc: null,
             comments: '',
             doc: null,
@@ -163,10 +163,10 @@ export default class PlayerForm extends Component {
 
     validateForm(isCaretakerRequired) {
         let result = true;
-        const { name, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
+        const { name, idCardNr, gender, birth, email, phoneNr, caretakerName, caretakerIdCardNr } = this.state;
         result = result &&
             name && name !== '' &&
-            docId && docId !== '' &&
+            idCardNr && idCardNr !== '' &&
             gender && gender !== '' &&
             birth && birth !== '' &&
             isValidEmail(email) && isValidPhone(phoneNr);
@@ -174,7 +174,7 @@ export default class PlayerForm extends Component {
         if (isCaretakerRequired) {
             result = result &&
                 caretakerName && caretakerName !== '' &&
-                caretakerDocId && caretakerDocId !== '';
+                caretakerIdCardNr && caretakerIdCardNr !== '';
         }
         return result;
     }
@@ -195,7 +195,7 @@ export default class PlayerForm extends Component {
                         person: {
                             id: this.state.personId,
                             name: this.state.name,
-                            id_card_number: this.state.docId,
+                            id_card_number: this.state.idCardNr,
                             gender: this.state.gender,
                             birthdate: this.state.birth,
                             email: caretakerRequired ? null : this.state.email,
@@ -207,7 +207,7 @@ export default class PlayerForm extends Component {
                         photo: this.state.photoSrc,
                         caretaker: caretakerRequired ? {
                             name: this.state.caretakerName,
-                            id_card_number: this.state.caretakerDocId,
+                            id_card_number: this.state.caretakerIdCardNr,
                             email: caretakerRequired ? this.state.email : null,
                             phone: caretakerRequired ? this.state.phoneNr : null,
                             voter_nr: caretakerRequired ? this.state.voterNr : null
@@ -237,8 +237,8 @@ export default class PlayerForm extends Component {
             }
         }
         else {
-            console.log('Search person with docId ' + this.state.docId);
-            getPerson(this.state.docId, true)
+            console.log('Search person with idCardNr ' + this.state.idCardNr);
+            getPerson(this.state.idCardNr, true)
                 .then(person => {
                     //console.log("PlayerForm getPerson response: ", person);
                     if (person && person.id) {
@@ -252,7 +252,7 @@ export default class PlayerForm extends Component {
                             voterNr: person.voter_nr,
                             isLocalBorn: person.local_born ? person.local_born : false,
                             isLocalTown: person.local_town ? person.local_town : false,
-                            caretakerDocId: person.caretaker ? person.caretaker.id_card_number : '',
+                            caretakerIdCardNr: person.caretaker ? person.caretaker.id_card_number : '',
                             caretakerName: person.caretaker ? person.caretaker.name : '',
                         });
                     } else {
@@ -336,7 +336,7 @@ export default class PlayerForm extends Component {
                 name: '',
                 gender: '',
                 birth: null,
-                docId: '',
+                idCardNr: '',
                 phoneNr: '',
                 email: '',
                 isResident: false,
@@ -344,7 +344,7 @@ export default class PlayerForm extends Component {
                 isLocalTown: false,
                 voterNr: '',
                 caretakerName: '',
-                caretakerDocId: '',
+                caretakerIdCardNr: '',
                 photoSrc: null,
                 comments: '',
                 doc: null,
@@ -389,14 +389,14 @@ export default class PlayerForm extends Component {
                     <FieldGroup
                         id="formIdCard"
                         type="text"
-                        name="docId"
+                        name="idCardNr"
                         label={"Nr Cartão Cidadão" + (this.state.roleId === 1 ? " do Jogador" : "")}
                         placeholder="CC"
                         onChange={this.handleControlChange.bind(this)}
                         maxLength="30"
                         validationState={validateNotEmpty}
-                        validationArgs={this.state.docId}
-                        value={this.state.docId}
+                        validationArgs={this.state.idCardNr}
+                        value={this.state.idCardNr}
                         disabled={this.state.personId !== null || this.state.isSubmitting}
                     />
                     {this.state.personId !== null ?
@@ -494,14 +494,14 @@ function PlayerDetails(props) {
                 <FieldGroup
                     id="formCaretakerIdCard"
                     type="text"
-                    name="caretakerDocId"
+                    name="caretakerIdCardNr"
                     label="Nr Cartão Cidadão do Responsável"
                     placeholder="Nr Cartão Cidadão do Responsável"
-                    value={props.caretakerDocId || ''}
+                    value={props.caretakerIdCardNr || ''}
                     onChange={props.handleControlChange}
                     maxLength="30"
                     validationState={validateNotEmpty}
-                    validationArgs={props.caretakerDocId}
+                    validationArgs={props.caretakerIdCardNr}
                 />
                 {commonFields}
             </Panel.Body>

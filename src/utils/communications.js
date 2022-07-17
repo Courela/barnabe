@@ -212,15 +212,15 @@ export function getPlayer(season, teamId, stepId, playerId) {
 //     return getRequest(url);
 // }
 
-export function getPerson(docId, includeCaretaker) {
-    const url = settings.API_URL + '/api/persons?docId=' + docId + (includeCaretaker ? '&caretaker=true' : '');
+export function getPerson(idCardNr, includeCaretaker) {
+    const url = settings.API_URL + '/api/persons?idCardNr=' + idCardNr + (includeCaretaker ? '&caretaker=true' : '');
     return getRequest(url)
         .then(r => mapPersonFromApi(r.data))
         .catch(errors.handleError);
 }
 
-export function searchPersons(docId){
-    const url = settings.API_URL + '/api/persons?docId=' + docId + '&multiple=true';
+export function searchPersons(idCardNr){
+    const url = settings.API_URL + '/api/persons?idCardNr=' + idCardNr + '&multiple=true';
     return getRequest(url);
 }
 

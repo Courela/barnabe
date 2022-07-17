@@ -36,7 +36,7 @@ export default class PlayerDetails extends Component {
             playerName: '',
             gender: '',
             birth: null,
-            docId: '',
+            idCardNr: '',
             phoneNr: '',
             email: '',
             isResident: false,
@@ -80,7 +80,7 @@ export default class PlayerDetails extends Component {
                     roles: [role],
                     playerName: person.name,
                     birth: isValidDate(person.birthdate) ? new Date(person.birthdate) : null,
-                    docId: person.id_card_number,
+                    idCardNr: person.id_card_number,
                     gender: person.gender,
                     isResident: player.is_resident ? true : false,
                     isLocalBorn: person.local_born ? true : false,
@@ -124,10 +124,10 @@ export default class PlayerDetails extends Component {
 
     validateForm() {
         let result = true;
-        const { playerName, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
+        const { playerName, idCardNr, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
         result = result &&
                 playerName && playerName !== '' &&
-                docId && docId !== '' &&
+                idCardNr && idCardNr !== '' &&
                 isValidEmail(email) && isValidPhone(phoneNr);
                 
         if (this.state.roleId === 1) {
@@ -161,7 +161,7 @@ export default class PlayerDetails extends Component {
                         person: {
                             id: this.state.personId,
                             name: this.state.playerName,
-                            id_card_number: this.state.docId,
+                            id_card_number: this.state.idCardNr,
                             gender: this.state.gender,
                             birthdate: this.state.birth,
                             email: caretakerRequired ? null : this.state.email,

@@ -106,6 +106,7 @@ export function mapPlayerFromApi(playerApi) {
         photo_filename: playerApi.PhotoFilename,
         photo: playerApi.Photo ? decodeBase64(playerApi.Photo) : null,
         doc_filename: playerApi.DocFilename,
+        doc: playerApi.Doc ? decodeBase64(playerApi.Doc) : null,
         step: mapFromStepApi(playerApi.Step),
         role: mapFromRoleApi(playerApi.Role),
         person: mapPersonFromApi(playerApi.Person),
@@ -153,6 +154,7 @@ export function mapPlayerToApi(player) {
         PhotoFilename: player.photo_filename,
         Photo: player.photo,
         DocFilename: player.doc_filename,
+        Doc: player.doc,
         Person: mapPersonToApi(player.person),
         Caretaker: mapPersonToApi(player.caretaker)
     };

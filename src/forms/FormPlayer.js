@@ -113,10 +113,10 @@ export default function FormPlayer(props) {
         <FieldGroup
             id="formIdCard"
             type="text"
-            name="docId"
+            name="idCardNr"
             label={props.roleId === 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
             placeholder={props.roleId === 1 ? "Nr Cartão Cidadão do Jogador" : "Nr Cartão Cidadão" }
-            value={props.docId}
+            value={props.idCardNr}
             onChange={props.handleControlChange}
             readOnly={true}
             maxLength="30"

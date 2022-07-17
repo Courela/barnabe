@@ -10,7 +10,7 @@ export default class ManagePersons extends Component {
         super(props);
 
         this.state = {
-            docId: props.location.search ? queryString.parse(props.location.search).docId : null,
+            idCardNr: props.location.search ? queryString.parse(props.location.search).idCardNr : null,
             data: []
         };
 
@@ -21,7 +21,7 @@ export default class ManagePersons extends Component {
     }
 
     componentDidMount() {
-        if (this.state.docId) {
+        if (this.state.idCardNr) {
             this.fetchResults();
         }
     }
@@ -33,17 +33,17 @@ export default class ManagePersons extends Component {
     }
 
     fillSearchCriteria(props) {
-        const { docId } = queryString.parse(props.location.search);
-        if (docId) {
+        const { idCardNr } = queryString.parse(props.location.search);
+        if (idCardNr) {
             this.setState({
-                docId: docId
+                idCardNr: idCardNr
             }, () => this.fetchResults());
         }
     }
 
     fetchResults() {
-        const { docId } = this.state;
-        searchPersons(docId)
+        const { idCardNr } = this.state;
+        searchPersons(idCardNr)
             .then(result => {
                 if (result.data) {
                     this.setState({ data: result.data });
@@ -62,9 +62,9 @@ export default class ManagePersons extends Component {
     }
 
     handleSubmit(evt) {
-        const { docId } = this.state;
-        if (docId.length > 0) {
-            this.props.history.push(this.props.location.pathname + '?docId=' + docId);
+        const { idCardNr } = this.state;
+        if (idCardNr.length > 0) {
+            this.props.history.push(this.props.location.pathname + '?docId=' + idCardNr);
         }
         else {
             alert('Preencha todos os critérios de pesquisa.');
@@ -79,10 +79,10 @@ export default class ManagePersons extends Component {
             <FieldGroup
                 id="formIdCard"
                 type="text"
-                name="docId"
+                name="idCardNr"
                 label="Nr Cartão Cidadão"
                 placeholder="Nr Cartão Cidadão"
-                value={this.state.docId}
+                value={this.state.idCardNr}
                 onChange={this.handleControlChange}
                 maxLength="30"
             />

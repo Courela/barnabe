@@ -64,7 +64,7 @@ export default class ManagePersons extends Component {
     handleSubmit(evt) {
         const { idCardNr } = this.state;
         if (idCardNr.length > 0) {
-            this.props.history.push(this.props.location.pathname + '?docId=' + idCardNr);
+            this.props.history.push(this.props.location.pathname + '?idCardNr=' + idCardNr);
         }
         else {
             alert('Preencha todos os critérios de pesquisa.');

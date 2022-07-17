@@ -4,9 +4,9 @@ import {
     Button, Checkbox, Image
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
-import { FieldGroup } from '../utils/controls';
 import CommonForm from './CommonForm';
 import CaretakerForm from './CaretakerForm';
+import { FieldGroup } from '../utils/controls';
 import { validateNotEmpty, isCaretakerRequired } from '../utils/validations';
 import '../styles/PlayerForm.css'
 

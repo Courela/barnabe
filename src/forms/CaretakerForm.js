@@ -28,14 +28,14 @@ export default function CaretakerDetails(props) {
                 <FieldGroup
                     id="formCaretakerIdCard"
                     type="text"
-                    name="caretakerDocId"
+                    name="caretakerIdCardNr"
                     label="Nr Cartão Cidadão do Responsável"
                     placeholder="Nr Cartão Cidadão do Responsável"
-                    value={props.caretakerDocId || ''}
+                    value={props.caretakerIdCardNr || ''}
                     onChange={props.handleControlChange}
                     readOnly={!props.isEditing || props.isSubmitting}
                     validationState={validateNotEmpty}
-                    validationArgs={props.caretakerDocId}
+                    validationArgs={props.caretakerIdCardNr}
                     maxLength="30"
                 />
                 <CommonForm {...props} />

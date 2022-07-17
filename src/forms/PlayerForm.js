@@ -1,13 +1,15 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     FormGroup, FormControl, ControlLabel,
-    Button, Panel, Image, Checkbox
+    Button, Image, Checkbox
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 import errors from '../components/Errors';
 import '../styles/PlayerForm.css'
 import { validateNotEmpty, isValidEmail, isValidPhone, 
     isCaretakerRequired } from '../utils/validations';
+import CaretakerForm from './CaretakerForm';
+import CommonForm from './CommonForm';
 import { FieldGroup } from '../utils/controls';
 import { getRoles, getTeamSteps, getStep, getPerson, createPlayer } from '../utils/communications';
 
@@ -425,89 +427,6 @@ export default class PlayerForm extends Component {
 function PlayerDetails(props) {
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
-    const validateEmail = () => {
-        if (props.email && props.email !== '' && !props.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) return 'error';
-        return null;
-    };
-
-    const validatePhone = () => {
-        if (props.phoneNr && props.phoneNr !== '' && !props.phoneNr.replace(/ /g, '').match(/^(\+351|00351|351)?(9[1236][0-9]{7}|2[1-9][0-9]{7})$/)) return 'error';
-        return null;
-    };
-
-    const commonFields =
-        <Fragment>
-            <FieldGroup
-                id="formEmail"
-                type="email"
-                name="email"
-                label={caretakerRequired ? "Email do Responsável" : "Email"}
-                placeholder={caretakerRequired ? "Email do Responsável" : "Email"}
-                value={props.email}
-                onChange={props.handleControlChange}
-                maxLength="100"
-                validationState={validateEmail}
-                validationArgs={[]}
-            />
-            <FieldGroup
-                id="formPhone"
-                type="text"
-                name="phoneNr"
-                label={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
-                placeholder={caretakerRequired ? "Telefone do Responsável" : "Telefone"}
-                value={props.phoneNr}
-                onChange={props.handleControlChange}
-                maxLength="16"
-                validationState={validatePhone}
-                validationArgs={[]}
-            />
-            {props.roleId && props.roleId === 1 ?
-                <Fragment>
-                    <Checkbox checked={props.isResident}
-                        name="isResident" onChange={props.handleCheckboxToggle} >
-                        <span style={{ fontWeight: '700' }}>Residente na freguesia?</span>
-                    </Checkbox>
-                    Para efeitos de valição do estatuto de residente será usada a morada registada no
-                    Cartão do Cidadão (usada para efeitos de votação eleitoral). Pode validar a morada aqui:&nbsp;
-                    <a href="https://www.recenseamento.mai.gov.pt/" target="_blank" rel="noopener noreferrer">https://www.recenseamento.mai.gov.pt/</a>
-                </Fragment> : ''}
-        </Fragment>;
-
-    const caretakerCtrls = caretakerRequired ?
-        <Panel>
-            <Panel.Heading>
-                <Panel.Title componentClass="h3">Dados do Responsável (Mãe/Pai/Tutor)</Panel.Title>
-            </Panel.Heading>
-            <Panel.Body>
-                <FieldGroup
-                    id="formCaretakerName"
-                    type="text"
-                    name="caretakerName"
-                    label="Nome do Responsável"
-                    placeholder="Nome do Responsável"
-                    value={props.caretakerName || ''}
-                    onChange={props.handleControlChange}
-                    maxLength="80"
-                    validationState={validateNotEmpty}
-                    validationArgs={props.caretakerName}
-                />
-                <FieldGroup
-                    id="formCaretakerIdCard"
-                    type="text"
-                    name="caretakerIdCardNr"
-                    label="Nr Cartão Cidadão do Responsável"
-                    placeholder="Nr Cartão Cidadão do Responsável"
-                    value={props.caretakerIdCardNr || ''}
-                    onChange={props.handleControlChange}
-                    maxLength="30"
-                    validationState={validateNotEmpty}
-                    validationArgs={props.caretakerIdCardNr}
-                />
-                {commonFields}
-            </Panel.Body>
-        </Panel> :
-        <div />;
-
     const selectRoles = props.roles.map((r) => <option key={r.id} value={r.id}>{r.description}</option>);
 
     const getStepDate = (prop, defaultDate) => {
@@ -595,8 +514,8 @@ function PlayerDetails(props) {
                 onChange={props.handleDoc}
                 accept="image/*,application/pdf"
             /> : ''}
-        {caretakerCtrls}
-        {caretakerRequired ? <div /> : commonFields}
+        {caretakerRequired ? <CaretakerForm {...props} isEditing={true} /> : <div /> }
+        {caretakerRequired ? <div /> : <CommonForm {...props} caretakerRequired={caretakerRequired} />}
         <FormGroup controlId="formComments">
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"

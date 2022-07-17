@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { getSeasons, logout } from '../utils/communications';
+import { getSeasons, getTeam, logout } from '../utils/communications';
 
 export default class TopMenu extends Component {
     constructor(props) {
@@ -12,19 +12,28 @@ export default class TopMenu extends Component {
         this.handleLogout = this.handleLogout.bind(this);
 
         this.state = {
-            seasons: []
+            seasons: [],
+            teamName: null
         }
     }
 
     componentDidMount() {
         if (this.state.seasons.length === 0) {
             getSeasons()
-                .then(result => {
-                    this.setState({ seasons: result });
+                .then(seasons => {
+                    this.setState({ seasons: seasons });
                 })
                 .catch((err) => {
                     console.error(err);
                 });
+        }
+        if(!this.state.teamName && this.props.teamId) {
+            getTeam(this.props.teamId)
+                .then(team => {
+                    if (team) {
+                        this.setState({ teamName: team.name });
+                    }
+                })
         }
     }
 
@@ -46,6 +55,7 @@ export default class TopMenu extends Component {
         const authenticatedOptions =
             <Fragment>
                 <NavItem disabled>Utilizador: {this.props.username}</NavItem>
+                { this.state.teamName ? <NavItem disabled>Equipa: {this.state.teamName}</NavItem> : '' }
                 <NavItem onClick={this.handleLogout}>Sair</NavItem>
             </Fragment>;
         const anonymousOptions =

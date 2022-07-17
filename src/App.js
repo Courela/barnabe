@@ -32,7 +32,7 @@ class App extends Component {
         this.userHasAuthenticated = this.userHasAuthenticated.bind(this);
     }
 
-    userHasAuthenticated = (authenticated, user, redirectTo) => {
+    userHasAuthenticated = async (authenticated, user, redirectTo) => {
         this.setState({ 
             isAuthenticated: authenticated, 
             user: user, 
@@ -74,8 +74,8 @@ class App extends Component {
         return (
             <div className="App container">
                 <TopMenu isAuthenticated={this.state.isAuthenticated} username={this.state.username}
-                    userHasAuthenticated={this.userHasAuthenticated} />
-                <Routes /*{...this.props}*/ childProps={childProps} />
+                    teamId={this.state.teamId} userHasAuthenticated={this.userHasAuthenticated} />
+                <Routes childProps={childProps} />
             </div>
         );
     }

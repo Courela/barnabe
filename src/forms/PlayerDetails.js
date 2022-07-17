@@ -44,7 +44,7 @@ export default class PlayerDetails extends Component {
             isLocalTown: false,
             voterNr: '',
             caretakerName: '',
-            caretakerDocId: '',
+            caretakerIdCardNr: '',
             newPhotoUpload: false,
             photoSrc: null,
             comments: '',
@@ -90,7 +90,7 @@ export default class PlayerDetails extends Component {
                     email: caretaker && caretaker.email ? caretaker.email : (person.email ? person.email : ''),
                     caretakerId: caretaker.Id,
                     caretakerName: caretaker ? caretaker.name : '',
-                    caretakerDocId: caretaker ? caretaker.id_card_number : '',
+                    caretakerIdCardNr: caretaker ? caretaker.id_card_number : '',
                     comments: player.comments,
                     stepDescr: step.description,
                     steps: [step],
@@ -124,7 +124,7 @@ export default class PlayerDetails extends Component {
 
     validateForm() {
         let result = true;
-        const { playerName, idCardNr, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
+        const { playerName, idCardNr, gender, birth, email, phoneNr, caretakerName, caretakerIdCardNr } = this.state;
         result = result &&
                 playerName && playerName !== '' &&
                 idCardNr && idCardNr !== '' &&
@@ -139,7 +139,7 @@ export default class PlayerDetails extends Component {
             if (isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate)) {
                 result = result &&
                     caretakerName && caretakerName !== '' &&
-                    caretakerDocId && caretakerDocId !== '';
+                    caretakerIdCardNr && caretakerIdCardNr !== '';
             }
         }
         return result;
@@ -173,7 +173,7 @@ export default class PlayerDetails extends Component {
                         caretaker: caretakerRequired ? {
                             id: this.state.caretakerId,
                             name: this.state.caretakerName,
-                            id_card_number: this.state.caretakerDocId,
+                            id_card_number: this.state.caretakerIdCardNr,
                             email: caretakerRequired ? this.state.email : null,
                             phone: caretakerRequired ? this.state.phoneNr : null,
                             voter_nr: this.state.isResident && caretakerRequired ? this.state.voterNr : null

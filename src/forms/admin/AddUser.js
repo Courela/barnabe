@@ -49,11 +49,8 @@ export default class AddUser extends Component {
         if (this.state.teamId > 0) {
             const { username, password, teamId } = this.state;
             createUser(username, password, teamId)
-                .then(result => {
+                .then(() => {
                     alert('Utilizador criado com sucesso.');
-                })
-                .catch((err) => {
-                    errors.handleError(err, { e409: 'Nome de utilizador já existe!'});
                 });
         }
         evt.preventDefault();

@@ -12,10 +12,9 @@ export default class Statistics extends React.Component {
 
     componentDidMount() {
         getStatistics()
-            .then(res => {
-                this.setState({ statistics: res.data });
-            })
-            .catch(err => console.error(err));
+            .then(statistics => {
+                this.setState({ statistics: statistics });
+            });
     }
 
     render() {

@@ -37,8 +37,8 @@ export default class SeasonMain extends Component {
         const { team, teamId } = this.state; 
         if (!team || team.Id !== teamId) {
             getTeam(teamId)
-                .then(res => {
-                    this.setState({ team: res.data });
+                .then(team => {
+                    this.setState({ team: team });
                 })
                 .catch(errors.handleError);
         }

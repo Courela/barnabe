@@ -28,10 +28,10 @@ export default class TopMenu extends Component {
         }
     }
 
-    handleLogout(event) {
+    async handleLogout(event) {
         event.preventDefault();
         if (this.props.userHasAuthenticated) {
-            logout();
+            await logout();
             sessionStorage.clear();
             this.props.userHasAuthenticated(false, null, null);
         }

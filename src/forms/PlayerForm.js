@@ -161,9 +161,9 @@ export default class PlayerForm extends Component {
         return null;
     }
 
-    validateForm() {
+    validateForm(isCaretakerRequired) {
         let result = true;
-        const { name, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId, steps, stepId, roleId } = this.state;
+        const { name, docId, gender, birth, email, phoneNr, caretakerName, caretakerDocId } = this.state;
         result = result &&
             name && name !== '' &&
             docId && docId !== '' &&
@@ -171,7 +171,7 @@ export default class PlayerForm extends Component {
             birth && birth !== '' &&
             isValidEmail(email) && isValidPhone(phoneNr);
         
-        if (isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate)) {
+        if (isCaretakerRequired) {
             result = result &&
                 caretakerName && caretakerName !== '' &&
                 caretakerDocId && caretakerDocId !== '';
@@ -183,37 +183,40 @@ export default class PlayerForm extends Component {
         const { season, teamId, stepId, personId, steps, roleId, birth } = this.state;
         const caretakerRequired = isCaretakerRequired(steps, stepId, roleId, birth, this.props.eighteenDate);
         if (personId !== null) {
-            if (this.validateForm()) {
+            if (this.validateForm(caretakerRequired)) {
                 console.log('Submitting player...');
                 //console.log('handleSubmit birth: ', this.state.birth);
                 this.setState({ isSubmitting: true }, () => {
-                    const data = {
-                        role: this.state.roleId,
-                        photo: this.state.photoSrc,
+                    const player = {
+                        season: season,
+                        team_id: teamId,
+                        step_id: stepId,
+                        role_id: this.state.roleId,
                         person: {
                             id: this.state.personId,
                             name: this.state.name,
-                            docId: this.state.docId,
+                            id_card_number: this.state.docId,
                             gender: this.state.gender,
-                            birth: this.state.birth,
+                            birthdate: this.state.birth,
                             email: caretakerRequired ? null : this.state.email,
-                            phoneNr: caretakerRequired ? null : this.state.phoneNr,
-                            voterNr: caretakerRequired ? null : this.state.voterNr,
-                            isLocalBorn: this.state.isLocalBorn,
-                            isLocalTown: this.state.isLocalTown
+                            phone: caretakerRequired ? null : this.state.phoneNr,
+                            voter_nr: caretakerRequired ? null : this.state.voterNr,
+                            local_born: this.state.isLocalBorn,
+                            local_town: this.state.isLocalTown
                         },
+                        photo: this.state.photoSrc,
                         caretaker: caretakerRequired ? {
                             name: this.state.caretakerName,
-                            docId: this.state.caretakerDocId,
+                            id_card_number: this.state.caretakerDocId,
                             email: caretakerRequired ? this.state.email : null,
-                            phoneNr: caretakerRequired ? this.state.phoneNr : null,
-                            voterNr: caretakerRequired ? this.state.voterNr : null
+                            phone: caretakerRequired ? this.state.phoneNr : null,
+                            voter_nr: caretakerRequired ? this.state.voterNr : null
                         } : null,
-                        isResident: this.state.isResident,
+                        is_resident: this.state.isResident,
                         comments: this.state.comments,
                         doc: this.state.doc
                     };
-                    createPlayer(season, teamId, stepId, data)
+                    createPlayer(season, teamId, stepId, player)
                         .then(result => {
                             const playerId = result.data.Id;
                             const isAdmin = this.props.location.pathname.includes('admin');

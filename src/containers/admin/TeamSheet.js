@@ -116,7 +116,7 @@ export default class TeamSheet extends Component {
             getTeamTemplate(season, teamId, stepId)
                 .then(result => {
                     const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
-                    var buf = Buffer.from(result.data.src.replace(FILE_REGEX, ''), 'base64');
+                    var buf = Buffer.from(result.src.replace(FILE_REGEX, ''), 'base64');
                     var blob = new Blob([buf], { type: "application/pdf" });
                     var url = window.URL.createObjectURL(blob);
                     this.setState({ loading: false, exportDataUrl: url });

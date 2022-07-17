@@ -71,11 +71,6 @@ export function mapPersonFromApi(personApi) {
         return null;
     }
 
-    var caretaker = null;
-    if (personApi.Caretaker) {
-        caretaker = mapPersonFromApi(personApi.Caretaker);
-    }
-
     return {
         id: personApi.Id,
         name: personApi.Name,
@@ -88,7 +83,6 @@ export function mapPersonFromApi(personApi) {
         email: personApi.Email,
         local_born: personApi.LocalBorn,
         local_town: personApi.LocalTown,
-        caretaker: caretaker,
         created_at: personApi.CreatedAt,
         last_updated_at: personApi.LastUpdatedAt
     };
@@ -118,6 +112,49 @@ export function mapPlayerFromApi(playerApi) {
         caretaker: mapPersonFromApi(playerApi.Caretaker),
         created_at: playerApi.CreatedAt,
         last_updated_at: playerApi.LastUpdatedAt
+    };
+}
+
+export function mapPersonToApi(person) {
+    if (!person) {
+        return null;
+    }
+
+    return {
+        Id: person.id,
+        Name: person.name,
+        Gender: person.gender,
+        Birthdate: person.birthdate,
+        IdCardNr: person.id_card_number,
+        IdCardExpireDate: person.id_card_expire_date,
+        VoterNr: person.voter_nr,
+        Phone: person.phone,
+        Email: person.email,
+        LocalBorn: person.local_born,
+        LocalTown: person.local_town
+    };
+}
+
+export function mapPlayerToApi(player) {
+    if (!player) {
+        return null;
+    }
+
+    return {
+        Id: player.id,
+        Season: player.season,
+        TeamId: player.team_id,
+        StepId: player.step_id,
+        PersonId: player.person_id,
+        RoleId: player.role_id,
+        Resident: player.is_resident,
+        CaretakerId: player.careTaker_id,
+        Comments: player.comments,
+        PhotoFilename: player.photo_filename,
+        Photo: player.photo,
+        DocFilename: player.doc_filename,
+        Person: mapPersonToApi(player.person),
+        Caretaker: mapPersonToApi(player.caretaker)
     };
 }
 

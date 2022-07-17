@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "../styles/Login.css";
-//import errors from '../components/Errors';
 import { login } from '../utils/communications';
 
 export default class Login extends Component {
@@ -77,10 +76,5 @@ export default class Login extends Component {
 }
 
 async function validateUser(username, password) {
-    const promise = login(username, password);
-    return await promise.then(response => {
-        //console.log(response);
-        return response.data;
-    })
-        .catch(() => null);
+    return await login(username, password);
 }

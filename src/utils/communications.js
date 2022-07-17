@@ -8,7 +8,8 @@ import {
     mapFromStepApi, 
     mapFromTeamApi, 
     mapPersonFromApi, 
-    mapPlayerFromApi 
+    mapPlayerFromApi,
+    mapPlayerToApi
 } from './mappings';
 
 const headers = {
@@ -223,14 +224,14 @@ export function searchPersons(docId){
     return getRequest(url);
 }
 
-export function createPlayer(season, teamId, stepId, data) {
+export function createPlayer(season, teamId, stepId, player) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
-    return putRequest(url, data);
+    return putRequest(url, mapPlayerToApi(player));
 }
 
-export function updatePlayer(season, teamId, stepId, playerId, data) {
+export function updatePlayer(season, teamId, stepId, playerId, player) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
-    return patchRequest(url, data)
+    return patchRequest(url, mapPlayerToApi(player))
 }
 
 export function copyPlayers(season, teamId, stepId, fromSeason, playerIds) {
@@ -240,15 +241,7 @@ export function copyPlayers(season, teamId, stepId, fromSeason, playerIds) {
         playerIds: playerIds
     };
     return postRequest(url, data)
-        .then(r => {
-            var result = []
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    result.push(mapPlayerFromApi(el));
-                });
-            }
-            return result;
-        })
+        .then(r => r.data)
         .catch(errors.handleError);
 }
 
@@ -259,17 +252,22 @@ export function exportPlayers(season, teamId, stepId) {
 
 export function getGameTemplate(season, homeTeamId, awayTeamId, stepId) {
     const url = settings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId;
-    return getRequest(url);
+    return getRequest(url)
+        .then(result => result.data)
+        .catch(errors.handleError);
 }
 
 export function getTeamTemplate(season, teamId, stepId) {
     const url = settings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId;
-    return getRequest(url);
+    return getRequest(url)
+        .then(result => result.data)
+        .catch(errors.handleError);
 }
 
 export function removePlayer(season, teamId, stepId, playerId) {
     const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId
-    return deleteRequest(url);
+    return deleteRequest(url)
+        .catch(errors.handleError);
 }
 
 export function getUsers() {
@@ -294,21 +292,32 @@ export function createUser(username, password, teamId) {
         password: password,
         teamId: teamId
     };
-    return putRequest(url, data);
+    return putRequest(url, data)
+        .catch((err) => {
+            errors.handleError(err, { e409: 'Nome de utilizador já existe!'});
+        });
 }
 
 export function login(username, password) {
     const url = settings.API_URL + '/api/authenticate';
-    return postRequest(url, { username: username, password: password });
+    return postRequest(url, { username: username, password: password })
+        .then(response => {
+            //console.log(response);
+            return response.data;
+        })
+        .catch(() => null);
 }
 
 export function logout() {
-    return postRequest(settings.API_URL + '/api/logout');
+    return postRequest(settings.API_URL + '/api/logout')
+        .catch(errors.handleError);
 }
 
 export function getStatistics() {
     const url = settings.API_URL + '/api/admin/statistics';
-    return getRequest(url);
+    return getRequest(url)
+        .then(res => res.data)
+        .catch(err => console.error(err));
 }
 
 export function getDbPing() {

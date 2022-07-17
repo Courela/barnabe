@@ -66,12 +66,9 @@ export default class StepForm extends Component {
             if (action === 'remove') {
                 if (window.confirm('Tem a certeza que quer remover o escalão ' + (step ? step.description : stepId) + '?')) {
                     removeTeamStep(season, teamId, stepId)
-                        .then(res => { 
-                            //this.props.history.push('/seasons/' + year);
-                            
-                            //TODO Avoid whole page refresh
-                            //window.location.href = '/seasons/' + season;
+                        .then(() => { 
                             alert('Escalão removido.');
+                            this.setState({ steps: [], teamId: 0, stepId: 0 });
                         })
                         .catch(errors.handleError);
                 }
@@ -79,7 +76,10 @@ export default class StepForm extends Component {
             else {                
                 if (window.confirm('Tem a certeza que quer adicionar o escalão ' + (step ? step.description : stepId) + '?')) {
                     createTeamStep(season, teamId, stepId)
-                        .then(res => { alert('Escalão adicionado.'); })
+                        .then(() => { 
+                            alert('Escalão adicionado.'); 
+                            this.setState({ steps: [], teamId: 0, stepId: 0 });
+                        })
                         .catch(errors.handleError);
                 }
             }

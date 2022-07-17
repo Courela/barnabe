@@ -29,10 +29,10 @@ function StatDetail(props) {
     return (
         <div>
             <ul>
-                <li>Nr Utilizadores registados: {props.data.nrUsers}</li>
-                <li>Nr Equipas sem Utilizador: {props.data.nrTeamsWoutUser}</li>
-                <li>Nr Jogadores inscritos na presente época: {props.data.nrPlayers}</li>
-                <li>Nr Escalões sem Jogadores inscritos: {props.data.nrStepsWoutPlayers}</li>
+                <li>Nr Utilizadores registados: {props.data.NrUsers}</li>
+                <li>Nr Equipas sem Utilizador: {props.data.NrTeamsWithoutUser}</li>
+                <li>Nr Jogadores inscritos na presente época: {props.data.NrPlayers}</li>
+                <li>Nr Escalões sem Jogadores inscritos: {props.data.NrStepsWithoutPlayers}</li>
             </ul>
         </div>);
 }

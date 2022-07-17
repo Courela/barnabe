@@ -79,7 +79,6 @@ export default class Import extends React.Component {
         if (this.state.selected && this.state.selected.length > 0) {
             copyPlayers(season, teamId, stepId, this.state.selectedSeason, this.state.selected)
                 .then(result => {
-                    console.log("Import handleSubmit result: ", result);
                     var count = result && result.Imported ? result.Imported : 0;
                     alert(count + (role === 'staff' ? ' membro(s) da Equipa Técnica': ' jogador(es)' ) + ' importado(s) com sucesso.');
                     this.props.history.push('/seasons/' + season + '/steps/' + stepId);

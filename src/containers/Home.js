@@ -8,8 +8,8 @@ export default class Home extends Component {
             <div className="Home">
                 <div className="lander">
                     <h1>Página de Inscrições</h1>
-                    <h3><p>15ª Edição: início a ?? de Setembro de 2022</p></h3>
-                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: ?? de Setembro de 2022</p></h4>
+                    <h3><p>15ª Edição: início a 23 de Setembro de 2022</p></h3>
+                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: 11 de Setembro de 2022</p></h4>
                 </div>     
 <p>Para participar no torneio, as coletividades interessadas terão de inscrever os escalões e respectivos jogadores e equipa técnica 
 neste site.<br />
@@ -22,15 +22,15 @@ e posteriormente digitalizada, sendo ambos carregados na página de inscrição 
 
 <p>Os escalões disponíveis para inscrição são os seguintes:</p>
 <ul>
-    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre ??/11/2013 e 31/12/2017 (Dos 5 aos 8 anos);</li>
-    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre ??/11/2009 e ??/11/2013 (Dos 8 aos 12 anos);</li>
-    <li><strong>II Escalão</strong> - masculino para nascidos entre ??-11-2004 a ??-11-2009 (Dos 13 aos 17 anos);</li>
-    <li><strong>III Escalão</strong> - masculino para nascidos antes de ??-11-2004 (+ de 17 anos);</li>
-    <li><strong>Escalão Feminino</strong> - para nascidas antes de 21-11-2006 (+ de 12 anos).</li>
+    <li><strong>Escolinhas</strong> - masculino e feminino, para nascidos entre 22/11/2013 e 31/12/2017 (Dos 5 aos 8 anos);</li>
+    <li><strong>I Escalão</strong> - masculino e feminino, para nascidos entre 22/11/2009 e 21/11/2013 (Dos 8 aos 12 anos);</li>
+    <li><strong>II Escalão</strong> - masculino para nascidos entre 22-11-2004 a 21-11-2009 (Dos 13 aos 17 anos);</li>
+    <li><strong>III Escalão</strong> - masculino para nascidos antes de 21-11-2004 (+ de 17 anos);</li>
+    <li><strong>Escalão Feminino</strong> - para nascidas antes de 21-11-2009 (+ de 12 anos).</li>
 </ul>
 
 <p>Para mais informações sobre o torneio consulte o 
-    <a href="https://drive.google.com/file/d/1GpnPTyuPhzyLk6DuPl2u8o4VGFNiFM9d/view?usp=sharing" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
+    <a href="https://drive.google.com/file/d/1Uj-wNu0Gv4q9FGyd8EEhgQ2N6VpBUYC4/view?usp=sharing" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
 <p>Qualquer problema ou questão relacionada com a página de inscrições, envie um mail para <a href="mailto:courela+tacabarnabe@gmail.com">courela+tacabarnabe@gmail.com</a>.</p>
 
 <p>Acompanhem-nos na página do torneio e também no Facebook e no Twitter.</p>

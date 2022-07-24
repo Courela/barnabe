@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import FormPlayer from './FormPlayer';
 import errors from '../components/Errors';
 import { isValidEmail, isValidPhone, isValidDate, isCaretakerRequired } from '../utils/validations';
-import { getPlayer, updatePlayer } from '../utils/communications';
+import { getDocument, getPhoto, getPlayer, updatePlayer } from '../utils/communications';
 import '../styles/PlayerForm.css'
 
 export default class PlayerDetails extends Component {
@@ -72,8 +72,21 @@ export default class PlayerDetails extends Component {
         getPlayer(season, teamId, stepId, playerId)
             .then(player => {
                 // console.log("PlayerDetails getPlayer: ", player);
-                const { photo, person, caretaker, role, step } = player;
+                const { person, caretaker, role, step } = player;
                 const voterNr = caretaker && caretaker.voter_nr ? caretaker.voter_nr : (person && person.voter_nr ? person.voter_nr : '');
+                if (player.photo_filename) {
+                    getPhoto(season, teamId, stepId, playerId)
+                        .then(photo => {
+                            this.setState({ photoSrc: photo });
+                        });
+                }
+                if (player.doc_filename) {
+                    getDocument(season, teamId, stepId, playerId)
+                        .then(doc => {
+                            this.setState({ doc: doc });
+                        });
+                }
+
                 this.setState({
                     personId: person.id,
                     roleId: player.role_id,
@@ -94,10 +107,11 @@ export default class PlayerDetails extends Component {
                     comments: player.comments,
                     stepDescr: step.description,
                     steps: [step],
-                    photoSrc: photo,
+                    photoExists: player.photo_filename ? true : false,
+                    //photoSrc: photo,
                     newPhotoUpload: false,
                     docExists: player.doc_filename ? true : false,
-                    doc: player.doc
+                    //doc: player.doc
                 });
                 window.scrollTo(0, 0);
             })

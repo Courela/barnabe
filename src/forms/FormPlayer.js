@@ -55,8 +55,8 @@ export default function FormPlayer(props) {
                     <span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
                         {props.docExists ? ' submetida.' : ' em falta!'}
                     </span>
-                    {downloadDocLink}
                 </p>
+                {downloadDocLink}
             </Fragment> : '' );
 
     const isAdmin = props.location.pathname.includes('admin');

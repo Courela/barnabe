@@ -104,9 +104,9 @@ export function mapPlayerFromApi(playerApi) {
         caretaker_id: playerApi.CareTakerId,
         comments: playerApi.Comments,
         photo_filename: playerApi.PhotoFilename,
-        photo: playerApi.Photo ? decodeBase64(playerApi.Photo) : null,
+        //photo: playerApi.Photo ? decodeBase64(playerApi.Photo) : null,
         doc_filename: playerApi.DocFilename,
-        doc: playerApi.Doc ? decodeBase64(playerApi.Doc) : null,
+        //doc: playerApi.Doc ? decodeBase64(playerApi.Doc) : null,
         step: mapFromStepApi(playerApi.Step),
         role: mapFromRoleApi(playerApi.Role),
         person: mapPersonFromApi(playerApi.Person),
@@ -114,6 +114,20 @@ export function mapPlayerFromApi(playerApi) {
         created_at: playerApi.CreatedAt,
         last_updated_at: playerApi.LastUpdatedAt
     };
+}
+
+export function mapPhotoFromApi(photoApi) {
+    if (!photoApi) {
+        return null;
+    }
+    return decodeBase64(photoApi);
+}
+
+export function mapDocumentFromApi(docApi) {
+    if (!docApi) {
+        return null;
+    }
+    return decodeBase64(docApi);
 }
 
 export function mapPersonToApi(person) {

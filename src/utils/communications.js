@@ -9,7 +9,9 @@ import {
     mapFromTeamApi, 
     mapPersonFromApi, 
     mapPlayerFromApi,
-    mapPlayerToApi
+    mapPlayerToApi,
+    mapPhotoFromApi,
+    mapDocumentFromApi
 } from './mappings';
 
 const headers = {
@@ -207,10 +209,19 @@ export function getPlayer(season, teamId, stepId, playerId) {
         .catch(errors.handleError);
 }
 
-// export function getPhoto(season, teamId, stepId, playerId) {
-//     const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
-//     return getRequest(url);
-// }
+export function getPhoto(season, teamId, stepId, playerId) {
+    const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
+    return getRequest(url)
+        .then(r => mapPhotoFromApi(r.data))
+        .catch(errors.handleError);
+}
+
+export function getDocument(season, teamId, stepId, playerId) {
+    const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/doc';
+    return getRequest(url)
+        .then(r => mapDocumentFromApi(r.data))
+        .catch(errors.handleError);
+}
 
 export function getPerson(idCardNr, includeCaretaker) {
     const url = settings.API_URL + '/api/persons?idCardNr=' + idCardNr + (includeCaretaker ? '&caretaker=true' : '');

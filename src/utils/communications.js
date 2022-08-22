@@ -219,7 +219,13 @@ export function getPhoto(season, teamId, stepId, playerId) {
 export function getDocument(season, teamId, stepId, playerId) {
     const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/doc';
     return getRequest(url)
-        .then(r => mapDocumentFromApi(r.data))
+        .then(r => {
+            if (r.data.ExistsLocally) {
+                mapDocumentFromApi(r.data.Src);
+            } else {
+                return null;
+            }
+        })
         .catch(errors.handleError);
 }
 

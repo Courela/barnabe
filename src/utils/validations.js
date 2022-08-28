@@ -41,13 +41,12 @@ function isResident(player) {
 
 function isValidPlayer(player) {
     let result = false;
-    
-    const { name, gender, birthdate, id_card_number, phone, email /*, voter_nr*/ } = player.person;
-    const { /*Resident,*/ photo_filename, doc_filename, caretaker } = player;
+    const { name, gender, birthdate, id_card_number, phone, email } = player.person;
+    const { photo_filename, doc_filename, caretaker } = player;
+    const { step } = player;
 
     result = name && gender && birthdate && id_card_number && isValidEmail(email) && isValidPhone(phone);
-    result = result && (!caretaker || (caretaker && caretaker.name)); 
-    //result = result && (!Resident || (Resident && (VoterNr || (caretaker && caretaker.VoterNr))));
+    result = result && (!step.is_caretaker_required || (caretaker && caretaker.name)); 
     result = result && photo_filename && doc_filename;
     return result;
 }

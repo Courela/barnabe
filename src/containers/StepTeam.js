@@ -61,7 +61,7 @@ export default class StepTeam extends Component {
                 .then(result => {
                     this.setState({ players: result });
                 })
-                .then(res => {
+                .then(() => {
                     if (!this.state.stepName) {
                         getStep(this.state.stepId)
                             .then(step => this.setState({ stepName: step.description }))

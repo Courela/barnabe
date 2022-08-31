@@ -111,8 +111,9 @@ export default class PlayerForm extends Component {
                     roles.splice(roles.indexOf(roles.find(r => r.id === 1)), 1);
                 }
 
-                if (this.props.roleId > 0) {
-                    const singleRole = roles.filter(r => r.id === this.props.roleId);
+                var roleId = parseInt(this.props.roleId, 10);
+                if (roleId > 0) {
+                    const singleRole = roles.filter(r => r.id === roleId);
                     this.setState({
                         roles: singleRole,
                         roleId: singleRole[0].id
@@ -159,17 +160,17 @@ export default class PlayerForm extends Component {
     }
 
     validateRole() {
-        if (this.state.roleId === null || this.state.roleId > 0) return 'error';
+        if (this.state.roleId === null || this.state.roleId <= 1) return 'error';
         return null;
     }
 
     validateForm(isCaretakerRequired) {
         let result = true;
-        const { name, idCardNr, gender, birth, email, phoneNr, caretakerName, caretakerIdCardNr } = this.state;
+        const { name, idCardNr, gender, birth, email, phoneNr, caretakerName, caretakerIdCardNr, roleId } = this.state;
         result = result &&
             name && name !== '' &&
             idCardNr && idCardNr !== '' &&
-            gender && gender !== '' &&
+            (roleId > 1 || (gender && gender !== '')) &&
             birth && birth !== '' &&
             isValidEmail(email) && isValidPhone(phoneNr);
         
@@ -474,17 +475,18 @@ function Details(props) {
             </div>
         </FormGroup>
 
-        <FormGroup controlId="selectGender" validationState={props.validateGender()}>
-            <ControlLabel>Género</ControlLabel>
-            <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
-                onChange={props.handleGenderSelect} value={props.gender || ''}
-                disabled={!props.steps || (props.steps.length === 1 && props.steps[0].gender)}>
-                <option value="0">Escolha...</option>
-                <option value="M">Masculino</option>
-                <option value="F">Feminino</option>
-            </FormControl>
-            <FormControl.Feedback />
-        </FormGroup>
+        {props.roleId && props.roleId === 1 ?
+            <FormGroup controlId="selectGender" validationState={props.validateGender()}>
+                <ControlLabel>Género</ControlLabel>
+                <FormControl componentClass="select" placeholder="select" style={{ width: 200 }}
+                    onChange={props.handleGenderSelect} value={props.gender || ''}
+                    disabled={!props.steps || (props.steps.length === 1 && props.steps[0].gender)}>
+                    <option value="0">Escolha...</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                </FormControl>
+                <FormControl.Feedback />
+            </FormGroup> : '' }
         {props.roleId && props.roleId === 1 ?
                 <Checkbox checked={props.isLocalBorn}
                     name="isLocalBorn" onChange={props.handleCheckboxToggle} >

@@ -59,10 +59,30 @@ export default class Import extends React.Component {
             getStaff(selectedSeason, teamId, stepId) :
             getPlayers(selectedSeason, teamId, stepId))
             .then(result => {
-                this.setState({ players: result });
-                // alert("Encontradas " + result.length + " pessoas.");
+                var previousStepId = this.getPreviousStep(stepId);
+                if (previousStepId > 0) {
+                    getPlayers(selectedSeason, teamId, previousStepId.toString())
+                    .then(r => {  
+                        this.setState({ players: r.concat(result) });
+                    })
+                    .catch(errors.handleError);
+                } else {
+                    this.setState({ players: result });
+                    // alert("Encontradas " + result.length + " pessoas.");
+                }
             })
             .catch(errors.handleError);
+    }
+
+    getPreviousStep(stepId) {
+        var s = parseInt(stepId, 10);
+        var result = 0;
+        if (s === 1) {
+            result = 4;
+        } else if (s < 4) {
+            result = s - 1;
+        }
+        return result;
     }
 
     handleSeasonSelect(evt) {

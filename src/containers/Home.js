@@ -9,7 +9,7 @@ export default class Home extends Component {
                 <div className="lander">
                     <h1>Página de Inscrições</h1>
                     <h3><p>15ª Edição: início a 23 de Setembro de 2022</p></h3>
-                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: 11 de Setembro de 2022</p></h4>
+                    <h4><p style={{ color: 'red' }}>Prazo limite de inscrições: 2 de Setembro de 2022</p></h4>
                 </div>     
 <p>Para participar no torneio, as coletividades interessadas terão de inscrever os escalões e respectivos jogadores e equipa técnica 
 neste site.<br />

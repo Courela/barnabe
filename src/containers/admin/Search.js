@@ -65,19 +65,10 @@ export default class Seach extends Component {
         this.setState({ seasons: seasons, teams: teams });
     }
 
-    // getSteps() {
-    //     const url = settings.API_URL + '/api/steps';
-    //     axios.get(url)
-    //         .then(results => {
-    //             this.setState({ steps: results.data });
-    //         })
-    //         .catch(errors.handleError);
-    // }
-
     getSteps(season, teamId, stepId = 0, callback = null) {
         getTeamSteps(season, teamId)
             .then(steps => {
-                this.setState({ steps: steps, stepId: stepId, data: [], exportDataUrl: null }, callback);
+                this.setState({ steps: steps, stepId: stepId, data: [], staff: [], exportDataUrl: null }, callback);
             })
             .catch(errors.handleError);
     }

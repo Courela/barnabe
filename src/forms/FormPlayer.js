@@ -11,6 +11,7 @@ import { validateNotEmpty, isCaretakerRequired } from '../utils/validations';
 import '../styles/PlayerForm.css'
 
 export default function FormPlayer(props) {
+    const isAdmin = props.location.pathname.includes('admin');
     const caretakerRequired = isCaretakerRequired(props.steps, props.stepId, props.roleId, props.birth, props.eighteenDate);
 
     const downloadDoc = (doc) => {
@@ -54,7 +55,7 @@ export default function FormPlayer(props) {
             {photoUploader}    
             { props.roleId === 1 ? docUploader : '' } 
         </div> :
-        ( props.isSeasonActive && props.roleId === 1 ?
+        ((props.isSeasonActive || isAdmin) && props.roleId === 1 ?
             <Fragment>
                 <p style={{ margin: '2px'}}>
                     <span style={{ color: props.docExists ? 'green' : 'red' }}>Ficha individual do Jogador
@@ -64,7 +65,6 @@ export default function FormPlayer(props) {
                 {downloadDocLink}
             </Fragment> : '' );
 
-    const isAdmin = props.location.pathname.includes('admin');
     const showEditButton = (props.isSeasonActive || isAdmin) && (!props.personId || !props.isEditing);
     const editButton = showEditButton ?
         <div className="column" style={{ float: 'right' }}>

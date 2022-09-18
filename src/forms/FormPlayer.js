@@ -15,9 +15,12 @@ export default function FormPlayer(props) {
 
     const downloadDoc = (doc) => {
         const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
-        const fileType = doc.match(FILE_REGEX);
-        var buf = Buffer.from(doc.replace(FILE_REGEX, ''), 'base64');
-        var blob = new Blob([buf], { type: fileType[1]+"/"+fileType[2] });
+        const fileType = (doc ? doc.substring(0, 50) : '').match(FILE_REGEX);
+        //console.log('File type: ', fileType);
+        var stripString = doc.substring(5 + fileType[1].length + 1 + fileType[2].length + 8);
+        // var buf = Buffer.from(stripString);
+        // var blob = new Blob([buf]);
+        var blob = b64toBlob(stripString, fileType[1]+ '/' + fileType[2]);
         return window.URL.createObjectURL(blob);
     };
 
@@ -41,9 +44,11 @@ export default function FormPlayer(props) {
             accept="image/*,application/pdf"
         />;
 
-    const downloadDocLink = props.docExists && props.doc ? 
+    const downloadDocLink = props.doc ? 
         <p><a href={downloadDoc(props.doc)} target="_blank" rel="noopener noreferrer">Download</a></p> :
-         '';
+        props.docExists ?
+            <p><img src="/show_loader.gif" alt="loading..." height="50px" width="50px"/></p> :
+            '';
     const docUploaders = props.isEditing ?
         <div className="column">
             {photoUploader}    
@@ -182,3 +187,23 @@ export default function FormPlayer(props) {
         </FormGroup>
     </div>);
 }
+
+function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+      const byteNumbers = new Array(slice.length);
+
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+
+    return blob;
+  }

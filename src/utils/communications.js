@@ -14,10 +14,11 @@ import {
     mapDocumentFromApi
 } from './mappings';
 
-const headers = {
+const options = {
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    timeout: settings.PLAYER_REQUEST_TIMEOUT
 };
 
 export function getSeasons() {
@@ -29,6 +30,8 @@ export function getSeasons() {
                 r.data.forEach(el => {
                     result.push(mapFromSeasonApi(el));
                 });
+            } else {
+                console.error("error getting response: getSeasons = ", r)
             }
             return result;
         })
@@ -44,6 +47,8 @@ export function getRoles() {
                 r.data.forEach(el => {
                     steps.push(mapFromRoleApi(el));
                 });
+            } else {
+                console.error("error getting response: getRoles = ", r)
             }
             return steps;
         })
@@ -59,6 +64,8 @@ export function getSteps() {
                 r.data.forEach(el => {
                     steps.push(mapFromStepApi(el));
                 });
+            } else {
+                console.error("error getting response: getSteps = ", r)
             }
             return steps;
         })
@@ -90,6 +97,8 @@ export function getTeams(season) {
                 r.data.forEach(el => {
                     teams.push(mapFromTeamApi(el));
                 });
+            } else {
+                console.error("error getting response: getTeams = ", r)
             }
             return teams;
         })
@@ -112,6 +121,8 @@ export function signSteps(season, teamId) {
                 r.data.forEach(el => {
                     steps.push(mapFromStepApi(el));
                 });
+            } else {
+                console.error("error getting response: signSteps = ", r)
             }
             return steps;
         })
@@ -146,6 +157,8 @@ export function getTeamSteps(season, teamId) {
                 r.data.forEach(el => {
                     steps.push(mapFromStepApi(el));
                 });
+            } else {
+                console.error("error getting response: getTeamSteps = ", r)
             }
             return steps;
         })
@@ -161,6 +174,8 @@ export function getTeamsByStep(season, stepId) {
                 r.data.forEach(el => {
                     teams.push(mapFromTeamApi(el));
                 });
+            } else {
+                console.error("error getting response: getTeamsByStep = ", r)
             }
             return teams;
         })
@@ -181,6 +196,8 @@ export function getPlayers(season, teamId, stepId) {
                 r.data.forEach(el => {
                     result.push(mapPlayerFromApi(el));
                 });
+            } else {
+                console.error("error getting response: getPlayers = ", r)
             }
             return result;
         })
@@ -221,7 +238,7 @@ export function getDocument(season, teamId, stepId, playerId) {
     return getRequest(url)
         .then(r => {
             if (r.data.ExistsLocally) {
-                mapDocumentFromApi(r.data.Src);
+                return mapDocumentFromApi(r.data.Src);
             } else {
                 return null;
             }
@@ -358,15 +375,15 @@ function getRequest(url) {
 }
 
 function postRequest(url, data) {
-    return axios.post(url, data, headers);
+    return axios.post(url, data, options);
 }
 
 function putRequest(url, data) {
-    return axios.put(url, data, headers);
+    return axios.put(url, data, options);
 }
 
 function patchRequest(url, data) {
-    return axios.patch(url, data, headers);
+    return axios.patch(url, data, options);
 }
 
 function deleteRequest(url) {

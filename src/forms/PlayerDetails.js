@@ -83,7 +83,21 @@ export default class PlayerDetails extends Component {
                 if (player.doc_filename) {
                     getDocument(season, teamId, stepId, playerId)
                         .then(doc => {
-                            this.setState({ doc: doc });
+                            if (doc) {
+                                console.log('Setting player document...');
+                                this.setState({ doc: doc });
+                            } else {
+                                console.log('Restoring', player.doc_filename, '...');
+                                setTimeout(() => getDocument(season, teamId, stepId, playerId)
+                                    .then(doc => {
+                                        if (doc) {
+                                            console.log('Setting player document...');
+                                            this.setState({ doc: doc });
+                                        } else {
+                                            console.log('Document not found.');
+                                        }
+                                }), 10000);
+                            }
                         });
                 }
 

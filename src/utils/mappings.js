@@ -127,7 +127,8 @@ export function mapDocumentFromApi(docApi) {
     if (!docApi) {
         return null;
     }
-    return decodeBase64(docApi);
+    //return decodeBase64(docApi);
+    return docApi;
 }
 
 export function mapPersonToApi(person) {

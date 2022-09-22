@@ -96,7 +96,7 @@ export default class PlayerDetails extends Component {
                                         } else {
                                             console.log('Document not found.');
                                         }
-                                }), 10000);
+                                }), 5000);
                             }
                         });
                 }

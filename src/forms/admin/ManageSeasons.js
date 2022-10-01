@@ -73,7 +73,9 @@ export default class ManageSeasons extends Component {
         if (this.state.key === 1) {
             if (this.state.season.year) {
                 const { year, status, signUpDueDate, startDate } = this.state;
-                updateSeason(parseInt(year, 10), status, signUpDueDate, startDate, new Date());
+                updateSeason(parseInt(year, 10), status, signUpDueDate, startDate, 
+                    //TODO update extra sign up date
+                    new Date(2025, 1));
             }
         }
         if (this.state.key === 2) {

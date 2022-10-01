@@ -379,14 +379,15 @@ export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExt
         startDate: startDate,
         signUpExtraDueDate: signUpExtraDueDate
     };
-    axios.put(url, data)
-        .then(result => {
-            console.log(result);
-            alert('Época actualizada.');
-        })
-        .catch((err) => {
-            errors.handleError(err);
-        });
+    return putRequest(url, data);
+    // axios.put(url, data)
+    //     .then(result => {
+    //         console.log(result);
+    //         alert('Época actualizada.');
+    //     })
+    //     .catch((err) => {
+    //         errors.handleError(err);
+    //     });
 }
 
 function getRequest(url) {

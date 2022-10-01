@@ -370,6 +370,25 @@ export function addSeason(year, isActive, signUpDueDate, startDate) {
     return putRequest(url, data);
 }
 
+export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExtraDueDate) {
+    const url = settings.API_URL + '/api/admin/seasons/update';
+    const data = {
+        season: year,
+        isActive: isActive,
+        signUpDueDate: signUpDueDate,
+        startDate: startDate,
+        signUpExtraDueDate: signUpExtraDueDate
+    };
+    axios.put(url, data)
+        .then(result => {
+            console.log(result);
+            alert('Época actualizada.');
+        })
+        .catch((err) => {
+            errors.handleError(err);
+        });
+}
+
 function getRequest(url) {
     return axios.get(url);
 }
@@ -389,3 +408,4 @@ function patchRequest(url, data) {
 function deleteRequest(url) {
     return axios.delete(url);
 }
+

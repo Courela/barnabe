@@ -4,10 +4,9 @@ import {
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 import errors from '../../components/Errors';
-import { getSeasons } from '../../utils/communications';
+import { getSeasons, addSeason, updateSeason } from '../../utils/communications';
 import { FieldGroup } from '../../utils/controls';
 import { validateNotEmpty } from '../../utils/validations';
-import { addSeason } from '../../utils/communications';
 
 export default class ManageSeasons extends Component {
     constructor(props, context) {
@@ -73,18 +72,8 @@ export default class ManageSeasons extends Component {
     handleSubmit(evt) {
         if (this.state.key === 1) {
             if (this.state.season.year) {
-                //const url = settings.API_URL + '/api/admin/seasons/activate';
-                // const data = {
-                //     season: this.state.season
-                // };
-                // axios.post(url, data)
-                //     .then(result => {
-                //         console.log(result);
-                //         alert('Época activada.');
-                //     })
-                //     .catch((err) => {
-                //         errors.handleError(err);
-                //     });
+                const { year, status, signUpDueDate, startDate } = this.state;
+                updateSeason(parseInt(year, 10), status, signUpDueDate, startDate, new Date());
             }
         }
         if (this.state.key === 2) {
@@ -168,7 +157,6 @@ function SeasonDetails(props) {
                     <DatePicker name="signUpDueDate" onChange={props.onChangeSignUpDate} value={props.signUpDueDate}
                         required={true} locale="pt-PT"
                         calendarClassName="date-picker-form-control" />
-                    
                 </div>
                 <ControlLabel>Data de começo</ControlLabel>
                 <div>

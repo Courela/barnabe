@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment/moment';
 import settings from '../settings';
 import errors from '../components/Errors';
 import { 
@@ -375,9 +376,9 @@ export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExt
     const data = {
         season: year,
         isActive: isActive,
-        signUpDueDate: signUpDueDate,
-        startDate: startDate,
-        signUpExtraDueDate: signUpExtraDueDate
+        signUpDueDate: removeDateLocale(signUpDueDate),
+        startDate: removeDateLocale(startDate),
+        signUpExtraDueDate: removeDateLocale(signUpExtraDueDate)
     };
     return putRequest(url, data);
     // axios.put(url, data)
@@ -388,6 +389,10 @@ export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExt
     //     .catch((err) => {
     //         errors.handleError(err);
     //     });
+}
+
+function removeDateLocale(date) {
+    return moment(date).utcOffset(0, true);
 }
 
 function getRequest(url) {

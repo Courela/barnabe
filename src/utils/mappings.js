@@ -21,9 +21,9 @@ export function mapFromSeasonApi(seasonApi) {
     return {
         year: seasonApi.Year,
         is_active: seasonApi.IsActive,
-        sign_up_due_date: seasonApi.SignUpDueDate,
-        start_date: seasonApi.StartDate,
-        sign_up_extra_due_date: seasonApi.SignUpExtraDueDate
+        sign_up_due_date: new Date(seasonApi.SignUpDueDate),
+        start_date: new Date(seasonApi.StartDate),
+        sign_up_extra_due_date: new Date(seasonApi.SignUpExtraDueDate)
     };
 }
 

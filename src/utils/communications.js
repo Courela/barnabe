@@ -23,8 +23,6 @@ const options = {
 };
 
 export function getSeasons() {
-    console.log("Env: ", process.env);
-    console.log("ClientSettings: ", clientSettings);
     const url = clientSettings.API_URL + '/api/seasons';
     return getRequest(url)
         .then(r => {

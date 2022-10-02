@@ -1,6 +1,6 @@
 import axios from 'axios';
 import moment from 'moment/moment';
-import settings from '../settings';
+import { clientSettings } from '../clientSettings';
 import errors from '../components/Errors';
 import { 
     mapFromUserApi, 
@@ -19,11 +19,13 @@ const options = {
     headers: {
         'Content-Type': 'application/json'
     },
-    timeout: settings.PLAYER_REQUEST_TIMEOUT
+    timeout: clientSettings.PLAYER_REQUEST_TIMEOUT
 };
 
 export function getSeasons() {
-    const url = settings.API_URL + '/api/seasons';
+    console.log("Env: ", process.env);
+    console.log("ClientSettings: ", clientSettings);
+    const url = clientSettings.API_URL + '/api/seasons';
     return getRequest(url)
         .then(r => {
             var result = [];
@@ -40,7 +42,7 @@ export function getSeasons() {
 }
 
 export function getRoles() {
-    const url = settings.API_URL + '/api/roles';
+    const url = clientSettings.API_URL + '/api/roles';
     return getRequest(url)
         .then(r => {
             var steps = [];
@@ -57,7 +59,7 @@ export function getRoles() {
 }
 
 export function getSteps() {
-    const url = settings.API_URL + '/api/steps';
+    const url = clientSettings.API_URL + '/api/steps';
     return getRequest(url)
         .then(r => {
             var steps = [];
@@ -80,14 +82,14 @@ export function getActiveSeason() {
 }
 
 export function getSeason(season) {
-    const url = settings.API_URL + '/api/seasons/' + season;
+    const url = clientSettings.API_URL + '/api/seasons/' + season;
     return getRequest(url)
         .then(r => mapFromSeasonApi(r.data))
         .catch(errors.handleError);
 }
 
 export function getTeams(season) {
-    var url = settings.API_URL + '/api/teams';
+    var url = clientSettings.API_URL + '/api/teams';
     if (season) {
         url += '?season=' + season;
     }
@@ -107,14 +109,14 @@ export function getTeams(season) {
 }
 
 export function getTeam(teamId) {
-    const url = settings.API_URL + '/api/teams/' + teamId;
+    const url = clientSettings.API_URL + '/api/teams/' + teamId;
     return getRequest(url)
         .then(r => mapFromTeamApi(r.data))
         .catch(errors.handleError);
 }
 
 export function signSteps(season, teamId) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/sign-steps';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/sign-steps';
     return getRequest(url)
         .then(r => {
             var steps = [];
@@ -131,7 +133,7 @@ export function signSteps(season, teamId) {
 }
 
 export function getStep(stepId, season) {
-    var url = settings.API_URL + '/api';
+    var url = clientSettings.API_URL + '/api';
     if (season) {
         url += '/seasons/' + season;
     }
@@ -142,7 +144,7 @@ export function getStep(stepId, season) {
 }
 
 export function createTeamStep(season, teamId, stepId) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
     return putRequest(url, { stepId: stepId });
 }
 
@@ -150,7 +152,7 @@ export function getTeamSteps(season, teamId) {
     if (!teamId || teamId === 'undefined') {
         debugger;
     }
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
     return getRequest(url)
         .then(r => {
             var steps = [];
@@ -167,7 +169,7 @@ export function getTeamSteps(season, teamId) {
 }
 
 export function getTeamsByStep(season, stepId) {
-    const url = settings.API_URL + '/api/teams?season=' + season + '&stepId=' + stepId;
+    const url = clientSettings.API_URL + '/api/teams?season=' + season + '&stepId=' + stepId;
     return getRequest(url)
         .then(r => {
             var teams = [];
@@ -184,12 +186,12 @@ export function getTeamsByStep(season, stepId) {
 }
 
 export function removeTeamStep(season, teamId, stepId) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId;
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId;
     return deleteRequest(url);
 }
 
 export function getPlayers(season, teamId, stepId) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
     return getRequest(url)
         .then(r => {
             var result = []
@@ -206,7 +208,7 @@ export function getPlayers(season, teamId, stepId) {
 }
 
 export function getStaff(season, teamId, stepId) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/staff';
     return getRequest(url)
         .then(r => {
             var result = []
@@ -221,21 +223,21 @@ export function getStaff(season, teamId, stepId) {
 }
 
 export function getPlayer(season, teamId, stepId, playerId) {
-    const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId;
+    const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId;
     return getRequest(url)
         .then(r => mapPlayerFromApi(r.data))
         .catch(errors.handleError);
 }
 
 export function getPhoto(season, teamId, stepId, playerId) {
-    const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
+    const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
     return getRequest(url)
         .then(r => mapPhotoFromApi(r.data))
         .catch(errors.handleError);
 }
 
 export function getDocument(season, teamId, stepId, playerId) {
-    const url = settings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/doc';
+    const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/doc';
     return getRequest(url)
         .then(r => {
             if (r.data.ExistsLocally) {
@@ -248,29 +250,29 @@ export function getDocument(season, teamId, stepId, playerId) {
 }
 
 export function getPerson(idCardNr, includeCaretaker) {
-    const url = settings.API_URL + '/api/persons?idCardNr=' + idCardNr + (includeCaretaker ? '&caretaker=true' : '');
+    const url = clientSettings.API_URL + '/api/persons?idCardNr=' + idCardNr + (includeCaretaker ? '&caretaker=true' : '');
     return getRequest(url)
         .then(r => mapPersonFromApi(r.data))
         .catch(errors.handleError);
 }
 
 export function searchPersons(idCardNr){
-    const url = settings.API_URL + '/api/persons?idCardNr=' + idCardNr + '&multiple=true';
+    const url = clientSettings.API_URL + '/api/persons?idCardNr=' + idCardNr + '&multiple=true';
     return getRequest(url);
 }
 
 export function createPlayer(season, teamId, stepId, player) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players';
     return putRequest(url, mapPlayerToApi(player));
 }
 
 export function updatePlayer(season, teamId, stepId, playerId, player) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId;
     return patchRequest(url, mapPlayerToApi(player))
 }
 
 export function copyPlayers(season, teamId, stepId, fromSeason, playerIds) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/import-players';
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/import-players';
     const data = {
         selectedSeason: fromSeason,
         playerIds: playerIds
@@ -281,32 +283,32 @@ export function copyPlayers(season, teamId, stepId, fromSeason, playerIds) {
 }
 
 export function exportPlayers(season, teamId, stepId) {
-    const url = settings.API_URL + '/api/admin/export?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId;
+    const url = clientSettings.API_URL + '/api/admin/export?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId;
     return getRequest(url);
 }
 
 export function getGameTemplate(season, homeTeamId, awayTeamId, stepId) {
-    const url = settings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId;
+    const url = clientSettings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId;
     return getRequest(url)
         .then(result => result.data)
         .catch(errors.handleError);
 }
 
 export function getTeamTemplate(season, teamId, stepId) {
-    const url = settings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId;
+    const url = clientSettings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId;
     return getRequest(url)
         .then(result => result.data)
         .catch(errors.handleError);
 }
 
 export function removePlayer(season, teamId, stepId, playerId) {
-    const url = settings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId
     return deleteRequest(url)
         .catch(errors.handleError);
 }
 
 export function getUsers() {
-    const url = settings.API_URL + '/api/admin/users';
+    const url = clientSettings.API_URL + '/api/admin/users';
     return getRequest(url)
         .then(r => {
             var result = []
@@ -321,7 +323,7 @@ export function getUsers() {
 }
 
 export function createUser(username, password, teamId) {
-    const url = settings.API_URL + '/api/admin/users';
+    const url = clientSettings.API_URL + '/api/admin/users';
     const data = {
         username: username,
         password: password,
@@ -334,7 +336,7 @@ export function createUser(username, password, teamId) {
 }
 
 export function login(username, password) {
-    const url = settings.API_URL + '/api/authenticate';
+    const url = clientSettings.API_URL + '/api/authenticate';
     return postRequest(url, { username: username, password: password })
         .then(response => {
             //console.log(response);
@@ -344,24 +346,24 @@ export function login(username, password) {
 }
 
 export function logout(username) {
-    return postRequest(settings.API_URL + '/api/logout', { user: username })
+    return postRequest(clientSettings.API_URL + '/api/logout', { user: username })
         .catch(errors.handleError);
 }
 
 export function getStatistics() {
-    const url = settings.API_URL + '/api/admin/statistics';
+    const url = clientSettings.API_URL + '/api/admin/statistics';
     return getRequest(url)
         .then(res => res.data)
         .catch(err => console.error(err));
 }
 
 export function getDbPing() {
-    const url = settings.API_URL + '/api/admin/ping';
+    const url = clientSettings.API_URL + '/api/admin/ping';
     return getRequest(url);
 }
 
 export function addSeason(year, isActive, signUpDueDate, startDate) {
-    const url = settings.API_URL + '/api/admin/seasons';
+    const url = clientSettings.API_URL + '/api/admin/seasons';
     const data = {
         year: year,
         isActive: isActive,
@@ -372,7 +374,7 @@ export function addSeason(year, isActive, signUpDueDate, startDate) {
 }
 
 export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExtraDueDate) {
-    const url = settings.API_URL + '/api/admin/seasons/update';
+    const url = clientSettings.API_URL + '/api/admin/seasons/update';
     const data = {
         season: year,
         isActive: isActive,

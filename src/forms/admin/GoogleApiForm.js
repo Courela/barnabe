@@ -3,7 +3,7 @@ import {
     FormGroup, FormControl, ControlLabel, HelpBlock, Button
 } from 'react-bootstrap';
 import axios from 'axios';
-import settings from '../../settings';
+import { clientSettings } from '../../clientSettings';
 
 export default class GoogleApiForm extends Component {
     constructor(props, context) {
@@ -28,7 +28,7 @@ export default class GoogleApiForm extends Component {
     }
 
     checkStatus() {
-        const url = settings.API_URL + '/api/admin/drive';
+        const url = clientSettings.API_URL + '/api/admin/drive';
         axios.get(url)
             .then(result => {
                 if (!result.data.success) {
@@ -53,7 +53,7 @@ export default class GoogleApiForm extends Component {
     }
 
     handleSubmitSecret(evt) {
-        const url = settings.API_URL + '/api/admin/client-secret';
+        const url = clientSettings.API_URL + '/api/admin/client-secret';
         const data = {
             file: this.state.fileContent
         };
@@ -72,7 +72,7 @@ export default class GoogleApiForm extends Component {
     }
 
     handleSubmitCode(evt) {
-        const url = settings.API_URL + '/api/admin/auth-code';
+        const url = clientSettings.API_URL + '/api/admin/auth-code';
         const data = {
             authCode: this.state.authCode
         };
@@ -116,7 +116,7 @@ export default class GoogleApiForm extends Component {
     }
 
     handleReset(evt) {
-        const url = settings.API_URL + '/api/admin/reset-auth';
+        const url = clientSettings.API_URL + '/api/admin/reset-auth';
         axios.post(url, {})
             .then(result => {
                 console.log(result);
@@ -197,7 +197,7 @@ class BackupForm extends Component {
 
     handleBackup(evt) {
         this.setState({ loadingBackup: true }, () => {
-            const url = settings.API_URL + '/api/admin/save-' + this.props.type;
+            const url = clientSettings.API_URL + '/api/admin/save-' + this.props.type;
             axios.get(url)
                 .then(result => {
                     console.log(result);
@@ -226,7 +226,7 @@ class BackupForm extends Component {
     handleRestore(evt) {
         if (window.confirm('About to restore ' + this.props.type + '! Are you sure?')) {
             this.setState({ loadingRestore: true }, () => {
-                const url = settings.API_URL + '/api/admin/restore-' + this.props.type;
+                const url = clientSettings.API_URL + '/api/admin/restore-' + this.props.type;
                 axios.get(url)
                     .then(result => {
                         console.log(result);

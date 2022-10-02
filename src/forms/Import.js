@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table';
 import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import queryString from 'query-string';
-import settings from '../settings';
+import { clientSettings } from '../clientSettings';
 import errors from '../components/Errors';
 import { dateFormat } from '../utils/formats';
 import { getSeasons, getStep, getPlayers, copyPlayers, getStaff } from '../utils/communications';
@@ -222,8 +222,8 @@ export default class Import extends React.Component {
                     data={this.state.players}
                     columns={columns}
                     defaultSorted={[{ id: "id", desc: false }]}
-                    minRows={Math.max(Math.min(this.state.players.length, settings.DEFAULT_TABLE_PAGE_SIZE), 1)}
-                    defaultPageSize={settings.DEFAULT_TABLE_PAGE_SIZE}
+                    minRows={Math.max(Math.min(this.state.players.length, clientSettings.DEFAULT_TABLE_PAGE_SIZE), 1)}
+                    defaultPageSize={clientSettings.DEFAULT_TABLE_PAGE_SIZE}
                 />
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}
                     disabled={this.state.isSubmitting}>

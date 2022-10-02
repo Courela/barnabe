@@ -5,7 +5,7 @@ import App from "./App";
 import registerServiceWorker from "./registerServiceWorker";
 import { CookiesProvider } from 'react-cookie';
 import axios from 'axios';
-import settins from './settings';
+import { clientSettings } from './clientSettings';
 
 //import "./index.css";
 
@@ -23,13 +23,13 @@ ReactDOM.render(
 registerServiceWorker();
 
 function Api(props) {
-    const url = settins.API_URL + props.location.pathname + (props.location.search ? props.location.search : '');
+    const url = clientSettings.API_URL + props.location.pathname + (props.location.search ? props.location.search : '');
     if (props.location.pathname.indexOf('api/files') > -1) {
         //console.log('Redirect to ', url);
         window.location.href = url;
     }
     else {
-        let apiResponse = CallApi(settins.API_URL + props.location.pathname + (props.location.search ? props.location.search : ''));
+        let apiResponse = CallApi(clientSettings.API_URL + props.location.pathname + (props.location.search ? props.location.search : ''));
         return (<div>
             {JSON.stringify(apiResponse)}
         </div>);

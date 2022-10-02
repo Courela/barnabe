@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
-import settings from '../settings';
+import { clientSettings } from '../clientSettings';
 
 export default function Table(props) {
     return (<ReactTable
         columns={props.columns}
         data={props.data}
         minRows="0"
-        defaultPageSize={settings.DEFAULT_TABLE_PAGE_SIZE}
+        defaultPageSize={clientSettings.DEFAULT_TABLE_PAGE_SIZE}
         className="-striped"
         previousText='Anterior'
         nextText= 'Próxima'

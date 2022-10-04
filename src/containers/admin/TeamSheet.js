@@ -115,11 +115,16 @@ export default class TeamSheet extends Component {
             const { season, teamId, stepId } = this.state;
             getTeamTemplate(season, teamId, stepId)
                 .then(result => {
-                    const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
-                    var buf = Buffer.from(result.src.replace(FILE_REGEX, ''), 'base64');
-                    var blob = new Blob([buf], { type: "application/pdf" });
-                    var url = window.URL.createObjectURL(blob);
-                    this.setState({ loading: false, exportDataUrl: url });
+                    if (result && result.src) {
+                        const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
+                        var buf = Buffer.from(result.src.replace(FILE_REGEX, ''), 'base64');
+                        var blob = new Blob([buf], { type: "application/pdf" });
+                        var url = window.URL.createObjectURL(blob);
+                        this.setState({ loading: false, exportDataUrl: url });
+                    } else {
+                        errors.handleError("Unable to get response");
+                        this.setState({ loading: false });
+                    }
                 })
                 .catch(err => {
                     console.error(err);

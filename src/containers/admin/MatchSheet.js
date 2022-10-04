@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import queryString from 'query-string';
 import { Button, Form } from 'react-bootstrap';
 //import atob from 'atob';
+import errors from '../../components/Errors';
 import { SeasonSelect, StepSelect, TeamSelect } from '../../components/Controls';
 import { getSeasons, getTeams, getSteps, getGameTemplate } from '../../utils/communications';
 
@@ -100,11 +101,16 @@ export default class MatchSheet extends Component {
             //axios.get(settings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId)
             getGameTemplate(season, homeTeamId, awayTeamId, stepId)
                 .then(result => {
-                    const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
-                    var buf = Buffer.from(result.src.replace(FILE_REGEX, ''), 'base64');
-                    var blob = new Blob([buf], { type: "application/pdf" });
-                    var url = window.URL.createObjectURL(blob);
-                    this.setState({ loading: false, exportDataUrl: url });
+                    if (result && result.src) {
+                        const FILE_REGEX = /^data:(.+)\/(.+);base64,/;
+                        var buf = Buffer.from(result.src.replace(FILE_REGEX, ''), 'base64');
+                        var blob = new Blob([buf], { type: "application/pdf" });
+                        var url = window.URL.createObjectURL(blob);
+                        this.setState({ loading: false, exportDataUrl: url });
+                    } else {
+                        errors.handleError("Unable to get response");
+                        this.setState({ loading: false });
+                    }
                 })
                 .catch(err => {
                     console.error(err);

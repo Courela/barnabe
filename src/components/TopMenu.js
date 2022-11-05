@@ -76,9 +76,14 @@ export default class TopMenu extends Component {
         const leftSideOptions =
             <Fragment>
                 {this.props.isAuthenticated ? <SeasonDropDown seasons={this.state.seasons} /> : 
-                <LinkContainer to="/documents">
-                    <NavItem>Documentos</NavItem>
-                </LinkContainer> }
+                <Fragment>
+                    <LinkContainer to="/documents">
+                        <NavItem>Documentos</NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/standings">
+                        <NavItem>Classificação</NavItem>
+                    </LinkContainer>
+                </Fragment> }
             </Fragment>;
 
         return (

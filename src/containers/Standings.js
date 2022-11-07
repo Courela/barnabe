@@ -32,11 +32,7 @@ export default class Standings extends Component {
     }
 
     handleSeasonChange(evt) {
-        const season = evt.target.value;
-        this.getSteps(season, null);
-
         this.handleControlChange(evt);
-
         if(evt) { evt.preventDefault(); }
     }
 

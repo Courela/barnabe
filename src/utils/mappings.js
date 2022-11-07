@@ -148,6 +148,22 @@ export function mapMatchFromApi(match) {
     };
 }
 
+export function mapStandingFromApi(standing) {
+    if (!standing) {
+        return null;
+    }
+
+    return {
+        position: standing.Position,
+        teamId: standing.TeamId,
+        teamName: standing.TeamName,
+        points: standing.Points,
+        goalsScored: standing.GoalsScored,
+        goalsConceded: standing.GoalsConceded,
+        avg: standing.Avg
+    };
+}
+
 export function mapPersonToApi(person) {
     if (!person) {
         return null;

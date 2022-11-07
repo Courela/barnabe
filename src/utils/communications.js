@@ -13,7 +13,8 @@ import {
     mapPlayerToApi,
     mapPhotoFromApi,
     mapDocumentFromApi,
-    mapMatchFromApi
+    mapMatchFromApi,
+    mapStandingFromApi
 } from './mappings';
 
 const options = {
@@ -392,11 +393,28 @@ export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExt
     //     });
 }
 
+export async function getPhases() {
+    const url = clientSettings.API_URL + '/api/phases';
+    try {
+        const res = await getRequest(url);
+        return res.data.map(p => { return { id: p.Id, description: p.Name }; });
+    } catch (err) {
+        handleError(err);
+        return [];
+    }
+}
+
 export async function getStandings(season, stepId) {
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/standings';
     try {
-        const res = await getRequest(url);
-        return res.data;
+        const standings = await getRequest(url);
+        var result = []
+        if (standings.data && standings.data.length > 0) {
+            standings.data.forEach(el => {
+                result.push(mapStandingFromApi(el));
+            });
+        }
+        return result;
     } catch (err) {
         return console.error(err);
     }

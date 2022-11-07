@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { SeasonSelect, StepSelect, TeamSelect, Select } from '../../components/Controls';
 import { FieldGroup } from '../../utils/controls';
-import { getSeasons, getSteps, addMatch, getTeams } from '../../utils/communications';
+import { getSeasons, getSteps, addMatch, getTeams, getPhases } from '../../utils/communications';
 import { handleError } from '../../components/Errors';
 
 export default class AddMatch extends Component {
@@ -15,7 +15,7 @@ export default class AddMatch extends Component {
             seasons: [],
             teams: [],
             steps: [],
-            phases: [{id: 1, description: 'Campeonato'},{id: 2, description: 'Grupo'},{id: 3, description: 'Playoff'}],
+            phases: [],
             season: 0,
             stepId: 0,
             phase: '',
@@ -39,7 +39,8 @@ export default class AddMatch extends Component {
         var activeSeason = seasons.find(s => s.is_active);
         var teams = await getTeams();
         var steps = await getSteps();
-        this.setState({ seasons: seasons, teams: teams, steps: steps, season: activeSeason.year });
+        var phases = await getPhases();
+        this.setState({ seasons: seasons, teams: teams, steps: steps, phases: phases, season: activeSeason.year });
     }
 
     handleControlChange(evt) {

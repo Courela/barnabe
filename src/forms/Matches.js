@@ -15,23 +15,25 @@ export default class Matches extends Component {
             stepId: 0
         }
 
+        this.handleSeasonChange = this.handleSeasonChange.bind(this);
+        this.handleStepChange = this.handleStepChange.bind(this);
         this.handleControlChange = this.handleControlChange.bind(this);
-        this.getSeasons = this.getSeasons.bind(this);
     }
 
     async componentDidMount() {
-        await this.getSeasons();
-        var steps = await getSteps();
-        this.setState({ steps: steps });
-    }
-
-    async getSeasons() {
-        var seasons = await getSeasons();
-        var season = seasons.find(s => s.is_active);
-        this.setState({ seasons: seasons, season: season.year });
+        if (!this.state.seasons.length) {
+            var seasons = await getSeasons();
+            var season = seasons.find(s => s.is_active);
+            this.setState({ seasons: seasons, season: season.year });
+        }
+        if (!this.state.steps.length) {
+            var steps = await getSteps();
+            this.setState({ steps: steps });
+        }
     }
 
     handleSeasonChange(evt) {
+        this.setState({ stepId: 0 });
         const season = evt.target.value;
         getSteps(season, null)
             .then(r => {
@@ -41,8 +43,12 @@ export default class Matches extends Component {
             });
 
         this.handleControlChange(evt);
-
         if(evt) { evt.preventDefault(); }
+    }
+
+    handleStepChange(evt) {
+        this.setState({ stepId: 0 });
+        this.handleControlChange(evt);
     }
 
     handleControlChange(evt) {
@@ -56,8 +62,8 @@ export default class Matches extends Component {
 
         return (
             <Form inline>
-                <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
-                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
+                <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange} />
+                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
                 { this.state.stepId > 0 ?
                     <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} /> :
                     "" }

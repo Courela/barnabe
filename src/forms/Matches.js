@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Form } from 'react-bootstrap';
+import React, { Component, Fragment } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import Table from '../components/Table';
 import { SeasonSelect, StepSelect } from '../components/Controls';
-import { getSeasons, getSteps, getMatches } from '../utils/communications';
+import { getSeasons, getSteps, getMatches, removeMatch } from '../utils/communications';
 
-export default class ListMatches extends Component {
+export default class Matches extends Component {
     constructor(props) {
         super(props);
 
@@ -59,7 +59,7 @@ export default class ListMatches extends Component {
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
                 { this.state.stepId > 0 ?
-                    <TableMatches year={this.state.season} step={this.state.stepId} /> :
+                    <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} /> :
                     "" }
             </Form>
         );
@@ -73,6 +73,9 @@ class TableMatches extends Component {
         this.state = {
             matches: []
         };
+
+        this.playerActions = this.matchActions.bind(this);
+        this.matchActions = this.matchActions.bind(this);
     }
 
     async componentDidMount() {
@@ -82,18 +85,46 @@ class TableMatches extends Component {
             this.setState({ matches: matches });
         }
     }
+    
+    matchActions(row) {
+        const { year, step } = this.props;
+        const { matchId } = row;
+        if (this.props.isAdmin) {
+            const removeFn = () => this.removeMatch(year, step, matchId);
+            return (
+                <Fragment>
+                    <Button bsStyle="link" bsSize="small" onClick={removeFn}>Remover</Button>
+                </Fragment>
+            );
+        }
+        else return ('');
+    }
+
+    async removeMatch(year, step, id) {
+        if (window.confirm('Tem a certeza que quer remover o jogo?')) {
+            await removeMatch(year, step, id);
+
+            var matches = await getMatches(year, step);
+            this.setState({ matches: matches });
+        }
+    }
 
     render() {
+        var columns = [
+            { Header: 'Fase', id: 'phase', accessor: 'phase' },
+            { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
+            { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
+            { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
+            { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
+        ];
+
+        if (this.props.isAdmin) {
+            columns.push({ Header: "", id: "id", accessor: 'matchId', Cell: (row) => this.matchActions(row.original) });
+        }
         return (
             <div>
                 <Table
-                    columns={[
-                        { Header: 'Fase', id: 'phase', accessor: 'phase' },
-                        { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
-                        { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
-                        { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
-                        { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
-                    ]}
+                    columns={columns}
                     data={this.state.matches} />
             </div>
         );

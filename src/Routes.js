@@ -7,7 +7,7 @@ import Season from "./containers/Season";
 import AppliedRoute from "./components/AppliedRoute";
 import Documents from "./containers/Documents";
 import Standings from "./containers/Standings";
-import ListMatches from "./forms/ListMatches";
+import Matches from "./forms/Matches";
 
 export default ({ childProps }) => {
     let routes = [];
@@ -18,7 +18,7 @@ export default ({ childProps }) => {
         <AppliedRoute key={5 + childProps.year} path="/login" exact component={Login} props={childProps} />,
         <AppliedRoute key={6 + childProps.year} path="/documents" exact component={Documents} props={childProps} />,
         <AppliedRoute key={7 + childProps.year} path="/standings" exact component={Standings} props={childProps} />,
-        <AppliedRoute key={8 + childProps.year} path="/matches" exact component={ListMatches} props={childProps} />,
+        <AppliedRoute key={8 + childProps.year} path="/matches" exact component={Matches} props={childProps} />,
         <AppliedRoute key={9 + childProps.year} path="/" exact component={Home} props={childProps} />,
         <Route key="99" component={NotFound} />,
     ];

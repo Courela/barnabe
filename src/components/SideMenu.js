@@ -165,11 +165,12 @@ function AdminMenu(props) {
             <MenuItem key={"/admin/manage-steps"}>Gerir escalões</MenuItem>
             <MenuItem key={"/admin/listing"}>Listar</MenuItem>
             <SubMenu title="Fichas de Jogo">
-                <MenuItem key={"/admin/match-sheet"}>Jogo</MenuItem>
-                <MenuItem key={"/admin/team-sheet"}>Equipa</MenuItem>
+                <MenuItem key={"/admin/templates/match-sheet"}>Jogo</MenuItem>
+                <MenuItem key={"/admin/templates/team-sheet"}>Equipa</MenuItem>
             </SubMenu>
             <SubMenu title="Jogos">
-                <MenuItem key={"/admin/add-match"}>Adicionar</MenuItem>
+                <MenuItem key={"/admin/matches/add"}>Adicionar</MenuItem>
+                <MenuItem key={"/admin/matches/list"}>Listar</MenuItem>
             </SubMenu>
             <SubMenu title="Utilitários">
                 <MenuItem key={"/admin/manage-persons"}>Gerir Pessoas</MenuItem>

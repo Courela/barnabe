@@ -436,6 +436,12 @@ export async function addMatch(season, stepId, phase, homeTeamId, homeTeamGoals,
     }
 }
 
+export async function removeMatch(season, stepId, matchId) {
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/matches/' + matchId
+    return deleteRequest(url)
+        .catch(errors.handleError);
+}
+
 function removeDateLocale(date) {
     return moment(date).utcOffset(0, true);
 }

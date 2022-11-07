@@ -22,6 +22,7 @@ import Listing from '../containers/admin/Listing';
 import AddPlayer from '../forms/admin/AddPlayer';
 import Db from '../containers/admin/Db'
 import AddMatch from '../forms/admin/AddMatch';
+import Matches from '../forms/Matches';
 
 export default class MainContent extends Component {
     render() {
@@ -109,11 +110,11 @@ export default class MainContent extends Component {
                 exact: true,
                 component: Listing
             },{
-                path: '/admin/match-sheet',
+                path: '/admin/templates/match-sheet',
                 exact: true,
                 component: MatchSheet
             },{
-                path: '/admin/team-sheet',
+                path: '/admin/templates/team-sheet',
                 exact: true,
                 component: TeamSheet
             },{
@@ -122,9 +123,13 @@ export default class MainContent extends Component {
                 render: (props) => <PlayerDetails {...props} isSeasonActive={false} 
                                     teamId={props.match.params.teamId} />,
             },{
-                path: '/admin/add-match',
+                path: '/admin/matches/add',
                 exact: true,
                 component: AddMatch
+            },{
+                path: '/admin/matches/list',
+                exact: true,
+                render: (props) => <Matches {...props} isAdmin={true} />,
             });
         }
 

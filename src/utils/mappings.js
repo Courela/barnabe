@@ -137,6 +137,7 @@ export function mapMatchFromApi(match) {
     }
 
     return {
+        matchId: match.Id,
         phase: match.PhaseName,
         homeTeamId: match.HomeTeamId,
         homeTeamName: match.HomeTeamName,

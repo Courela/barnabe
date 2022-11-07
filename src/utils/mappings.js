@@ -131,6 +131,22 @@ export function mapDocumentFromApi(docApi) {
     return docApi;
 }
 
+export function mapMatchFromApi(match) {
+    if (!match) {
+        return null;
+    }
+
+    return {
+        phase: match.PhaseName,
+        homeTeamId: match.HomeTeamId,
+        homeTeamName: match.HomeTeamName,
+        awayTeamId: match.AwayTeamId,
+        awayTeamName: match.AwayTeamName,
+        homeTeamGoals: match.HomeTeamGoals,
+        awayTeamGoals: match.AwayTeamGoals
+    };
+}
+
 export function mapPersonToApi(person) {
     if (!person) {
         return null;
@@ -172,6 +188,20 @@ export function mapPlayerToApi(player) {
         Doc: player.doc,
         Person: mapPersonToApi(player.person),
         Caretaker: mapPersonToApi(player.caretaker)
+    };
+}
+
+export function mapMatchToApi(match) {
+    if (!match) {
+        return null;
+    }
+
+    return {
+        Phase: match.phase,
+        HomeTeamId: match.homeTeamId,
+        AwayTeamId: match.awayTeamId,
+        HomeTeamGoals: match.homeTeamGoals,
+        AwayTeamGoals: match.awayTeamGoals
     };
 }
 

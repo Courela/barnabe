@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment/moment';
 import { clientSettings } from '../clientSettings';
-import errors from '../components/Errors';
+import errors, { handleError } from '../components/Errors';
 import { 
     mapFromUserApi, 
     mapFromSeasonApi, 
@@ -12,7 +12,8 @@ import {
     mapPlayerFromApi,
     mapPlayerToApi,
     mapPhotoFromApi,
-    mapDocumentFromApi
+    mapDocumentFromApi,
+    mapMatchFromApi
 } from './mappings';
 
 const options = {
@@ -389,6 +390,50 @@ export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExt
     //     .catch((err) => {
     //         errors.handleError(err);
     //     });
+}
+
+export async function getStandings(season, stepId) {
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/standings';
+    try {
+        const res = await getRequest(url);
+        return res.data;
+    } catch (err) {
+        return console.error(err);
+    }
+}
+
+export async function getMatches(season, stepId) {
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/matches';
+    try {
+        const r = await getRequest(url);
+        var result = []
+            if (r.data && r.data.length > 0) {
+                r.data.forEach(el => {
+                    result.push(mapMatchFromApi(el));
+                });
+            }
+            return result;
+    } catch (err) {
+        console.error(err);
+        handleError(err);
+    }
+}
+
+export async function addMatch(season, stepId, phase, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals) {
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/add-match';
+    try {
+        const data = {
+            phase: phase,
+            homeTeamId: homeTeamId,
+            homeTeamGoals: homeTeamGoals,
+            awayTeamId: awayTeamId,
+            awayTeamGoals: awayTeamGoals,
+        };
+        const res = await postRequest(url, data);
+        return res.data;
+    } catch (err) {
+        return console.error(err);
+    }
 }
 
 function removeDateLocale(date) {

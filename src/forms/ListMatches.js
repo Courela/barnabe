@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import Table from '../components/Table';
 import { SeasonSelect, StepSelect } from '../components/Controls';
-import { getSeasons, getSteps, getStandings } from '../utils/communications';
+import { getSeasons, getSteps, getMatches } from '../utils/communications';
 
-export default class Standings extends Component {
+export default class ListMatches extends Component {
     constructor(props) {
         super(props);
 
@@ -13,7 +13,7 @@ export default class Standings extends Component {
             steps: [],
             season: 0,
             stepId: 0
-        };
+        }
 
         this.handleControlChange = this.handleControlChange.bind(this);
         this.getSeasons = this.getSeasons.bind(this);
@@ -33,7 +33,12 @@ export default class Standings extends Component {
 
     handleSeasonChange(evt) {
         const season = evt.target.value;
-        this.getSteps(season, null);
+        getSteps(season, null)
+            .then(r => {
+                if (r) {
+                    this.setState({ steps: r });
+                }
+            });
 
         this.handleControlChange(evt);
 
@@ -54,26 +59,28 @@ export default class Standings extends Component {
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
                 { this.state.stepId > 0 ?
-                    <TableStandings year={this.state.season} step={this.state.stepId} /> :
+                    <TableMatches year={this.state.season} step={this.state.stepId} /> :
                     "" }
             </Form>
         );
     }
 }
 
-class TableStandings extends Component {
+class TableMatches extends Component {
     constructor(props) {
         super(props);
         
         this.state = {
-            standings: []
+            matches: []
         };
     }
 
     async componentDidMount() {
         const { year, step } = this.props;
-        var standings = await getStandings(year, step);
-        this.setState({ standings: standings });
+        var matches = await getMatches(year, step);
+        if (matches) {
+            this.setState({ matches: matches });
+        }
     }
 
     render() {
@@ -81,14 +88,13 @@ class TableStandings extends Component {
             <div>
                 <Table
                     columns={[
-                        { Header: 'Pos', id: 'pos', accessor: 'position' },
-                        { Header: 'Equipa', id: 'team', accessor: 'teamName' },
-                        { Header: 'Pontos', id: 'points', accessor: 'points' },
-                        { Header: "GM", id: "gs", accessor: "goalsScored" },
-                        { Header: "GS", id: "gc", accessor: "goalsConceded" },
-                        { Header: "Avg", id: "avg", accessor: "avg" },
+                        { Header: 'Fase', id: 'phase', accessor: 'phase' },
+                        { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
+                        { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
+                        { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
+                        { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
                     ]}
-                    data={this.state.standings} />
+                    data={this.state.matches} />
             </div>
         );
     }

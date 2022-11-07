@@ -83,6 +83,9 @@ export default class TopMenu extends Component {
                     <LinkContainer to="/standings">
                         <NavItem>Classificação</NavItem>
                     </LinkContainer>
+                    <LinkContainer to="/matches">
+                        <NavItem>Jogos</NavItem>
+                    </LinkContainer>
                 </Fragment> }
             </Fragment>;
 

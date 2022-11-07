@@ -21,6 +21,7 @@ import Users from '../containers/admin/Users';
 import Listing from '../containers/admin/Listing';
 import AddPlayer from '../forms/admin/AddPlayer';
 import Db from '../containers/admin/Db'
+import AddMatch from '../forms/admin/AddMatch';
 
 export default class MainContent extends Component {
     render() {
@@ -120,6 +121,10 @@ export default class MainContent extends Component {
                 exact: true,
                 render: (props) => <PlayerDetails {...props} isSeasonActive={false} 
                                     teamId={props.match.params.teamId} />,
+            },{
+                path: '/admin/add-match',
+                exact: true,
+                component: AddMatch
             });
         }
 

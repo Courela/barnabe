@@ -12,7 +12,8 @@ export default class Matches extends Component {
             seasons: [],
             steps: [],
             season: 0,
-            stepId: 0
+            stepId: 0,
+            updated: false,
         }
 
         this.handleSeasonChange = this.handleSeasonChange.bind(this);
@@ -33,6 +34,7 @@ export default class Matches extends Component {
     }
 
     handleSeasonChange(evt) {
+        console.log("Season change: ", this.state);
         this.setState({ stepId: 0 });
         const season = evt.target.value;
         getSteps(season, null)
@@ -40,6 +42,7 @@ export default class Matches extends Component {
                 if (r) {
                     this.setState({ steps: r });
                 }
+                this.setState({ updated: false });
             });
 
         this.handleControlChange(evt);
@@ -47,26 +50,27 @@ export default class Matches extends Component {
     }
 
     handleStepChange(evt) {
-        this.setState({ stepId: 0 });
+        this.setState({ updated: false });
+        console.log("Step change: ", this.state);
         this.handleControlChange(evt);
     }
 
     handleControlChange(evt) {
+        console.log("Control change: ", this.state);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal });
+        this.setState({ [fieldName]: fieldVal }, () => console.log("State after: ", this.state));
     }
 
     render() {
+        console.log("Render: ", this.state);
         const { season, stepId } = this.state;
 
         return (
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
-                { this.state.stepId > 0 ?
-                    <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} /> :
-                    "" }
+                <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} update={this.state.updated}/>
             </Form>
         );
     }
@@ -80,18 +84,32 @@ class TableMatches extends Component {
             matches: []
         };
 
+        this.init = this.init.bind(this);
         this.playerActions = this.matchActions.bind(this);
         this.matchActions = this.matchActions.bind(this);
     }
 
-    async componentDidMount() {
-        const { year, step } = this.props;
-        var matches = await getMatches(year, step);
-        if (matches) {
-            this.setState({ matches: matches });
-        }
+    componentDidMount() {
+        this.init();
+    }
+
+    componentDidUpdate() {
+        this.init();
     }
     
+    init() {
+        console.log("Props: ", this.props);
+        const { year, step } = this.props;
+        if (year && step && this.state.matches && this.state.matches.length === 0 && this.props.update) {
+            getMatches(year, step)
+                .then(matches => {
+                    if (matches) {
+                        this.setState({ matches: matches });
+                    }
+                });
+        }
+    }
+
     matchActions(row) {
         const { year, step } = this.props;
         const { matchId } = row;
@@ -116,23 +134,26 @@ class TableMatches extends Component {
     }
 
     render() {
-        var columns = [
-            { Header: 'Fase', id: 'phase', accessor: 'phase' },
-            { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
-            { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
-            { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
-            { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
-        ];
+        if (this.props.step > 0) {
+            var columns = [
+                { Header: 'Fase', id: 'phase', accessor: 'phase' },
+                { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
+                { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
+                { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
+                { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
+            ];
 
-        if (this.props.isAdmin) {
-            columns.push({ Header: "", id: "id", accessor: 'matchId', Cell: (row) => this.matchActions(row.original) });
+            if (this.props.isAdmin) {
+                columns.push({ Header: "", id: "id", accessor: 'matchId', Cell: (row) => this.matchActions(row.original) });
+            }
+            return (
+                <div>
+                    <Table
+                        columns={columns}
+                        data={this.state.matches} />
+                </div>
+            );
         }
-        return (
-            <div>
-                <Table
-                    columns={columns}
-                    data={this.state.matches} />
-            </div>
-        );
+        return '';
     }
 }

@@ -90,7 +90,7 @@ export default class PlayerForm extends Component {
                             this.setState({
                                 steps: steps
                             });
-                        } else {
+                        } else if (steps.length === 1) {
                             this.setState({
                                 steps: steps,
                                 stepId: steps[0].id,
@@ -240,30 +240,34 @@ export default class PlayerForm extends Component {
             }
         }
         else {
-            console.log('Search person with idCardNr ' + this.state.idCardNr);
-            getPerson(this.state.idCardNr, true)
-                .then(person => {
-                    //console.log("PlayerForm getPerson response: ", person);
-                    if (person && person.id) {
-                        this.setState({
-                            personId: person.id,
-                            name: person.name,
-                            gender: person.gender,
-                            email: person.email ? person.email : (person.caretaker && person.caretaker.email ? person.caretaker.Email : ''),
-                            phoneNr: person.phone ? person.phone : (person.caretaker && person.caretaker.phone ? person.caretaker.phone : ''),
-                            birth: person.birthdate ? new Date(person.birthdate) : null,
-                            voterNr: person.voter_nr,
-                            isLocalBorn: person.local_born ? person.local_born : false,
-                            isLocalTown: person.local_town ? person.local_town : false,
-                            caretakerIdCardNr: person.caretaker ? person.caretaker.id_card_number : '',
-                            caretakerName: person.caretaker ? person.caretaker.name : '',
-                        });
-                    } else {
-                        console.log('No person found');
-                        this.setState({ personId: 0 });
-                    }
-                })
-                .catch(errors.handleError);
+            if (this.state.idCardNr) {
+                console.log('Search person with idCardNr ' + this.state.idCardNr);
+                getPerson(this.state.idCardNr, true)
+                    .then(person => {
+                        //console.log("PlayerForm getPerson response: ", person);
+                        if (person && person.id) {
+                            this.setState({
+                                personId: person.id,
+                                name: person.name,
+                                gender: person.gender,
+                                email: person.email ? person.email : (person.caretaker && person.caretaker.email ? person.caretaker.Email : ''),
+                                phoneNr: person.phone ? person.phone : (person.caretaker && person.caretaker.phone ? person.caretaker.phone : ''),
+                                birth: person.birthdate ? new Date(person.birthdate) : null,
+                                voterNr: person.voter_nr,
+                                isLocalBorn: person.local_born ? person.local_born : false,
+                                isLocalTown: person.local_town ? person.local_town : false,
+                                caretakerIdCardNr: person.caretaker ? person.caretaker.id_card_number : '',
+                                caretakerName: person.caretaker ? person.caretaker.name : '',
+                            });
+                        } else {
+                            console.log('No person found');
+                            this.setState({ personId: 0 });
+                        }
+                    })
+                    .catch(errors.handleError);
+            } else {
+                alert('Campos obrigatórios em falta!');
+            }
         }
         evt.preventDefault();
     }

@@ -101,7 +101,7 @@ export function getTeams(season) {
                     teams.push(mapFromTeamApi(el));
                 });
             } else {
-                console.error("error getting response: getTeams = ", r)
+                console.warn("Response: getTeams = ", r)
             }
             return teams;
         })
@@ -161,7 +161,7 @@ export function getTeamSteps(season, teamId) {
                     steps.push(mapFromStepApi(el));
                 });
             } else {
-                console.error("error getting response: getTeamSteps = ", r)
+                console.warn("Response: getTeamSteps = ", r)
             }
             return steps;
         })
@@ -178,7 +178,7 @@ export function getTeamsByStep(season, stepId) {
                     teams.push(mapFromTeamApi(el));
                 });
             } else {
-                console.error("error getting response: getTeamsByStep = ", r)
+                console.warn("Response: getTeamsByStep = ", r)
             }
             return teams;
         })

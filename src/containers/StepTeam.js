@@ -39,13 +39,28 @@ export default class StepTeam extends Component {
         this.getStaff();
     }
 
-    UNSAFE_componentWillReceiveProps(newProps) {
-        getStep(newProps.match.params.stepId)
+    static async getDerivedStateFromProps(props, state) {
+        await getStep(props.match.params.stepId)
             .then(step => { 
-                this.setState({ stepId: newProps.match.params.stepId, stepName: step.description, players: [], staff: [] }, this.updatePlayersAndStaff);
+                return { 
+                    stepId: props.match.params.stepId, 
+                    stepName: step.description,
+                    players: [],
+                    staff: []
+                };
             })
             .catch(errors.handleError);
+        this.updatePlayersAndStaff();
+        return null;
     }
+
+    // UNSAFE_componentWillReceiveProps(newProps) {
+    //     getStep(newProps.match.params.stepId)
+    //         .then(step => { 
+    //             this.setState({ stepId: newProps.match.params.stepId, stepName: step.description, players: [], staff: [] }, this.updatePlayersAndStaff);
+    //         })
+    //         .catch(errors.handleError);
+    // }
 
     // static async getDerivedStateFromProps(props, state) {
     //     let result = await getStep(props.match.params.stepId)

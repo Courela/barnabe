@@ -38,11 +38,18 @@ export default class SideMenu extends Component {
         }
     }
 
-    UNSAFE_componentWillReceiveProps(newProps) {
-        if (newProps.match.params.year) {
-            this.setState({ season: newProps.match.params.year });
+    static getDerivedStateFromProps(props, state) {
+        if (props.match.params.year) {
+           return { season: props.match.params.year };
         }
+        return null;
     }
+
+    // UNSAFE_componentWillReceiveProps(newProps) {
+    //     if (newProps.match.params.year) {
+    //         this.setState({ season: newProps.match.params.year });
+    //     }
+    // }
 
     getTeams() {
         if (this.state.season > 0) {

@@ -28,15 +28,24 @@ export default class Season extends Component {
         }
     }
 
-    UNSAFE_componentWillReceiveProps(newProps) {
-        const year = newProps.match.params.year;
-        if (year && year !== this.state.year) {
-            this.getSeason(year);
+    static async getDerivedStateFromProps(props, state) {
+        const year = props.match.params.year;
+        if (year && year !== state.year) {
+            await this.getSeason(year);
+            return {};
         }
+        return null;
     }
 
+    // UNSAFE_componentWillReceiveProps(newProps) {
+    //     const year = newProps.match.params.year;
+    //     if (year && year !== this.state.year) {
+    //         this.getSeason(year);
+    //     }
+    // }
+
     getSeason(year) {
-        getSeason(year)
+        return getSeason(year)
             .then(season => {
                 //console.log("Season getSeason: ", season);
                 if (season) {

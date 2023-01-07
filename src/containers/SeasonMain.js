@@ -23,9 +23,14 @@ export default class SeasonMain extends Component {
         this.getTeam();
     }
 
-    UNSAFE_componentWillReceiveProps(newProps) {
-        this.updateSeasonActive(newProps.isSeasonActive)
+    static getDerivedStateFromProps(props, state) {
+        this.updateSeasonActive(props.isSeasonActive)
+        return null;
     }
+
+    // UNSAFE_componentWillReceiveProps(newProps) {
+    //     this.updateSeasonActive(newProps.isSeasonActive)
+    // }
 
     updateSeasonActive(isSeasonActive) {
         if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {

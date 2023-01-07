@@ -54,7 +54,7 @@ export default class Login extends Component {
                             onChange={this.handleChange}
                         />
                     </FormGroup>
-                    <FormGroup controlId="password" bsSize="large">
+                    <FormGroup controlId="password" bsSize="large" style={{marginBottom: 5}}>
                         <ControlLabel>Palavra-passe</ControlLabel>
                         <FormControl
                             value={this.state.password}
@@ -62,6 +62,7 @@ export default class Login extends Component {
                             type="password"
                         />
                     </FormGroup>
+                    <a href="/recover">Recuperar palavra-passe</a>
                     <Button
                         block
                         bsSize="large"

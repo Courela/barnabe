@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import {
-    FormGroup, FormControl, ControlLabel, HelpBlock, Button
+    FormGroup, FormControl, ControlLabel, Button
 } from 'react-bootstrap';
+import { FieldGroup } from '../../utils/controls';
 import errors from '../../components/Errors';
 import { getTeams, createUser } from '../../utils/communications';
+import { isValidEmail } from '../../utils/validations';
 
 export default class AddUser extends Component {
     constructor(props, context) {
         super(props, context);
 
         this.validateTeam = this.validateTeam.bind(this);
+        this.validateEmail = this.validateEmail.bind(this);
         this.handleTeamSelect = this.handleTeamSelect.bind(this);
         this.handleControlChange = this.handleControlChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,6 +21,7 @@ export default class AddUser extends Component {
             teams: [],
             username: '',
             password: '',
+            email: '',
             teamId: 0
         }
     }
@@ -35,6 +39,11 @@ export default class AddUser extends Component {
         return null;
     }
 
+    validateEmail() {
+        if (this.state.email && !isValidEmail(this.state.email)) return 'error';
+        return null;
+    };
+
     handleTeamSelect(evt) {
         this.setState({ teamId: evt.target.value });
     }
@@ -47,8 +56,8 @@ export default class AddUser extends Component {
 
     handleSubmit(evt) {
         if (this.state.teamId > 0) {
-            const { username, password, teamId } = this.state;
-            createUser(username, password, teamId)
+            const { username, password, teamId, email } = this.state;
+            createUser(username, password, teamId, email)
                 .then(() => {
                     alert('Utilizador criado com sucesso.');
                 });
@@ -77,6 +86,15 @@ export default class AddUser extends Component {
                     placeholder="Password"
                     onChange={this.handleControlChange}
                 />
+                <FieldGroup
+                    id="formEmail"
+                    type="text"
+                    name="email"
+                    label="Email"
+                    placeholder="Email"
+                    validationState={this.validateEmail}
+                    onChange={this.handleControlChange}
+                />
                 <FormGroup controlId="selectTeam" validationState={this.validateTeam()}>
                     <ControlLabel>Equipa</ControlLabel>
                     <FormControl componentClass="select" placeholder="select"
@@ -89,14 +107,4 @@ export default class AddUser extends Component {
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Guardar</Button>
             </form>);
     }
-}
-
-function FieldGroup({ id, label, help, ...props }) {
-    return (
-        <FormGroup controlId={id}>
-            <ControlLabel>{label}</ControlLabel>
-            <FormControl {...props} />
-            {help && <HelpBlock>{help}</HelpBlock>}
-        </FormGroup>
-    );
 }

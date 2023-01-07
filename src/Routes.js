@@ -8,6 +8,8 @@ import AppliedRoute from "./components/AppliedRoute";
 import Documents from "./containers/Documents";
 import Standings from "./containers/Standings";
 import Matches from "./forms/Matches";
+import UserForm from "./forms/UserForm";
+import RecoverPass from "./forms/RecoverPass";
 
 export default ({ childProps }) => {
     let routes = [];
@@ -19,7 +21,9 @@ export default ({ childProps }) => {
         <AppliedRoute key={6 + childProps.year} path="/documents" exact component={Documents} props={childProps} />,
         <AppliedRoute key={7 + childProps.year} path="/standings" exact component={Standings} props={childProps} />,
         <AppliedRoute key={8 + childProps.year} path="/matches" exact component={Matches} props={childProps} />,
-        <AppliedRoute key={9 + childProps.year} path="/" exact component={Home} props={childProps} />,
+        <AppliedRoute key={9 + childProps.year} path="/account" exact component={UserForm} props={childProps} />,
+        <AppliedRoute key={10 + childProps.year} path="/recover" exact component={RecoverPass} props={childProps} />,
+        <AppliedRoute key={11 + childProps.year} path="/" exact component={Home} props={childProps} />,
         <Route key="99" component={NotFound} />,
     ];
 

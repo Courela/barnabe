@@ -27,6 +27,9 @@ export default class TopMenu extends Component {
                     console.error(err);
                 });
         }
+    }
+
+    componentDidUpdate() {
         if(!this.state.teamName && this.props.teamId) {
             getTeam(this.props.teamId)
                 .then(team => {
@@ -34,6 +37,9 @@ export default class TopMenu extends Component {
                         this.setState({ teamName: team.name });
                     }
                 })
+        }
+        if(this.state.teamName && !this.props.teamId) {
+            this.setState({ teamName: null });
         }
     }
 
@@ -54,8 +60,11 @@ export default class TopMenu extends Component {
     render() {
         const authenticatedOptions =
             <Fragment>
-                <NavItem disabled>Utilizador: {this.props.username}</NavItem>
                 { this.state.teamName ? <NavItem disabled>Equipa: {this.state.teamName}</NavItem> : '' }
+                <NavItem disabled>Utilizador: {this.props.username}</NavItem>
+                <LinkContainer to="/account">
+                    <NavItem>Conta</NavItem>
+                </LinkContainer>
                 <NavItem onClick={this.handleLogout}>Sair</NavItem>
             </Fragment>;
         const anonymousOptions =
@@ -80,11 +89,11 @@ export default class TopMenu extends Component {
                     <LinkContainer to="/documents">
                         <NavItem>Documentos</NavItem>
                     </LinkContainer>
-                    <LinkContainer to="/standings">
-                        <NavItem>Classificação</NavItem>
-                    </LinkContainer>
                     <LinkContainer to="/matches">
                         <NavItem>Jogos</NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/standings">
+                        <NavItem>Classificação</NavItem>
                     </LinkContainer>
                 </Fragment> }
             </Fragment>;

@@ -333,12 +333,13 @@ export function getUsers() {
         .catch(errors.handleError);
 }
 
-export function createUser(username, password, teamId) {
+export function createUser(username, password, teamId, email) {
     const url = clientSettings.API_URL + '/api/admin/users';
     const data = {
         username: username,
         password: password,
-        teamId: teamId
+        teamId: teamId,
+        email: email
     };
     return putRequest(url, data)
         .catch((err) => {

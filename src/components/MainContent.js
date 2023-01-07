@@ -23,11 +23,11 @@ import AddPlayer from '../forms/admin/AddPlayer';
 import Db from '../containers/admin/Db'
 import AddMatch from '../forms/admin/AddMatch';
 import Matches from '../forms/Matches';
+import Teams from '../containers/admin/Teams';
+import AddTeam from '../forms/admin/AddTeam';
 
 export default class MainContent extends Component {
     render() {
-        let stepId = 0;
-
         const authenticatedRoutesArr = [{
             path: '/seasons/:year/steps/:stepId/import',
             exact: true,
@@ -84,6 +84,14 @@ export default class MainContent extends Component {
                 path: '/admin/users/add',
                 exact: true,
                 render: (props) => { return (<AddUser {...props} />) }
+            },{
+                path: '/admin/teams',
+                exact: true,
+                render: (props) => { return (<Teams {...props} />) }
+            },{
+                path: '/admin/teams/add',
+                exact: true,
+                render: (props) => { return (<AddTeam {...props} />) }
             },{
                 path: '/admin/players/add',
                 exact: true,
@@ -142,9 +150,9 @@ export default class MainContent extends Component {
         const authenticatedRoutes = authenticatedRoutesArr.map(
             ({ path, exact, component, render }, key) => {
                 if (render) {
-                    return (<Route exact={exact} path={path} render={render} key={key + stepId} />);
+                    return (<Route exact={exact} path={path} render={render} key={key} />);
                 } else {
-                    return (<Route exact={exact} path={path} component={component} key={key + stepId} />);
+                    return (<Route exact={exact} path={path} component={component} key={key} />);
                 }
             });
 

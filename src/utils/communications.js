@@ -108,6 +108,17 @@ export function getTeams(season) {
         .catch(errors.handleError);
 }
 
+export function createTeam(name, shortDescription) {
+    const url = clientSettings.API_URL + '/api/teams'
+    const data = {
+        name: name,
+        shortDescription: shortDescription
+    };
+    return postRequest(url, data)
+        .then(r => r.data)
+        .catch(errors.handleError);
+}
+
 export function getTeam(teamId) {
     const url = clientSettings.API_URL + '/api/teams/' + teamId;
     return getRequest(url)

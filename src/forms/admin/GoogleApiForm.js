@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import {
-    FormGroup, FormControl, ControlLabel, HelpBlock, Button
-} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import { clientSettings } from '../../clientSettings';
+import { FieldGroup } from '../../utils/controls';
 
 export default class GoogleApiForm extends Component {
     constructor(props, context) {
@@ -270,14 +269,4 @@ class BackupForm extends Component {
             </div>
         );
     }
-}
-
-function FieldGroup({ id, label, help, ...props }) {
-    return (
-        <FormGroup controlId={id}>
-            <ControlLabel>{label}</ControlLabel>
-            <FormControl {...props} />
-            {help && <HelpBlock>{help}</HelpBlock>}
-        </FormGroup>
-    );
 }

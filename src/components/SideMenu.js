@@ -157,6 +157,10 @@ function AdminMenu(props) {
                 <MenuItem key={"/admin/users/add"}>Criar</MenuItem>
                 <MenuItem key={"/admin/users"}>Listar</MenuItem>
             </SubMenu>
+            <SubMenu title="Colectividades">
+                <MenuItem key={"/admin/teams/add"}>Criar</MenuItem>
+                <MenuItem key={"/admin/teams"}>Listar</MenuItem>
+            </SubMenu>
             <SubMenu title="Jogadores">
                 <MenuItem key={"/admin/players/add"}>Inscrever</MenuItem>
                 <MenuItem key={"/admin/players/search"}>Procurar</MenuItem>

@@ -24,55 +24,20 @@ export default class SideMenu extends Component {
         this.getTeams = this.getTeams.bind(this);
         this.getTeamSteps = this.getTeamSteps.bind(this);
     }
-
-    // shouldComponentUpdate() {
-    //     return this.props.season !== this.state.season ||
-    //         this.props.teamId !== this.state.teamId;
-    // }
-
-    UNSAFE_componentWillReceiveProps(newProps) {
-        if (newProps.match.params.year) {
-            this.setState({ season: newProps.match.params.year });
-        }
-    }
     
-    // static getDerivedStateFromProps(props, state) {
-    //    //console.log("Derived state from props: ", props, state);
-    //    var year = 0;
-    //    try {
-    //        year = parseInt(props.match.params.year, 10);
-    //    } catch {}
-    //     var result = null;
-    //     if (props.season !== state.season ||
-    //         props.teamId !== state.teamId ||
-    //         props.isSeasonActive !== state.isSeasonActive) {
-    //         result = {
-    //             season: props.season,
-    //             teamId: props.teamId,
-    //             isSeasonActive: props.isSeasonActive,
-    //             updated: false
-    //         };
-    //     }
-    //     if (year && year !== state.season) {
-    //         result = { season: year, updated: false };
-    //     }
-    //     if (props.teamId && props.teamId !== state.teamId) {
-    //         result = Object.assign(result, { teamId: props.teamId, updated: false });
-    //     }
-    //     return result;
-    // }
+    static getDerivedStateFromProps(props, state) {
+       //console.log("Derived state from props: ", props, state);
+       var year = 0;
+       try {
+           year = parseInt(props.match.params.year, 10);
+       } catch {}
+        var result = null;
+        if (year && year !== state.year) {
+            return { year: year };
+        }
 
-    // componentDidUpdate() {
-    //     debugger;
-    //     //console.log("Element updated: ", this.state);
-    //     if (!this.state.updated && this.props.isAuthenticated) {
-    //         if (this.state.teamId && parseInt(this.state.teamId, 10) > 0) {
-    //             this.getTeamSteps();
-    //         } else if (this.state.teams && this.state.teams.length === 0) {
-    //             this.getTeams();
-    //         }
-    //     }
-    // }
+        return result;
+    }
 
     componentDidMount() {
         // console.log("Mount completed");

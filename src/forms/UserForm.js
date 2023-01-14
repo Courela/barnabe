@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Fragment } from 'react';
 import { Button } from 'react-bootstrap';
-import { FieldGroup } from '../utils/controls';
+import { FieldGroup } from '../components/Controls';
 
 export default class UserForm extends Component {
     constructor(props, context) {

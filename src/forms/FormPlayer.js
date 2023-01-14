@@ -6,7 +6,7 @@ import {
 import DatePicker from 'react-date-picker';
 import CommonForm from './CommonForm';
 import CaretakerForm from './CaretakerForm';
-import { FieldGroup } from '../utils/controls';
+import { FieldGroup } from '../components/Controls';
 import { validateNotEmpty, isCaretakerRequired } from '../utils/validations';
 import '../styles/PlayerForm.css'
 

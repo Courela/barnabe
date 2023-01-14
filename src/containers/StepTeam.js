@@ -29,51 +29,38 @@ export default class StepTeam extends Component {
         this.handleNewPlayer = this.handleNewPlayer.bind(this);
         this.handleNewStaff = this.handleNewStaff.bind(this);
     }
-
-    componentDidMount() {
-        this.updatePlayersAndStaff();
-    }
-
-    updatePlayersAndStaff() {
-        this.getPlayers();
-        this.getStaff();
-    }
-
+    
     static async getDerivedStateFromProps(props, state) {
-        await getStep(props.match.params.stepId)
+        var stepId = props.stepName;
+        if (stepId && stepId !== state.stepId) {
+            return await getStep(stepId)
             .then(step => { 
                 return { 
-                    stepId: props.match.params.stepId, 
+                    stepId: stepId, 
                     stepName: step.description,
                     players: [],
                     staff: []
                 };
             })
             .catch(errors.handleError);
-        this.updatePlayersAndStaff();
+        }
         return null;
     }
-
-    // UNSAFE_componentWillReceiveProps(newProps) {
-    //     getStep(newProps.match.params.stepId)
-    //         .then(step => { 
-    //             this.setState({ stepId: newProps.match.params.stepId, stepName: step.description, players: [], staff: [] }, this.updatePlayersAndStaff);
-    //         })
-    //         .catch(errors.handleError);
-    // }
-
-    // static async getDerivedStateFromProps(props, state) {
-    //     let result = await getStep(props.match.params.stepId)
-    //         .then(step => { return { stepId: props.match.params.stepId, stepName: step.description }; })
-    //         .catch(errors.handleError);
-    //     return result;
-    // }
-
+    
+    componentDidMount() {
+        this.updatePlayersAndStaff();
+    }
+    
+    updatePlayersAndStaff() {
+        this.getPlayers();
+        this.getStaff();
+    }
+    
     getPlayers() {
         if (this.state.players.length === 0) {
             const { season, teamId, stepId } = this.state;
             getPlayers(season, teamId, stepId)
-                .then(result => {
+            .then(result => {
                     if (result) {
                         this.setState({ players: result });
                     } else {

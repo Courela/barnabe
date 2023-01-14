@@ -10,7 +10,7 @@ import { validateNotEmpty, isValidEmail, isValidPhone,
     isCaretakerRequired } from '../utils/validations';
 import CaretakerForm from './CaretakerForm';
 import CommonForm from './CommonForm';
-import { FieldGroup } from '../utils/controls';
+import { FieldGroup } from '../components/Controls';
 import { getRoles, getTeamSteps, getStep, getPerson, createPlayer } from '../utils/communications';
 
 export default class PlayerForm extends Component {

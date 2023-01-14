@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { SeasonSelect, StepSelect, TeamSelect, Select } from '../../components/Controls';
-import { FieldGroup } from '../../utils/controls';
+import { FieldGroup } from '../../components/Controls';
 import { getSeasons, getSteps, addMatch, getTeams, getPhases } from '../../utils/communications';
 import { handleError } from '../../components/Errors';
 

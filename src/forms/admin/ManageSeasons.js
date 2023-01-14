@@ -5,7 +5,7 @@ import {
 import DatePicker from 'react-date-picker';
 import errors from '../../components/Errors';
 import { getSeasons, addSeason, updateSeason } from '../../utils/communications';
-import { FieldGroup } from '../../utils/controls';
+import { FieldGroup } from '../../components/Controls';
 import { validateNotEmpty } from '../../utils/validations';
 
 export default class ManageSeasons extends Component {

@@ -6,9 +6,6 @@ export default class SeasonMain extends Component {
     constructor(props) {
         super(props);
 
-        this.updateSeasonActive = this.updateSeasonActive.bind(this);
-        this.getTeam = this.getTeam.bind(this);
-
         const season = props.match.params.year;
         this.state = {
             season: season,
@@ -16,6 +13,9 @@ export default class SeasonMain extends Component {
             teamId: props.teamId,
             team: null
         };
+
+        this.updateSeasonActive = this.updateSeasonActive.bind(this);
+        this.getTeam = this.getTeam.bind(this);
     }
 
     componentDidMount() {
@@ -24,13 +24,11 @@ export default class SeasonMain extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        this.updateSeasonActive(props.isSeasonActive)
+        if (props.isSeasonActive && props.isSeasonActive !== state.isSeasonActive) {
+            return { isSeasonActive: props.isSeasonActive };
+        }
         return null;
     }
-
-    // UNSAFE_componentWillReceiveProps(newProps) {
-    //     this.updateSeasonActive(newProps.isSeasonActive)
-    // }
 
     updateSeasonActive(isSeasonActive) {
         if (isSeasonActive && isSeasonActive !== this.state.isSeasonActive) {

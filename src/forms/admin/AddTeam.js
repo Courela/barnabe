@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
-import { FieldGroup } from '../../utils/controls';
+import { FieldGroup } from '../../components/Controls';
 import { createTeam } from '../../utils/communications';
 
 export default class AddTeam extends Component {

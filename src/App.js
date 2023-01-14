@@ -26,7 +26,8 @@ class App extends Component {
             user: user,
             teamId: teamId,
             username: username,
-            isAdmin: false 
+            isAdmin: false,
+            year: 0
         };
 
         this.userHasAuthenticated = this.userHasAuthenticated.bind(this);
@@ -59,6 +60,13 @@ class App extends Component {
         });
     }
 
+    onSeasonChange(year) {
+        console.log("Received year: ", year);
+        if (this.state && this.state.year !== year) {
+            this.setState({ year: year });
+        }
+    }
+
     render() {
         const year = this.props.match && this.props.match.params && this.props.match.params.year ? this.props.match.params.year : 0;
 
@@ -74,8 +82,9 @@ class App extends Component {
         return (
             <div className="App container">
                 <TopMenu isAuthenticated={this.state.isAuthenticated} username={this.state.username}
-                    teamId={this.state.teamId} userHasAuthenticated={this.userHasAuthenticated} />
-                <Routes childProps={childProps} />
+                    teamId={this.state.teamId} userHasAuthenticated={this.userHasAuthenticated} 
+                    onSeasonChange={this.onSeasonChange} />
+                <Routes season={this.state.year} childProps={childProps} />
             </div>
         );
     }

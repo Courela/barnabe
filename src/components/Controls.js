@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    FormGroup, FormControl, ControlLabel
+    FormGroup, FormControl, ControlLabel, HelpBlock
 } from 'react-bootstrap';
 
 export function SeasonSelect(props) {
@@ -9,7 +9,7 @@ export function SeasonSelect(props) {
     return <Select controlId="selectSeason" name="season" label="Época" 
         options={selectSeasons} value={props.value} 
         onChange={props.onChange} validationState={props.validationState} />;
-}
+}        
 
 export function TeamSelect(props) {
     var controlId = props.controlId ? props.controlId : "selectTeam";
@@ -21,7 +21,7 @@ export function TeamSelect(props) {
     return <Select controlId={controlId} name={name} label={label} 
         options={selectTeams} value={props.value} 
         onChange={props.onChange} validationState={props.validationState} />
-}
+}        
 
 export function StepSelect(props) {
     const selectSteps = props.steps.map(s => { return { value: s.id, description: s.description }; });
@@ -29,7 +29,7 @@ export function StepSelect(props) {
     return <Select controlId="selectStep" name="stepId" label="Escalão" 
         options={selectSteps} value={props.value} 
         onChange={props.onChange} validationState={props.validationState} />;
-}
+}        
 
 export function Select(props) {
     const options = props.options.map((o, idx) => <option key={idx} value={o.value}>{o.description}</option>);
@@ -43,5 +43,17 @@ export function Select(props) {
                 {options}
             </FormControl>
             <FormControl.Feedback />
-        </FormGroup>);
+        </FormGroup>);            
+}
+
+export function FieldGroup({ id, label, help, validationState, validationArgs, ...props }) {
+    var state = validationState ? (validationArgs ? validationState(validationArgs) : validationState()) : null;
+    return (
+        <FormGroup controlId={id} 
+            validationState={state}>
+            <ControlLabel>{label}</ControlLabel>
+            <FormControl {...props} />
+            {help && <HelpBlock>{help}</HelpBlock>}
+        </FormGroup>
+    );
 }

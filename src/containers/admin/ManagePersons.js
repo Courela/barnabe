@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import queryString from 'query-string';
 import errors from '../../components/Errors';
-import { FieldGroup } from '../../utils/controls';
+import { FieldGroup } from '../../components/Controls';
 import { searchPersons } from '../../utils/communications';
 
 export default class ManagePersons extends Component {

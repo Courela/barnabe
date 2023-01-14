@@ -101,7 +101,7 @@ export default class MainContent extends Component {
                 exact: true,
                 component: Search
             },{
-                path: '/admin/manage-steps',
+                path: '/admin/steps/manage',
                 exact: true,
                 component: StepForm
             }, 
@@ -114,7 +114,7 @@ export default class MainContent extends Component {
                 exact: true,
                 component: ManagePersons
             },{
-                path: '/admin/listing',
+                path: '/admin/teamsteps/listing',
                 exact: true,
                 component: Listing
             },{

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Checkbox } from 'react-bootstrap';
-import { FieldGroup } from '../utils/controls';
+import { FieldGroup } from '../components/Controls';
 import { isValidEmail, isValidPhone } from '../utils/validations';
 import '../styles/PlayerForm.css'
 

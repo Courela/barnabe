@@ -1,6 +1,6 @@
 import React from 'react';
 import { Panel } from 'react-bootstrap';
-import { FieldGroup } from '../utils/controls';
+import { FieldGroup } from '../components/Controls';
 import { validateNotEmpty } from '../utils/validations';
 import '../styles/PlayerForm.css'
 import CommonForm from './CommonForm';

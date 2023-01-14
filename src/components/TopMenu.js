@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Navbar, NavItem, NavDropdown, MenuItem } from "react-bootstrap";
+import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { getSeasons, getTeam, logout } from '../utils/communications';
+import SeasonDropDown from '../components/SeasonDropDown';
 
 export default class TopMenu extends Component {
     constructor(props) {
@@ -84,18 +85,22 @@ export default class TopMenu extends Component {
 
         const leftSideOptions =
             <Fragment>
-                {this.props.isAuthenticated ? <SeasonDropDown seasons={this.state.seasons} /> : 
-                <Fragment>
-                    <LinkContainer to="/documents">
-                        <NavItem>Documentos</NavItem>
-                    </LinkContainer>
-                    <LinkContainer to="/matches">
-                        <NavItem>Jogos</NavItem>
-                    </LinkContainer>
-                    <LinkContainer to="/standings">
-                        <NavItem>Classificação</NavItem>
-                    </LinkContainer>
-                </Fragment> }
+                {this.props.isAuthenticated ? 
+                    <SeasonDropDown 
+                        onSeasonChange={this.props.onSeasonChange} 
+                        seasons={this.state.seasons} /> : 
+                    <Fragment>
+                        <LinkContainer to="/documents">
+                            <NavItem>Documentos</NavItem>
+                        </LinkContainer>
+                        <LinkContainer to="/matches">
+                            <NavItem>Jogos</NavItem>
+                        </LinkContainer>
+                        <LinkContainer to="/standings">
+                            <NavItem>Classificação</NavItem>
+                        </LinkContainer>
+                    </Fragment>
+                }
             </Fragment>;
 
         return (
@@ -116,26 +121,4 @@ export default class TopMenu extends Component {
                 </Navbar>
             </div>);
     }
-}
-
-function SeasonDropDown(props) {
-    let seasons = [];
-    if (props.seasons.length > 0) {
-        const activeSeason = props.seasons.find(s => s.is_active);
-        const indexActive = props.seasons.indexOf(activeSeason);
-
-        seasons = props.seasons.map(s => s.year);
-        seasons.splice(indexActive, 1);
-        seasons.splice(0, 0, activeSeason.year, 0);
-    }
-
-    return (
-        <NavDropdown title="Edição" id="season-nav-dropdown">
-            {seasons.map((s, idx) => {
-                return (s > 0 ? 
-                    <LinkContainer key={idx} to={'/seasons/' + s}><MenuItem>{s}</MenuItem></LinkContainer> : 
-                    <MenuItem key={idx} divider />
-                );
-            })}
-        </NavDropdown>);
 }

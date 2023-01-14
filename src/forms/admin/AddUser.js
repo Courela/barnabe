@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     FormGroup, FormControl, ControlLabel, Button
 } from 'react-bootstrap';
-import { FieldGroup } from '../../utils/controls';
+import { FieldGroup } from '../../components/Controls';
 import errors from '../../components/Errors';
 import { getTeams, createUser } from '../../utils/communications';
 import { isValidEmail } from '../../utils/validations';

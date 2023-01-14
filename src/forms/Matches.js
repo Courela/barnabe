@@ -63,7 +63,6 @@ export default class Matches extends Component {
     }
 
     render() {
-        console.log("Render: ", this.state);
         const { season, stepId } = this.state;
 
         return (
@@ -98,7 +97,6 @@ class TableMatches extends Component {
     }
     
     init() {
-        console.log("Props: ", this.props);
         const { year, step } = this.props;
         if (year && step && this.state.matches && this.state.matches.length === 0 && this.props.update) {
             getMatches(year, step)

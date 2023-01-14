@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import { clientSettings } from '../../clientSettings';
-import { FieldGroup } from '../../utils/controls';
+import { FieldGroup } from '../../components/Controls';
 
 export default class GoogleApiForm extends Component {
     constructor(props, context) {

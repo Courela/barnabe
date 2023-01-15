@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import SeasonMain from '../containers/SeasonMain';
+import Season from '../containers/Season';
 import Player from '../containers/Player';
 import NotFound from '../containers/NotFound';
 import StepTeam from '../containers/StepTeam';
@@ -59,7 +59,7 @@ export default class MainContent extends Component {
         }, {
             path: '/seasons/:year',
             exact: true,
-            render: (props) => <SeasonMain {...props} teamId={this.props.teamId} 
+            render: (props) => <Season {...props} teamId={this.props.teamId} 
                                     isSeasonActive={this.props.isSeasonActive} isSignUpExpired={this.props.isSignUpExpired}/>
         }];
 

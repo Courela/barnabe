@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import errors from '../components/Errors';
 import { getTeam } from '../utils/communications';
 
-export default class SeasonMain extends Component {
+export default class Season extends Component {
     constructor(props) {
         super(props);
 

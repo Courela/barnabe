@@ -12,6 +12,7 @@ import CaretakerForm from './CaretakerForm';
 import CommonForm from './CommonForm';
 import { FieldGroup } from '../components/Controls';
 import { getRoles, getTeamSteps, getStep, getPerson, createPlayer } from '../utils/communications';
+import { stringify } from 'query-string';
 
 export default class PlayerForm extends Component {
     constructor(props, context) {
@@ -436,11 +437,16 @@ function Details(props) {
 
     const getStepDate = (prop, defaultDate) => {
         let result = defaultDate;
-        if (props.roleId === 1) {
-            const step = props.steps.find((s) => s.id === props.stepId);
-            if (step) {
-                result = new Date(step[prop]);
+        try {
+            if (props.roleId === 1) {
+                const step = props.steps.find((s) => s.id === props.stepId);
+                if (step) {
+                    console.log('Parse date ', step[prop], ' for step ' + stringify(step));
+                    result = new Date(step[prop]);
+                }
             }
+        } catch (e) {
+            console.error(e);
         }
         return result;
     };
@@ -521,7 +527,7 @@ function Details(props) {
                 accept="image/*,application/pdf"
             /> : ''}
         {caretakerRequired ? <CaretakerForm {...props} isEditing={true} /> : <div /> }
-        {caretakerRequired ? <div /> : <CommonForm {...props} caretakerRequired={caretakerRequired} />}
+        {caretakerRequired ? <div /> : <CommonForm {...props} isEditing={true} caretakerRequired={caretakerRequired} />}
         <FormGroup controlId="formComments">
             <ControlLabel>Notas Adicionais</ControlLabel>
             <FormControl componentClass="textarea" placeholder="Notas"

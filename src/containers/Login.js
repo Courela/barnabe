@@ -23,6 +23,10 @@ export default class Login extends Component {
         });
     }
 
+    handleRecover = () => {
+        this.props.history.push("/recover");
+    }
+
     handleSubmit = async event => {
         event.preventDefault();
 
@@ -62,7 +66,7 @@ export default class Login extends Component {
                             type="password"
                         />
                     </FormGroup>
-                    <a href="/recover">Recuperar palavra-passe</a>
+                    <a href="#" onClick={this.handleRecover}>Recuperar palavra-passe</a>
                     <Button
                         block
                         bsSize="large"

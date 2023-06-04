@@ -22,10 +22,11 @@ export default class Login extends Component {
         });
     }
 
-    handleSubmit = () => {
+    handleSubmit = evt => {
         recoverPassword(this.state.email)
-            .then(r => alert("Email sent."))
+            .then(r => alert("Email enviado."))
             .catch(errors.handleError);
+        evt.preventDefault();
     }
 
     render() {

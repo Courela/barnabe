@@ -82,7 +82,7 @@ export default class ManageSeasons extends Component {
         if (this.state.key === 2) {
             const { year, status, signUpDueDate, startDate } = this.state;
             addSeason(parseInt(year, 10), status, signUpDueDate, startDate)
-                .then(() => alert("Época criada."));;
+                .then(() => alert("Época criada."));
         }
         evt.preventDefault();
     }

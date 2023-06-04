@@ -31,24 +31,28 @@ export default class StepTeam extends Component {
     }
     
     static async getDerivedStateFromProps(props, state) {
-        var stepId = props.stepName;
+        debugger;
+        var stepId = props.stepId;
         if (stepId && stepId !== state.stepId) {
-            return await getStep(stepId)
-            .then(step => { 
-                return { 
-                    stepId: stepId, 
-                    stepName: step.description,
-                    players: [],
-                    staff: []
-                };
-            })
-            .catch(errors.handleError);
+            return { 
+                stepId: stepId,
+                players: [],
+                staff: []
+            };
         }
         return null;
     }
     
     componentDidMount() {
         this.updatePlayersAndStaff();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        debugger;
+        if (this.props.match.params.stepId !== this.state.stepId) {
+            //this.updatePlayersAndStaff();
+            this.setState({ stepId: prevProps.match.params.stepId, players: [], staff: [] });
+        }
     }
     
     updatePlayersAndStaff() {
@@ -128,6 +132,7 @@ export default class StepTeam extends Component {
     };
 
     render() {
+        console.log("StepTeam render: ", this.state);
         var staff_columns = [
             { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row.original) },
             { Header: 'Função', id: 'role', accessor: 'role.description' },

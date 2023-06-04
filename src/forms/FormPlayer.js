@@ -8,6 +8,7 @@ import CommonForm from './CommonForm';
 import CaretakerForm from './CaretakerForm';
 import { FieldGroup } from '../components/Controls';
 import { validateNotEmpty, isCaretakerRequired } from '../utils/validations';
+import utils from '../utils/common';
 import '../styles/PlayerForm.css'
 
 export default function FormPlayer(props) {
@@ -21,7 +22,7 @@ export default function FormPlayer(props) {
         var stripString = doc.substring(5 + fileType[1].length + 1 + fileType[2].length + 8);
         // var buf = Buffer.from(stripString);
         // var blob = new Blob([buf]);
-        var blob = b64toBlob(stripString, fileType[1]+ '/' + fileType[2]);
+        var blob = utils.b64toBlob(stripString, fileType[1]+ '/' + fileType[2]);
         return window.URL.createObjectURL(blob);
     };
 
@@ -187,23 +188,3 @@ export default function FormPlayer(props) {
         </FormGroup>
     </div>);
 }
-
-function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
-    const byteCharacters = atob(b64Data);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-      const byteNumbers = new Array(slice.length);
-
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-
-    const blob = new Blob(byteArrays, { type: contentType });
-
-    return blob;
-  }

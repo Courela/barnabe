@@ -68,12 +68,17 @@ class App extends Component {
     }
 
     render() {
-        const year = this.props.match && this.props.match.params && this.props.match.params.year ? this.props.match.params.year : 0;
+        var year = this.props.match && this.props.match.params && this.props.match.params.year ? this.props.match.params.year : this.state.year;
+        year = parseInt(year, 10);
+        year = !isNaN(year) ? year : 0;
+
+        var teamId = parseInt(this.state.teamId, 10);
+        teamId = !isNaN(teamId) ? teamId : 0;
 
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
             user: this.state.user,
-            teamId: this.state.teamId,
+            teamId: teamId,
             username: this.state.username,
             userHasAuthenticated: this.userHasAuthenticated,
             year: year
@@ -82,9 +87,9 @@ class App extends Component {
         return (
             <div className="App container">
                 <TopMenu isAuthenticated={this.state.isAuthenticated} username={this.state.username}
-                    teamId={this.state.teamId} userHasAuthenticated={this.userHasAuthenticated} 
+                    teamId={teamId} userHasAuthenticated={this.userHasAuthenticated} 
                     onSeasonChange={this.onSeasonChange} />
-                <Routes season={this.state.year} childProps={childProps} />
+                <Routes season={year} childProps={childProps} />
             </div>
         );
     }

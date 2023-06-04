@@ -28,6 +28,7 @@ import AddTeam from '../forms/admin/AddTeam';
 
 export default class MainContent extends Component {
     render() {
+        console.log("MainContent props: ", this.props);
         const authenticatedRoutesArr = [{
             path: '/seasons/:year/steps/:stepId/import',
             exact: true,
@@ -37,7 +38,7 @@ export default class MainContent extends Component {
         }, {
             path: '/seasons/:year/steps/:stepId',
             exact: true,
-            render: (props) => <StepTeam {...props} teamId={this.props.teamId} 
+            render: (props) => <StepTeam {...props} teamId={this.props.teamId} stepId={props.match.params.stepId} 
                             isSeasonActive={this.props.isSeasonActive} isSignUpExpired={this.props.isSignUpExpired} />
         }, {
             path: '/seasons/:year/steps/:stepId/players/:playerId',

@@ -161,7 +161,7 @@ export function createTeamStep(season, teamId, stepId) {
 
 export function getTeamSteps(season, teamId) {
     if (!teamId || teamId === 'undefined') {
-        debugger;
+        console.error("No team to get steps from!");
     }
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
     return getRequest(url)
@@ -375,14 +375,14 @@ export function getDbPing() {
 }
 
 export function addSeason(year, isActive, signUpDueDate, startDate) {
-    const url = clientSettings.API_URL + '/api/admin/seasons';
+    const url = clientSettings.API_URL + '/api/admin/seasons/add';
     const data = {
         year: year,
         isActive: isActive,
         signUpDueDate: signUpDueDate,
         startDate: startDate
     };
-    return putRequest(url, data);
+    return postRequest(url, data);
 }
 
 export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExtraDueDate) {
@@ -395,14 +395,6 @@ export function updateSeason(year, isActive, signUpDueDate, startDate, signUpExt
         signUpExtraDueDate: removeDateLocale(signUpExtraDueDate)
     };
     return putRequest(url, data);
-    // axios.put(url, data)
-    //     .then(result => {
-    //         console.log(result);
-    //         alert('Época actualizada.');
-    //     })
-    //     .catch((err) => {
-    //         errors.handleError(err);
-    //     });
 }
 
 export async function getPhases() {

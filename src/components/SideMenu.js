@@ -7,6 +7,7 @@ import { getTeams, getTeamSteps } from '../utils/communications';
 import AnonymousMenu from './AnonymousMenu';
 import AuthenticatedMenu from './AuthenticatedMenu';
 import AdminMenu from './AdminMenu';
+import { string } from 'prop-types';
 
 export default class SideMenu extends Component {
     constructor(props) {
@@ -64,6 +65,8 @@ export default class SideMenu extends Component {
     }
 
     handleSelect(info) {
+        var stepId = info.key.split("/")[4];
+        this.props.onStepChange(stepId);
         if (info.key) {
             this.props.history.push(info.key);
         }

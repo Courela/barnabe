@@ -20,8 +20,11 @@ export default class Content extends Component {
             year: year,
             isSeasonActive: false,
             isSignUpExpired: true,
-            eighteenDate: null
+            eighteenDate: null,
+            stepId: 0,
         }
+
+        this.onStepChange = this.onStepChange.bind(this);
     }
 
     componentDidUpdate() {
@@ -85,29 +88,38 @@ export default class Content extends Component {
             .catch(errors.handleError);
     }
 
+    onStepChange(stepId) {
+        this.setState({ stepId: stepId });
+    }
+
     render() {
+        console.log("Render Content: ", this.state);
+        var year = parseInt(this.state.year, 10);
+        year = !isNaN(year) ? year : 0;
+        console.log("Content year: ", year);
         return (
             <div className="display-area">
                 <div>
-                    <Route key={this.state.year + 0} path="/admin" render={(props) => 
+                    <Route key={year + 0} path="/admin" render={(props) => 
                         <SideMenu {...props} season={0} 
                             isAuthenticated={this.props.isAuthenticated} 
-                            teamId={this.props.teamId} />} 
+                            teamId={this.props.teamId} onStepChange={this.onStepChange} />} 
                     />
-                    <Route key={this.state.year + 1} path="/seasons/:year" 
+                    <Route key={year + 1} path="/seasons/:year" stepId={this.state.stepId}
                         render={(props) => { 
                             // console.log("Build SideMenu props: ", props);
                             return <SideMenu {...props} 
                                 season={props.match.params.year} 
                                 isAuthenticated={this.props.isAuthenticated} 
                                 teamId={this.props.teamId} isSeasonActive={this.state.isSeasonActive}
+                                onStepChange={this.onStepChange}
                             />}}
                     />
                 </div>
                 <div className="main-content">
-                    <Route key={this.state.year + 2} path="/admin" render={(props) => 
-                            <MainContent {...props} isAuthenticated={this.props.isAuthenticated} /> } />
-                    <Route key={this.state.year + 3} path="/seasons/:year" 
+                    <Route key={year + 2} path="/admin" render={(props) => 
+                            <MainContent {...props} isAuthenticated={this.props.isAuthenticated} stepId={this.state.stepId} /> } />
+                    <Route key={year + 3} path="/seasons/:year" stepId={this.state.stepId}
                         render={(props) => 
                             <MainContent {...props} 
                                 season={props.match.params.year}
@@ -115,7 +127,8 @@ export default class Content extends Component {
                                 isSeasonActive={this.state.isSeasonActive}
                                 isSignUpExpired={this.state.isSignUpExpired}
                                 eighteenDate={this.state.eighteenDate}
-                                isAuthenticated={this.props.isAuthenticated} /> } />
+                                isAuthenticated={this.props.isAuthenticated}
+                                stepId={this.state.stepId} /> } />
                 </div>
             </div>);
     }

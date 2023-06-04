@@ -7,7 +7,6 @@ import { getTeams, getTeamSteps } from '../utils/communications';
 import AnonymousMenu from './AnonymousMenu';
 import AuthenticatedMenu from './AuthenticatedMenu';
 import AdminMenu from './AdminMenu';
-import { string } from 'prop-types';
 
 export default class SideMenu extends Component {
     constructor(props) {

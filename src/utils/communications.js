@@ -464,6 +464,19 @@ export async function removeMatch(season, stepId, matchId) {
         .catch(errors.handleError);
 }
 
+export async function recoverPassword(email) {
+    const url = clientSettings.API_URL + '/api/recoverPassword';
+    try {
+        const data = {
+            email: email,
+        };
+        const res = await postRequest(url, data);
+        return res.data;
+    } catch (err) {
+        return console.error(err);
+    }
+}
+
 function removeDateLocale(date) {
     return moment(date).utcOffset(0, true);
 }

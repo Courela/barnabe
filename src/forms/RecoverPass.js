@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { recoverPassword } from '../utils/communications';
+import errors from '../components/Errors';
 
 export default class Login extends Component {
     constructor(props) {
@@ -18,6 +20,12 @@ export default class Login extends Component {
         this.setState({
             [event.target.id]: event.target.value
         });
+    }
+
+    handleSubmit = () => {
+        recoverPassword(this.state.email)
+            .then(r => alert("Email sent."))
+            .catch(errors.handleError);
     }
 
     render() {

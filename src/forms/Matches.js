@@ -13,7 +13,6 @@ export default class Matches extends Component {
             steps: [],
             season: 0,
             stepId: 0,
-            updated: false,
         }
 
         this.handleSeasonChange = this.handleSeasonChange.bind(this);
@@ -42,7 +41,6 @@ export default class Matches extends Component {
                 if (r) {
                     this.setState({ steps: r });
                 }
-                this.setState({ updated: false });
             });
 
         this.handleControlChange(evt);
@@ -50,7 +48,6 @@ export default class Matches extends Component {
     }
 
     handleStepChange(evt) {
-        this.setState({ updated: false });
         console.log("Step change: ", this.state);
         this.handleControlChange(evt);
     }
@@ -69,7 +66,7 @@ export default class Matches extends Component {
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
-                <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} update={this.state.updated}/>
+                <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} />
             </Form>
         );
     }
@@ -98,7 +95,7 @@ class TableMatches extends Component {
     
     init() {
         const { year, step } = this.props;
-        if (year && step && this.state.matches && this.state.matches.length === 0 && this.props.update) {
+        if (year && step && this.state.matches) {
             getMatches(year, step)
                 .then(matches => {
                     if (matches) {

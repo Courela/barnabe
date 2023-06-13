@@ -29,10 +29,14 @@ export function getSeasons() {
     return getRequest(url)
         .then(r => {
             var result = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    result.push(mapFromSeasonApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        result.push(mapFromSeasonApi(el));
+                    });
+                } else {
+                    console.info('No seasons found.');
+                }
             } else {
                 console.error("error getting response: getSeasons = ", r)
             }
@@ -46,10 +50,14 @@ export function getRoles() {
     return getRequest(url)
         .then(r => {
             var steps = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    steps.push(mapFromRoleApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        steps.push(mapFromRoleApi(el));
+                    });
+                } else {
+                    console.info('No roles found.');
+                }
             } else {
                 console.error("error getting response: getRoles = ", r)
             }
@@ -63,10 +71,14 @@ export function getSteps() {
     return getRequest(url)
         .then(r => {
             var steps = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    steps.push(mapFromStepApi(el));
-                });
+            if (r.data)  {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        steps.push(mapFromStepApi(el));
+                    });
+                } else {
+                    console.info('No steps found.');
+                }
             } else {
                 console.error("error getting response: getSteps = ", r)
             }
@@ -96,10 +108,14 @@ export function getTeams(season) {
     return getRequest(url)
         .then(r => {
             var teams = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    teams.push(mapFromTeamApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        teams.push(mapFromTeamApi(el));
+                    });
+                } else {
+                    console.info('No teams found.');
+                }
             } else {
                 console.warn("Response: getTeams = ", r)
             }
@@ -131,10 +147,14 @@ export function signSteps(season, teamId) {
     return getRequest(url)
         .then(r => {
             var steps = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    steps.push(mapFromStepApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        steps.push(mapFromStepApi(el));
+                    });
+                } else {
+                    console.info('No steps found.');
+                }
             } else {
                 console.error("error getting response: signSteps = ", r)
             }
@@ -167,10 +187,14 @@ export function getTeamSteps(season, teamId) {
     return getRequest(url)
         .then(r => {
             var steps = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    steps.push(mapFromStepApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        steps.push(mapFromStepApi(el));
+                    });
+                } else {
+                    console.info('No steps found.');
+                }
             } else {
                 console.warn("Response: getTeamSteps = ", r)
             }
@@ -184,10 +208,14 @@ export function getTeamsByStep(season, stepId) {
     return getRequest(url)
         .then(r => {
             var teams = [];
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    teams.push(mapFromTeamApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        teams.push(mapFromTeamApi(el));
+                    });
+                } else {
+                    console.info('No teams found.');
+                }
             } else {
                 console.warn("Response: getTeamsByStep = ", r)
             }
@@ -206,10 +234,14 @@ export function getPlayers(season, teamId, stepId) {
     return getRequest(url)
         .then(r => {
             var result = []
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    result.push(mapPlayerFromApi(el));
-                });
+            if (r.data) { 
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        result.push(mapPlayerFromApi(el));
+                    });
+                } else {
+                    console.info('No players found.');
+                }
             } else {
                 console.error("error getting response: getPlayers = ", r)
             }
@@ -223,10 +255,16 @@ export function getStaff(season, teamId, stepId) {
     return getRequest(url)
         .then(r => {
             var result = []
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    result.push(mapPlayerFromApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        result.push(mapPlayerFromApi(el));
+                    });
+                } else {
+                    console.info('No staff found.');
+                }
+            } else {
+                console.error("error getting response: getStaff = ", r)
             }
             return result;
         })
@@ -251,7 +289,7 @@ export function getDocument(season, teamId, stepId, playerId) {
     const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/doc';
     return getRequest(url)
         .then(r => {
-            if (r.data.ExistsLocally) {
+            if (r.data && r.data.ExistsLocally) {
                 return mapDocumentFromApi(r.data.Src);
             } else {
                 return null;
@@ -323,10 +361,14 @@ export function getUsers() {
     return getRequest(url)
         .then(r => {
             var result = []
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    result.push(mapFromUserApi(el));
-                });
+            if (r.data) {
+                if (r.data.length > 0) {
+                    r.data.forEach(el => {
+                        result.push(mapFromUserApi(el));
+                    });
+                } else {
+                    console.info('No users found.');
+                }
             }
             return result;
         })
@@ -351,7 +393,6 @@ export function login(username, password) {
     const url = clientSettings.API_URL + '/api/authenticate';
     return postRequest(url, { username: username, password: password })
         .then(response => {
-            //console.log(response);
             return response.data;
         })
         .catch(() => null);

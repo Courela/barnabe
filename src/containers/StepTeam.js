@@ -31,7 +31,7 @@ export default class StepTeam extends Component {
     }
     
     static async getDerivedStateFromProps(props, state) {
-        debugger;
+        //debugger;
         var stepId = props.stepId;
         if (stepId && stepId !== state.stepId) {
             return { 
@@ -48,7 +48,7 @@ export default class StepTeam extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        debugger;
+        //debugger;
         if (this.props.match.params.stepId !== this.state.stepId) {
             //this.updatePlayersAndStaff();
             this.setState({ stepId: prevProps.match.params.stepId, players: [], staff: [] });
@@ -74,7 +74,7 @@ export default class StepTeam extends Component {
                 .then(() => {
                     if (!this.state.stepName) {
                         getStep(this.state.stepId)
-                            .then(step => this.setState({ stepName: step.description }))
+                            .then(step => this.setState({ stepName: step ? step.description : this.state.stepName }))
                             .catch(errors.handleError);
                     }
                 })

@@ -65,7 +65,7 @@ export default class Standings extends Component {
                         }
                     });
             }
-        }
+        };
         this.handleControlChange(evt, fn);
     }
 

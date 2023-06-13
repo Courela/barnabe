@@ -26,17 +26,25 @@ export function TeamSelect(props) {
 export function StepSelect(props) {
     const selectSteps = props.steps.map(s => { return { value: s.id, description: s.description }; });
  
-    return <Select controlId="selectStep" name="stepId" label="Escalão" 
+    return <Select controlId="selectStep" name="stepId" label="Escalão"
         options={selectSteps} value={props.value} 
         onChange={props.onChange} validationState={props.validationState} />;
-}        
+}
+
+export function PhaseSelect(props) {
+    const selectPhases = props.phases.map(s => { return { value: s.id, description: s.description }; });
+ 
+    return <Select controlId="selectPhase" name="phaseId" label="Fase" 
+        options={selectPhases} value={props.value} 
+        onChange={props.onChange} validationState={props.validationState} />;
+}
 
 export function Select(props) {
     const options = props.options.map((o, idx) => <option key={idx} value={o.value}>{o.description}</option>);
 
     return (
-        <FormGroup controlId={props.controlId} validationState={props.validationState}>
-            <ControlLabel>{props.label}</ControlLabel>
+        <FormGroup controlId={props.controlId} validationState={props.validationState} style={{ "margin-right": 20 }}>
+            <ControlLabel style={{ "margin-right": 5 }}>{props.label}</ControlLabel>
             <FormControl name={props.name} componentClass="select" placeholder="select" style={{ width: 200 }}
                 onChange={props.onChange} value={props.value}>
                 <option value="0">Escolha...</option>
@@ -51,7 +59,7 @@ export function FieldGroup({ id, label, help, validationState, validationArgs, .
     return (
         <FormGroup controlId={id} 
             validationState={state}>
-            <ControlLabel>{label}</ControlLabel>
+            <ControlLabel style={{ "margin-right": 5 }}>{label}</ControlLabel>
             <FormControl {...props} />
             {help && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>

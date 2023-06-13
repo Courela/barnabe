@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import Table from '../components/Table';
-import { SeasonSelect, StepSelect } from '../components/Controls';
-import { getSeasons, getSteps, getMatches, removeMatch } from '../utils/communications';
+import { SeasonSelect, StepSelect, PhaseSelect } from '../components/Controls';
+import { getSeasons, getSteps, getPhases, getMatches, removeMatch } from '../utils/communications';
 
 export default class Matches extends Component {
     constructor(props) {
@@ -11,12 +11,16 @@ export default class Matches extends Component {
         this.state = {
             seasons: [],
             steps: [],
+            phases: [],
+            matches: [],
             season: 0,
             stepId: 0,
+            phaseId: 0
         }
 
         this.handleSeasonChange = this.handleSeasonChange.bind(this);
         this.handleStepChange = this.handleStepChange.bind(this);
+        this.handlePhaseChange = this.handlePhaseChange.bind(this);
         this.handleControlChange = this.handleControlChange.bind(this);
     }
 
@@ -29,6 +33,11 @@ export default class Matches extends Component {
         if (!this.state.steps.length) {
             var steps = await getSteps();
             this.setState({ steps: steps });
+        }
+        if (!this.state.phases.length) {
+            var phases = await getPhases();
+            phases.push({ id: 99, description: "Todos" });
+            this.setState({ phases: phases });
         }
     }
 
@@ -50,66 +59,52 @@ export default class Matches extends Component {
     handleStepChange(evt) {
         console.log("Step change: ", this.state);
         this.handleControlChange(evt);
+        this.setState({ phaseId: 0 });
     }
 
-    handleControlChange(evt) {
+    handlePhaseChange(evt) {
+        console.log("Phase change: ", this.state);
+        var fn = () => {
+            if (this.state.season && this.state.stepId && this.state.phaseId) {
+                getMatches(this.state.season, this.state.stepId, this.state.phaseId)
+                    .then(matches => {
+                        if (matches) {
+                            this.setState({ matches: matches });
+                        }
+                    });
+            }
+        };
+        this.handleControlChange(evt, fn);
+    }
+
+    handleControlChange(evt, fn) {
         console.log("Control change: ", this.state);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal }, () => console.log("State after: ", this.state));
+        this.setState({ [fieldName]: fieldVal }, () => { console.log("State after: ", this.state); if (fn) fn(); });
     }
 
     render() {
-        const { season, stepId } = this.state;
+        const { season, stepId, phaseId, matches } = this.state;
 
         return (
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
-                <TableMatches year={this.state.season} step={this.state.stepId} isAdmin={this.props.isAdmin} />
+                <PhaseSelect phases={this.state.phases} value={phaseId} onChange={this.handlePhaseChange} />
+                <TableMatches year={season} step={stepId} phase={phaseId} matches={matches} isAdmin={this.props.isAdmin} />
             </Form>
         );
     }
 }
 
-class TableMatches extends Component {
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            matches: []
-        };
+function TableMatches(props) {
+    const { year, step, phase, matches, isAdmin } = props;
 
-        this.init = this.init.bind(this);
-        this.playerActions = this.matchActions.bind(this);
-        this.matchActions = this.matchActions.bind(this);
-    }
-
-    componentDidMount() {
-        this.init();
-    }
-
-    componentDidUpdate() {
-        this.init();
-    }
-    
-    init() {
-        const { year, step } = this.props;
-        if (year && step && this.state.matches) {
-            getMatches(year, step)
-                .then(matches => {
-                    if (matches) {
-                        this.setState({ matches: matches });
-                    }
-                });
-        }
-    }
-
-    matchActions(row) {
-        const { year, step } = this.props;
+    var matchActions = (row) => {
         const { matchId } = row;
-        if (this.props.isAdmin) {
-            const removeFn = () => this.removeMatch(year, step, matchId);
+        if (isAdmin) {
+            const removeFn = () => removeMatch(year, step, matchId);
             return (
                 <Fragment>
                     <Button bsStyle="link" bsSize="small" onClick={removeFn}>Remover</Button>
@@ -119,36 +114,34 @@ class TableMatches extends Component {
         else return ('');
     }
 
-    async removeMatch(year, step, id) {
+    var removeMatch = async (year, step, id) => {
         if (window.confirm('Tem a certeza que quer remover o jogo?')) {
             await removeMatch(year, step, id);
 
-            var matches = await getMatches(year, step);
-            this.setState({ matches: matches });
+            // var matches = await getMatches(year, step);
+            // this.setState({ matches: matches });
         }
     }
 
-    render() {
-        if (this.props.step > 0) {
-            var columns = [
-                { Header: 'Fase', id: 'phase', accessor: 'phase' },
-                { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
-                { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
-                { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
-                { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
-            ];
+    if (matches && matches.length > 0) {
+        var columns = [
+            { Header: 'Fase', id: 'phase', accessor: 'phase' },
+            { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
+            { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
+            { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
+            { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
+        ];
 
-            if (this.props.isAdmin) {
-                columns.push({ Header: "", id: "id", accessor: 'matchId', Cell: (row) => this.matchActions(row.original) });
-            }
-            return (
-                <div>
-                    <Table
-                        columns={columns}
-                        data={this.state.matches} />
-                </div>
-            );
+        if (isAdmin) {
+            columns.push({ Header: "", id: "id", accessor: 'matchId', Cell: (row) => matchActions(row.original) });
         }
-        return '';
+        return (
+            <div>
+                <Table
+                    columns={columns}
+                    data={matches} />
+            </div>
+        );
     }
+    return '';
 }

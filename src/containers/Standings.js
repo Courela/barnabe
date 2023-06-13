@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import Table from '../components/Table';
-import { SeasonSelect, StepSelect } from '../components/Controls';
-import { getSeasons, getSteps, getStandings } from '../utils/communications';
+import { SeasonSelect, StepSelect, PhaseSelect } from '../components/Controls';
+import { getSeasons, getSteps, getStandings, getPhases } from '../utils/communications';
 
 export default class Standings extends Component {
     constructor(props) {
@@ -11,11 +11,18 @@ export default class Standings extends Component {
         this.state = {
             seasons: [],
             steps: [],
+            phases: [],
+            standings: [],
             season: 0,
-            stepId: 0
+            stepId: 0,
+            phaseId: 0
         };
 
+        this.handleSeasonChange = this.handleSeasonChange.bind(this);
+        this.handleStepChange = this.handleStepChange.bind(this);
+        this.handlePhaseChange = this.handlePhaseChange.bind(this);
         this.handleControlChange = this.handleControlChange.bind(this);
+        
         this.getSeasons = this.getSeasons.bind(this);
     }
 
@@ -23,6 +30,11 @@ export default class Standings extends Component {
         await this.getSeasons();
         var steps = await getSteps();
         this.setState({ steps: steps });
+
+        if (!this.state.phases.length) {
+            var phases = await getPhases();
+            this.setState({ phases: phases });
+        }
     }
 
     async getSeasons() {
@@ -36,74 +48,66 @@ export default class Standings extends Component {
         if(evt) { evt.preventDefault(); }
     }
 
-    handleControlChange(evt) {
+    handleStepChange(evt) {
+        console.log("Step change: ", this.state);
+        this.handleControlChange(evt);
+        this.setState({ phaseId: 0 });
+    }
+
+    handlePhaseChange(evt) {
+        console.log("Phase change: ", this.state);
+        var fn = () => {
+            if (this.state.season && this.state.stepId && this.state.phaseId) {
+                getStandings(this.state.season, this.state.stepId, this.state.phaseId)
+                    .then(standings => {
+                        if (standings) {
+                            this.setState({ standings: standings });
+                        }
+                    });
+            }
+        }
+        this.handleControlChange(evt, fn);
+    }
+
+    handleControlChange(evt, fn) {
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal });
+        this.setState({ [fieldName]: fieldVal }, fn);
     }
 
     render() {
-        const { season, stepId } = this.state;
+        const { season, stepId, phaseId, standings } = this.state;
 
         return (
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
-                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
-                <TableStandings year={this.state.season} step={this.state.stepId} />
+                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
+                <PhaseSelect phases={this.state.phases} value={phaseId} onChange={this.handlePhaseChange} />
+                <TableStandings standings={standings} />
             </Form>
         );
     }
 }
 
-class TableStandings extends Component {
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            standings: []
-        };
+function TableStandings(props) {
+    const { standings } = props;
 
-        this.init = this.init.bind(this);
+    if (standings && standings.length > 0) {
+        return (
+            <div>
+                <Table
+                    columns={[
+                        { Header: 'Pos', id: 'pos', accessor: 'position' },
+                        { Header: 'Equipa', id: 'team', accessor: 'teamName' },
+                        { Header: 'Pontos', id: 'points', accessor: 'points' },
+                        { Header: "GM", id: "gs", accessor: "goalsScored" },
+                        { Header: "GS", id: "gc", accessor: "goalsConceded" },
+                        { Header: "Avg", id: "avg", accessor: "avg" },
+                    ]}
+                    data={standings} />
+            </div>
+        );
     }
 
-    componentDidMount() {
-        this.init();
-    }
-
-    componentDidUpdate() {
-        this.init();
-    }
-
-    init() {
-        const { year, step } = this.props;
-        if (year && step && this.state.standings) {
-            getStandings(year, step)
-                .then(standings => {
-                    if (standings) {
-                        this.setState({ standings: standings });
-                    }
-                });
-        }
-    }
-
-    render() {
-        if (this.props.step > 0) {
-            return (
-                <div>
-                    <Table
-                        columns={[
-                            { Header: 'Pos', id: 'pos', accessor: 'position' },
-                            { Header: 'Equipa', id: 'team', accessor: 'teamName' },
-                            { Header: 'Pontos', id: 'points', accessor: 'points' },
-                            { Header: "GM", id: "gs", accessor: "goalsScored" },
-                            { Header: "GS", id: "gc", accessor: "goalsConceded" },
-                            { Header: "Avg", id: "avg", accessor: "avg" },
-                        ]}
-                        data={this.state.standings} />
-                </div>
-            );
-        }
-
-        return '';
-    }
+    return '';
 }

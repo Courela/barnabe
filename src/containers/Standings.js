@@ -49,9 +49,7 @@ export default class Standings extends Component {
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
-                { this.state.stepId > 0 ?
-                    <TableStandings year={this.state.season} step={this.state.stepId} /> :
-                    "" }
+                <TableStandings year={this.state.season} step={this.state.stepId} />
             </Form>
         );
     }
@@ -64,28 +62,48 @@ class TableStandings extends Component {
         this.state = {
             standings: []
         };
+
+        this.init = this.init.bind(this);
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.init();
+    }
+
+    componentDidUpdate() {
+        this.init();
+    }
+
+    init() {
         const { year, step } = this.props;
-        var standings = await getStandings(year, step);
-        this.setState({ standings: standings });
+        if (year && step && this.state.standings) {
+            getStandings(year, step)
+                .then(standings => {
+                    if (standings) {
+                        this.setState({ standings: standings });
+                    }
+                });
+        }
     }
 
     render() {
-        return (
-            <div>
-                <Table
-                    columns={[
-                        { Header: 'Pos', id: 'pos', accessor: 'position' },
-                        { Header: 'Equipa', id: 'team', accessor: 'teamName' },
-                        { Header: 'Pontos', id: 'points', accessor: 'points' },
-                        { Header: "GM", id: "gs", accessor: "goalsScored" },
-                        { Header: "GS", id: "gc", accessor: "goalsConceded" },
-                        { Header: "Avg", id: "avg", accessor: "avg" },
-                    ]}
-                    data={this.state.standings} />
-            </div>
-        );
+        if (this.props.step > 0) {
+            return (
+                <div>
+                    <Table
+                        columns={[
+                            { Header: 'Pos', id: 'pos', accessor: 'position' },
+                            { Header: 'Equipa', id: 'team', accessor: 'teamName' },
+                            { Header: 'Pontos', id: 'points', accessor: 'points' },
+                            { Header: "GM", id: "gs", accessor: "goalsScored" },
+                            { Header: "GS", id: "gc", accessor: "goalsConceded" },
+                            { Header: "Avg", id: "avg", accessor: "avg" },
+                        ]}
+                        data={this.state.standings} />
+                </div>
+            );
+        }
+
+        return '';
     }
 }

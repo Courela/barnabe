@@ -449,8 +449,8 @@ export async function getPhases() {
     }
 }
 
-export async function getStandings(season, stepId) {
-    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/standings';
+export async function getStandings(season, stepId, phaseId) {
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/standings/' + phaseId;
     try {
         const standings = await getRequest(url);
         var result = []
@@ -465,8 +465,8 @@ export async function getStandings(season, stepId) {
     }
 }
 
-export async function getMatches(season, stepId) {
-    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/matches';
+export async function getMatches(season, stepId, phaseId) {
+    const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/matches/' + phaseId;
     try {
         const r = await getRequest(url);
         var result = []

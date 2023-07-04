@@ -43,8 +43,8 @@ export function Select(props) {
     const options = props.options.map((o, idx) => <option key={idx} value={o.value}>{o.description}</option>);
 
     return (
-        <FormGroup controlId={props.controlId} validationState={props.validationState} style={{ "margin-right": 20 }}>
-            <ControlLabel style={{ "margin-right": 5 }}>{props.label}</ControlLabel>
+        <FormGroup controlId={props.controlId} validationState={props.validationState} style={{ "marginRight": 20 }}>
+            <ControlLabel style={{ "marginRight": 5 }}>{props.label}</ControlLabel>
             <FormControl name={props.name} componentClass="select" placeholder="select" style={{ width: 200 }}
                 onChange={props.onChange} value={props.value}>
                 <option value="0">Escolha...</option>
@@ -59,7 +59,7 @@ export function FieldGroup({ id, label, help, validationState, validationArgs, .
     return (
         <FormGroup controlId={id} 
             validationState={state}>
-            <ControlLabel style={{ "margin-right": 5 }}>{label}</ControlLabel>
+            <ControlLabel style={{ "marginRight": 5 }}>{label}</ControlLabel>
             <FormControl {...props} />
             {help && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>

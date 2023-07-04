@@ -42,7 +42,6 @@ export default class Matches extends Component {
     }
 
     handleSeasonChange(evt) {
-        console.log("Season change: ", this.state);
         this.setState({ stepId: 0 });
         const season = evt.target.value;
         getSteps(season, null)
@@ -57,13 +56,11 @@ export default class Matches extends Component {
     }
 
     handleStepChange(evt) {
-        console.log("Step change: ", this.state);
         this.handleControlChange(evt);
         this.setState({ phaseId: 0 });
     }
 
     handlePhaseChange(evt) {
-        console.log("Phase change: ", this.state);
         var fn = () => {
             if (this.state.season && this.state.stepId && this.state.phaseId) {
                 getMatches(this.state.season, this.state.stepId, this.state.phaseId)
@@ -78,10 +75,9 @@ export default class Matches extends Component {
     }
 
     handleControlChange(evt, fn) {
-        console.log("Control change: ", this.state);
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal }, () => { console.log("State after: ", this.state); if (fn) fn(); });
+        this.setState({ [fieldName]: fieldVal });
     }
 
     render() {

@@ -477,12 +477,12 @@ export async function getMatches(season, stepId, phaseId) {
     try {
         const r = await getRequest(url);
         var result = []
-            if (r.data && r.data.length > 0) {
-                r.data.forEach(el => {
-                    result.push(mapMatchFromApi(el));
-                });
-            }
-            return result;
+        if (r.data && r.data.length > 0) {
+            r.data.forEach(el => {
+                result.push(mapMatchFromApi(el));
+            });
+        }
+        return result;
     } catch (err) {
         console.error(err);
         handleError(err);

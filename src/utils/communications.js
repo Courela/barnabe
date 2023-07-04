@@ -174,6 +174,13 @@ export function getStep(stepId, season) {
         .catch(errors.handleError);
 }
 
+export function getTeamStep(teamStepId, teamId, season) {
+    var url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + teamStepId;
+    return getRequest(url)
+        .then(r => mapFromStepApi(r.data))
+        .catch(errors.handleError);
+}
+
 export function createTeamStep(season, teamId, stepId) {
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps';
     return putRequest(url, { stepId: stepId });

@@ -10,13 +10,7 @@ export default class StepTeam extends Component {
     constructor(props) {
         super(props);
 
-        const season = props.match.params.year;
-
         this.state = {
-            season: season,
-            teamId: props.teamId,
-            stepId: props.match.params.stepId,
-            stepName: null,
             players: [],
             staff: []
         };
@@ -30,29 +24,8 @@ export default class StepTeam extends Component {
         this.handleNewStaff = this.handleNewStaff.bind(this);
     }
     
-    static async getDerivedStateFromProps(props, state) {
-        //debugger;
-        var stepId = props.stepId;
-        if (stepId && stepId !== state.stepId) {
-            return { 
-                stepId: stepId,
-                players: [],
-                staff: []
-            };
-        }
-        return null;
-    }
-    
     componentDidMount() {
         this.updatePlayersAndStaff();
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        //debugger;
-        if (this.props.match.params.stepId !== this.state.stepId) {
-            //this.updatePlayersAndStaff();
-            this.setState({ stepId: prevProps.match.params.stepId, players: [], staff: [] });
-        }
     }
     
     updatePlayersAndStaff() {
@@ -62,9 +35,10 @@ export default class StepTeam extends Component {
     
     getPlayers() {
         if (this.state.players.length === 0) {
-            const { season, teamId, stepId } = this.state;
+            const season = this.props.match.params.year;
+            const { stepId, teamId } = this.props;
             getPlayers(season, teamId, stepId)
-            .then(result => {
+                .then(result => {
                     if (result) {
                         this.setState({ players: result });
                     } else {
@@ -73,7 +47,7 @@ export default class StepTeam extends Component {
                 })
                 .then(() => {
                     if (!this.state.stepName) {
-                        getStep(this.state.stepId)
+                        getStep(this.props.stepId)
                             .then(step => this.setState({ stepName: step ? step.description : this.state.stepName }))
                             .catch(errors.handleError);
                     }
@@ -84,7 +58,8 @@ export default class StepTeam extends Component {
 
     getStaff() {
         if (this.state.staff.length === 0) {
-            const { season, teamId, stepId } = this.state;
+            const season = this.props.match.params.year;
+            const { stepId, teamId } = this.props;
             getStaff(season, teamId, stepId)
                 .then(result => {
                     this.setState({ staff: result });
@@ -94,12 +69,15 @@ export default class StepTeam extends Component {
     }
 
     linkToPlayer(player) {
-        const { season, stepId } = this.state;
+        const season = this.props.match.params.year;
+        const { stepId } = this.props;
         return (<Link to={'/seasons/' + season + '/steps/' + stepId + '/players/' + player.id}>{player.person.name}</Link>);
     }
 
     playerActions(player) {
-        const { season, stepId } = this.state;
+        const season = this.props.match.params.year;
+        const { stepId } = this.props;
+
         if (this.props.isSeasonActive && !this.props.isSignUpExpired) {
             const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.id + '?edit=1';
             const removeFn = () => this.removePlayer(player.id, player.person.name);
@@ -114,7 +92,9 @@ export default class StepTeam extends Component {
     }
 
     async removePlayer(id, name) {
-        const { season, teamId, stepId } = this.state;
+        const season = this.props.match.params.year;
+        const { stepId, teamId } = this.props;
+
         if (window.confirm('Tem a certeza que quer remover o jogador ' + name + '?')) {
             await removePlayer(season, teamId, stepId, id);
             this.setState({ players: [], staff: [] }, this.updatePlayersAndStaff);
@@ -122,17 +102,23 @@ export default class StepTeam extends Component {
     }
 
     handleNewPlayer() {
-        const { season, stepId } = this.state;
+        const season = this.props.match.params.year;
+        const { stepId } = this.props;
+
         this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/player');
     };
 
     handleNewStaff() {
-        const { season, stepId } = this.state;
+        const season = this.props.match.params.year;
+        const { stepId } = this.props;
+        
         this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/staff');
     };
 
     render() {
-        console.log("StepTeam render: ", this.state);
+        const season = this.props.match.params.year;
+        const { stepId, isSeasonActive, isSignUpExpired } = this.props;
+
         var staff_columns = [
             { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row.original) },
             { Header: 'Função', id: 'role', accessor: 'role.description' },
@@ -144,11 +130,11 @@ export default class StepTeam extends Component {
 
         return (
             <Fragment>
-                <h2>{this.state.stepName}</h2>
+                <h2>{this.props.stepName}</h2>
                 <div style={{ float: 'right' }}>
-                    {this.props.isSeasonActive && !this.props.isSignUpExpired && this.state.stepName ?
+                    {isSeasonActive && !isSignUpExpired && this.state.stepName ?
                         <ButtonToolbar>
-                            <Button bsStyle="success" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import?role=players'}>Importar épocas anteriores</Button>
+                            <Button bsStyle="success" href={'/seasons/' + season + '/steps/' + stepId + '/import?role=players'}>Importar épocas anteriores</Button>
                             <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
                         </ButtonToolbar> : ''}
                 </div>
@@ -156,13 +142,13 @@ export default class StepTeam extends Component {
                     <h3>Jogadores</h3>
                     <PlayersTable players={this.state.players} getPlayers={this.getPlayers}
                         linkToPlayer={this.linkToPlayer} playerActions={this.playerActions}
-                        isSeasonActive={this.props.isSeasonActive} season={this.state.season} />
+                        isSeasonActive={isSeasonActive} season={season} />
                 </div>
                 <div style={{ marginTop: '30px', clear: 'right' }}>
                     <div style={{ float: 'right' }}>
-                        {this.props.isSeasonActive && this.state.stepName ?
+                        {isSeasonActive && this.state.stepName ?
                             <ButtonToolbar>
-                                <Button bsStyle="success" href={'/seasons/' + (this.state.season).toString() + '/steps/' + this.state.stepId + '/import?role=staff'}>Importar épocas anteriores</Button>
+                                <Button bsStyle="success" href={'/seasons/' + season + '/steps/' + stepId + '/import?role=staff'}>Importar épocas anteriores</Button>
                                 <Button bsStyle="primary" onClick={this.handleNewStaff}>Adicionar Elemento</Button>
                             </ButtonToolbar> : ''}
                     </div>

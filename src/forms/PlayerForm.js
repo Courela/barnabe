@@ -331,7 +331,6 @@ export default class PlayerForm extends Component {
 
     onChangeBirthdate = date => 
     {
-        console.log("onChangeBirthdate date: ", date);
         this.setState({ birth: date });
     }
 
@@ -441,7 +440,6 @@ function Details(props) {
             if (props.roleId === 1) {
                 const step = props.steps.find((s) => s.id === props.stepId);
                 if (step) {
-                    console.log('Parse date ', step[prop], ' for step ' + stringify(step));
                     result = new Date(step[prop]);
                 }
             }

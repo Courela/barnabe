@@ -20,10 +20,10 @@ export function mapFromSeasonApi(seasonApi) {
 
     return {
         year: seasonApi.Year,
-        is_active: seasonApi.IsActive,
+        is_active: seasonApi.IsActive ? true : false,
         sign_up_due_date: new Date(seasonApi.SignUpDueDate),
         start_date: new Date(seasonApi.StartDate),
-        sign_up_extra_due_date: new Date(seasonApi.SignUpExtraDueDate)
+        sign_up_extra_due_date: seasonApi.SignUpExtraDueDate ? new Date(seasonApi.SignUpExtraDueDate) : new Date(2099, 11),
     };
 }
 
@@ -34,6 +34,7 @@ export function mapFromStepApi(stepApi) {
 
     return {
         id: stepApi.Id,
+        stepId: stepApi.StepId,
         description: stepApi.Description,
         gender: stepApi.Gender,
         is_caretaker_required: stepApi.IsCaretakerRequired,

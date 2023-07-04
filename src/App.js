@@ -20,12 +20,14 @@ class App extends Component {
         const user = sessionStorage.getItem('user');
         const teamId = sessionStorage.getItem('teamId');
         const username = sessionStorage.getItem('username');
+        const email = sessionStorage.getItem('email');
         this.state = {
             cookieName: cookieSession,
             isAuthenticated: user != null,
             user: user,
             teamId: teamId,
             username: username,
+            email: email,
             isAdmin: false,
             year: 0
         };
@@ -39,12 +41,14 @@ class App extends Component {
             user: user, 
             teamId: user ? user.TeamId : null,
             username: user ? user.Username : null,
+            email: user ? user.Email : null,
             isAdmin: user && !user.TeamId
         }, () => {
             if (this.state.isAuthenticated) {
                 sessionStorage.setItem('user', this.state.user);
                 sessionStorage.setItem('teamId', this.state.user ? this.state.user.TeamId : null);
                 sessionStorage.setItem('username', this.state.user ? this.state.user.Username : null);
+                sessionStorage.setItem('email', this.state.user ? this.state.user.Email : null);
                 const url = redirectTo ? 
                     redirectTo : 
                     this.state.isAdmin ? '/admin' : "/seasons/" + new Date(Date.now()).getFullYear();
@@ -61,7 +65,6 @@ class App extends Component {
     }
 
     onSeasonChange(year) {
-        console.log("Received year: ", year);
         if (this.state && this.state.year !== year) {
             this.setState({ year: year });
         }
@@ -80,6 +83,7 @@ class App extends Component {
             user: this.state.user,
             teamId: teamId,
             username: this.state.username,
+            email: this.state.email,
             userHasAuthenticated: this.userHasAuthenticated,
             year: year
         };

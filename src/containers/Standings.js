@@ -49,13 +49,11 @@ export default class Standings extends Component {
     }
 
     handleStepChange(evt) {
-        console.log("Step change: ", this.state);
         this.handleControlChange(evt);
         this.setState({ phaseId: 0 });
     }
 
     handlePhaseChange(evt) {
-        console.log("Phase change: ", this.state);
         var fn = () => {
             if (this.state.season && this.state.stepId && this.state.phaseId) {
                 getStandings(this.state.season, this.state.stepId, this.state.phaseId)

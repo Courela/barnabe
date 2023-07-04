@@ -518,6 +518,21 @@ export async function recoverPassword(email) {
     }
 }
 
+export async function saveUserDetails(username, password, email) {
+    const url = clientSettings.API_URL + '/api/user/' + username ;
+    try {
+        const data = {
+            password: password,
+            email: email
+        };
+        const res = await postRequest(url, data);
+        return res.data;
+    } catch (err) {
+        console.error(err);
+        handleError(err);
+    }
+}
+
 function removeDateLocale(date) {
     return moment(date).utcOffset(0, true);
 }

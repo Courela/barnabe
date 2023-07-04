@@ -31,9 +31,8 @@ export default class Login extends Component {
         event.preventDefault();
 
         const user = await validateUser(this.state.username, this.state.password);
-        console.log('Logged User: ' + user);
         if (user) {
-            console.log('Login sucess!');
+            console.log('Login success!');
             const redirectTo = this.props.location.search ? this.props.location.search.match('(?<=redirect=)/.+')[0] : null;
             //console.log('Redirect to: ', redirectTo);
             this.props.userHasAuthenticated(true, user, redirectTo);

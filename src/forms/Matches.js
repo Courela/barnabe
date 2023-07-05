@@ -42,7 +42,7 @@ export default class Matches extends Component {
     }
 
     handleSeasonChange(evt) {
-        this.setState({ stepId: 0 });
+        this.setState({ phaseId:0, stepId: 0, matches: [] });
         const season = evt.target.value;
         getSteps(season, null)
             .then(r => {
@@ -57,7 +57,7 @@ export default class Matches extends Component {
 
     handleStepChange(evt) {
         this.handleControlChange(evt);
-        this.setState({ phaseId: 0 });
+        this.setState({ phaseId: 0, matches: [] });
     }
 
     handlePhaseChange(evt) {
@@ -65,8 +65,11 @@ export default class Matches extends Component {
             if (season && stepId && phaseId) {
                 getMatches(season, stepId, phaseId)
                     .then(matches => {
-                        if (matches) {
+                        if (matches && matches.length > 0) {
                             this.setState({ matches: matches });
+                        } else {
+                            alert('Nenhum jogo encontrado.');
+                            this.setState({ matches: [] });
                         }
                     });
             } else {

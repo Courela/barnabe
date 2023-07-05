@@ -45,12 +45,13 @@ export default class Standings extends Component {
 
     handleSeasonChange(evt) {
         this.handleControlChange(evt);
+        this.setState({ phaseId: 0, stepId: 0, standings: [] });
         if(evt) { evt.preventDefault(); }
     }
 
     handleStepChange(evt) {
         this.handleControlChange(evt);
-        this.setState({ phaseId: 0 });
+        this.setState({ phaseId: 0, standings: [] });
     }
 
     handlePhaseChange(evt) {
@@ -58,8 +59,11 @@ export default class Standings extends Component {
             if (this.state.season && this.state.stepId && this.state.phaseId) {
                 getStandings(this.state.season, this.state.stepId, this.state.phaseId)
                     .then(standings => {
-                        if (standings) {
+                        if (standings && standings.length > 0) {
                             this.setState({ standings: standings });
+                        } else {
+                            alert('Nenhuma classificação encontrada.');
+                            this.setState({ standings: [] });
                         }
                     });
             }

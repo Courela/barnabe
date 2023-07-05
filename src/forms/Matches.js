@@ -61,14 +61,16 @@ export default class Matches extends Component {
     }
 
     handlePhaseChange(evt) {
-        var fn = () => {
-            if (this.state.season && this.state.stepId && this.state.phaseId) {
-                getMatches(this.state.season, this.state.stepId, this.state.phaseId)
+        var fn = (season, stepId, phaseId) => {
+            if (season && stepId && phaseId) {
+                getMatches(season, stepId, phaseId)
                     .then(matches => {
                         if (matches) {
                             this.setState({ matches: matches });
                         }
                     });
+            } else {
+                console.warn('Not every search param filled: ', season, stepId, phaseId);
             }
         };
         this.handleControlChange(evt, fn);
@@ -77,7 +79,7 @@ export default class Matches extends Component {
     handleControlChange(evt, fn) {
         let fieldName = evt.target.name;
         let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal });
+        this.setState({ [fieldName]: fieldVal }, () => fn ? fn(this.state.season, this.state.stepId, this.state.phaseId) : null);
     }
 
     render() {

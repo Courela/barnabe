@@ -296,8 +296,8 @@ export function getDocument(season, teamId, stepId, playerId) {
     const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/doc';
     return getRequest(url)
         .then(r => {
-            if (r.data && r.data.ExistsLocally) {
-                return mapDocumentFromApi(r.data.Src);
+            if (r.data) {
+                return mapDocumentFromApi(r.data);
             } else {
                 return null;
             }

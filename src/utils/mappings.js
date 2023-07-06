@@ -128,8 +128,7 @@ export function mapDocumentFromApi(docApi) {
     if (!docApi) {
         return null;
     }
-    //return decodeBase64(docApi);
-    return docApi;
+    return decodeBase64(docApi);
 }
 
 export function mapMatchFromApi(match) {

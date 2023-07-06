@@ -95,6 +95,7 @@ export default class PlayerDetails extends Component {
                                             this.setState({ doc: doc });
                                         } else {
                                             console.log('Document not found.');
+                                            this.setState({ docExists: false });
                                         }
                                 }), 5000);
                             }

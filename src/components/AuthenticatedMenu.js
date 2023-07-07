@@ -11,8 +11,8 @@ export default function AuthenticatedMenu(props) {
         if (steps && Array.isArray(steps)) {
             steps.forEach(el => {
                 menuItems.push(
-                    <MenuItem key={"/seasons/" + season + "/steps/" + el.stepId} 
-                        stepId={el.stepId}
+                    <MenuItem key={"/seasons/" + season + "/steps/" + el.id} 
+                        stepId={el.id}
                         stepName={el.description}>{el.description}
                     </MenuItem>);
             });

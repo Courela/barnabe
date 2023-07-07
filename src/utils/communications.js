@@ -6,7 +6,8 @@ import {
     mapFromUserApi, 
     mapFromSeasonApi, 
     mapFromRoleApi, 
-    mapFromStepApi, 
+    mapFromStepApi,
+    mapFromTeamStepApi, 
     mapFromTeamApi, 
     mapPersonFromApi, 
     mapPlayerFromApi,
@@ -150,7 +151,7 @@ export function signSteps(season, teamId) {
             if (r.data) {
                 if (r.data.length > 0) {
                     r.data.forEach(el => {
-                        steps.push(mapFromStepApi(el));
+                        steps.push(mapFromTeamStepApi(el));
                     });
                 } else {
                     console.info('No steps found.');
@@ -177,7 +178,7 @@ export function getStep(stepId, season) {
 export function getTeamStep(teamStepId, teamId, season) {
     var url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + teamStepId;
     return getRequest(url)
-        .then(r => mapFromStepApi(r.data))
+        .then(r => mapFromTeamStepApi(r.data))
         .catch(errors.handleError);
 }
 

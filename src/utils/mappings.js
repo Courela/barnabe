@@ -27,7 +27,7 @@ export function mapFromSeasonApi(seasonApi) {
     };
 }
 
-export function mapFromStepApi(stepApi) {
+export function mapFromTeamStepApi(stepApi) {
     if (!stepApi) {
         return null;
     }
@@ -41,6 +41,19 @@ export function mapFromStepApi(stepApi) {
         season: stepApi.Season,
         min_date: stepApi.MinDate,
         max_date: stepApi.MaxDate
+    };
+}
+
+export function mapFromStepApi(stepApi) {
+    if (!stepApi) {
+        return null;
+    }
+
+    return {
+        id: stepApi.StepId,
+        description: stepApi.Description,
+        gender: stepApi.Gender,
+        is_caretaker_required: stepApi.IsCaretakerRequired
     };
 }
 
@@ -108,7 +121,7 @@ export function mapPlayerFromApi(playerApi) {
         //photo: playerApi.Photo ? decodeBase64(playerApi.Photo) : null,
         doc_filename: playerApi.DocFilename,
         //doc: playerApi.Doc ? decodeBase64(playerApi.Doc) : null,
-        step: mapFromStepApi(playerApi.Step),
+        step: mapFromTeamStepApi(playerApi.Step),
         role: mapFromRoleApi(playerApi.Role),
         person: mapPersonFromApi(playerApi.Person),
         caretaker: mapPersonFromApi(playerApi.Caretaker),

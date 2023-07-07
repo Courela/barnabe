@@ -6,7 +6,7 @@ import { clientSettings } from '../clientSettings';
 export default function Table(props) {
     return (<ReactTable
         columns={props.columns}
-        data={props.data}
+        data={props.data ?? []}
         minRows="0"
         defaultPageSize={clientSettings.DEFAULT_TABLE_PAGE_SIZE}
         className="-striped"

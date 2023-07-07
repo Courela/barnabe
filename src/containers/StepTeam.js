@@ -12,7 +12,8 @@ export default class StepTeam extends Component {
 
         this.state = {
             players: [],
-            staff: []
+            staff: [],
+            stepId: props.match.params.stepId,
         };
 
         this.getPlayers = this.getPlayers.bind(this);
@@ -27,6 +28,12 @@ export default class StepTeam extends Component {
     componentDidMount() {
         this.updatePlayersAndStaff();
     }
+
+    componentDidUpdate() {
+        if (this.state.stepId != this.props.match.params.stepId) {
+            this.setState({ stepId: this.props.match.params.stepId }, this.updatePlayersAndStaff);
+        }
+    }
     
     updatePlayersAndStaff() {
         this.getPlayers();
@@ -34,38 +41,34 @@ export default class StepTeam extends Component {
     }
     
     getPlayers() {
-        if (this.state.players.length === 0) {
-            const season = this.props.match.params.year;
-            const { stepId, teamId } = this.props;
-            getPlayers(season, teamId, stepId)
-                .then(result => {
-                    if (result) {
-                        this.setState({ players: result });
-                    } else {
-                        handleError();
-                    }
-                })
-                .then(() => {
-                    if (!this.state.stepName) {
-                        getStep(this.props.stepId)
-                            .then(step => this.setState({ stepName: step ? step.description : this.state.stepName }))
-                            .catch(errors.handleError);
-                    }
-                })
-                .catch(errors.handleError);
-        }
+        const season = this.props.match.params.year;
+        const { stepId, teamId } = this.props;
+        getPlayers(season, teamId, stepId)
+            .then(result => {
+                if (result) {
+                    this.setState({ players: result });
+                } else {
+                    handleError();
+                }
+            })
+            .then(() => {
+                if (!this.state.stepName) {
+                    getStep(this.props.stepId)
+                        .then(step => this.setState({ stepName: step ? step.description : this.state.stepName }))
+                        .catch(errors.handleError);
+                }
+            })
+            .catch(errors.handleError);
     }
 
     getStaff() {
-        if (this.state.staff.length === 0) {
-            const season = this.props.match.params.year;
-            const { stepId, teamId } = this.props;
-            getStaff(season, teamId, stepId)
-                .then(result => {
-                    this.setState({ staff: result });
-                })
-                .catch(errors.handleError);
-        }
+        const season = this.props.match.params.year;
+        const { stepId, teamId } = this.props;
+        getStaff(season, teamId, stepId)
+            .then(result => {
+                this.setState({ staff: result });
+            })
+            .catch(errors.handleError);
     }
 
     linkToPlayer(player) {

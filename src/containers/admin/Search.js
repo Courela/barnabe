@@ -81,8 +81,6 @@ export default class Seach extends Component {
         }
 
         this.handleControlChange(evt);
-
-        if(evt) { evt.preventDefault(); }
     }
 
     handleTeamChange(evt) {
@@ -93,8 +91,6 @@ export default class Seach extends Component {
         }
 
         this.handleControlChange(evt);
-
-        if(evt) { evt.preventDefault(); }
     }
 
     handleControlChange(evt) {
@@ -111,8 +107,6 @@ export default class Seach extends Component {
         else {
             alert('Escolha todos os critérios de pesquisa.');
         }
-        
-        if(evt) { evt.preventDefault(); }
     }
 
     fetchResults() {
@@ -188,7 +182,7 @@ export default class Seach extends Component {
                 <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
                 <h3>Jogadores</h3>
                 <Table columns={columns} data={this.state.data}/>
-                {this.state.data.length > 0 ?
+                {this.state.data && this.state.data.length > 0 ?
                     <Button bsStyle="primary" onClick={this.prepareExport.bind(this)}>Exportar</Button> : ''
                 }
                 {this.state.exportDataUrl ?

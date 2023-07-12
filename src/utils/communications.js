@@ -198,7 +198,7 @@ export function getTeamSteps(season, teamId) {
             if (r.data) {
                 if (r.data.length > 0) {
                     r.data.forEach(el => {
-                        steps.push(mapFromStepApi(el));
+                        steps.push(mapFromTeamStepApi(el));
                     });
                 } else {
                     console.info('No steps found.');

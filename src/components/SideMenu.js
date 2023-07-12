@@ -76,7 +76,7 @@ export default class SideMenu extends Component {
         const { season, teamId } = this.props;
         getTeamSteps(season, teamId)
             .then(steps => {
-                this.setState({ steps: steps, updated: true });
+                this.setState({ steps: steps.map(s => Object.assign(s, { id: s.stepId })), updated: true });
             })
             .catch(errors.handleError);
     }

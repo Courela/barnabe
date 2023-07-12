@@ -62,8 +62,12 @@ export default class Import extends React.Component {
                 var previousStepId = this.getPreviousStep(stepId);
                 if (previousStepId > 0) {
                     getPlayers(selectedSeason, teamId, previousStepId.toString())
-                    .then(r => {  
-                        this.setState({ players: r.concat(result) });
+                    .then(r => {
+                        if (r) {
+                            this.setState({ players: r.concat(result) });
+                        } else {
+                            console.log("No players found.");
+                        }
                     })
                     .catch(errors.handleError);
                 } else {
@@ -71,7 +75,13 @@ export default class Import extends React.Component {
                     // alert("Encontradas " + result.length + " pessoas.");
                 }
             })
-            .catch(errors.handleError);
+            .catch(err => () => {
+                if (err && err.response && err.response.status && err.response.status === 404) {
+                    alert("Escalão não existe para a época seleccionada.");
+                } else {
+                    errors.handleError(evt);
+                }
+            });
     }
 
     getPreviousStep(stepId) {

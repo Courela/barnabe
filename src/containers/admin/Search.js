@@ -68,7 +68,7 @@ export default class Seach extends Component {
     getSteps(season, teamId, stepId = 0, callback = null) {
         getTeamSteps(season, teamId)
             .then(steps => {
-                this.setState({ steps: steps, stepId: stepId, data: [], staff: [], exportDataUrl: null }, callback);
+                this.setState({ steps: steps.map(s => Object.assign(s, { id: s.stepId })), stepId: stepId, data: [], staff: [], exportDataUrl: null }, callback);
             })
             .catch(errors.handleError);
     }

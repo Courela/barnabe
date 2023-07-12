@@ -40,7 +40,7 @@ export default class Listing extends Component {
         if (season > 0 && teamId > 0) {
             getTeamSteps(season, teamId)
                 .then(result => {
-                    this.setState({ stepsData: result });
+                    this.setState({ stepsData: result.map(s => Object.assign(s, { id: s.stepId })) });
                 })
                 .catch(errors.handleError);
         }

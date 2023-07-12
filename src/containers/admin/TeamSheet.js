@@ -66,14 +66,12 @@ export default class TeamSheet extends Component {
         if (season && teamId) {
             getTeamSteps(season, teamId)
                 .then(steps => {
-                    this.setState({ steps: steps, stepId: 0, data: [], exportDataUrl: null });
+                    this.setState({ steps: steps.map(s => Object.assign(s, { id: s.stepId })), stepId: 0, data: [], exportDataUrl: null });
                 })
                 .catch(errors.handleError);
         }
 
         this.handleControlChange(evt);
-
-        if(evt) { evt.preventDefault(); }
     }
 
     handleTeamChange(evt) {
@@ -82,14 +80,12 @@ export default class TeamSheet extends Component {
         if (season && teamId) {
             getTeamSteps(season, teamId)
                 .then(steps => {
-                    this.setState({ steps: steps, stepId: 0, data: [], exportDataUrl: null });
+                    this.setState({ steps: steps.map(s => Object.assign(s, { id: s.stepId })), stepId: 0, data: [], exportDataUrl: null });
                 })
                 .catch(errors.handleError);
         }
 
         this.handleControlChange(evt);
-
-        if (evt) { evt.preventDefault(); }
     }
 
     handleControlChange(evt) {

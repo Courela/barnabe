@@ -1,10 +1,10 @@
-function handleError(errResponse, errorMsgs) {
-    console.error(errResponse);
+function handleError(err, errorMsgs) {
+    console.error(err);
     let msg = 'Ocorreu um erro, tente outra vez mais tarde. ' +
         'Se o erro persistir contacte o administrador.';
 
-    if (errResponse && errResponse.response && errResponse.response.status) {
-        switch (errResponse.response.status) {
+    if (err && err.response && err.response.status) {
+        switch (err.response.status) {
             case 400:
                 msg = errorMsgs && errorMsgs.e400 ? errorMsgs.e400 : 'Campos obrigatórios em falta.'; 
                 break;

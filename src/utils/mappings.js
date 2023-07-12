@@ -50,7 +50,7 @@ export function mapFromStepApi(stepApi) {
     }
 
     return {
-        id: stepApi.StepId,
+        id: stepApi.StepId | stepApi.Id,
         description: stepApi.Description,
         gender: stepApi.Gender,
         is_caretaker_required: stepApi.IsCaretakerRequired

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
+import { Buffer } from 'buffer';
 import { Button, Form } from 'react-bootstrap';
-//import atob from 'atob';
 import { SeasonSelect, TeamSelect, StepSelect } from '../../components/Controls';
 import errors from '../../components/Errors';
 import { getSeasons, getTeams, getTeamSteps, getTeamTemplate } from '../../utils/communications';
@@ -24,7 +24,6 @@ export default class TeamSheet extends Component {
 
         this.handleControlChange = this.handleControlChange.bind(this);
         this.getFilters = this.getFilters.bind(this);
-        //this.getSteps = this.getSteps.bind(this);
         this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.fetchResults = this.fetchResults.bind(this);
@@ -32,7 +31,6 @@ export default class TeamSheet extends Component {
 
     async componentDidMount() {
         await this.getFilters();
-        //this.getSteps();
         this.fillSearchCriteria(this.props);
     }
 

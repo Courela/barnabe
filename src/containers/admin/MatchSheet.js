@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
+import { Buffer } from 'buffer';
 import { Button, Form } from 'react-bootstrap';
-//import atob from 'atob';
 import errors from '../../components/Errors';
 import { SeasonSelect, StepSelect, TeamSelect } from '../../components/Controls';
 import { getSeasons, getTeams, getSteps, getGameTemplate } from '../../utils/communications';

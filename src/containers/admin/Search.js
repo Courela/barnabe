@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import queryString from 'query-string';
 import {  Button, Form, Glyphicon, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import { SeasonSelect, TeamSelect, StepSelect } from '../../components/Controls';
 import Table from '../../components/Table';
@@ -8,6 +7,7 @@ import errors from '../../components/Errors';
 import { dateFormat } from '../../utils/formats';
 import { isResident, isValidPlayer } from '../../utils/validations';
 import { getTeams, getTeamSteps, getPlayers, getStaff, exportPlayers, getSeasons } from '../../utils/communications';
+import { Fragment } from 'react';
 
 export default class Seach extends Component {
     constructor(props) {
@@ -27,36 +27,13 @@ export default class Seach extends Component {
 
         this.handleControlChange = this.handleControlChange.bind(this);
         this.getSeasons = this.getSeasons.bind(this);
-        //this.getSteps = this.getSteps.bind(this);
         this.linkToPlayer = this.linkToPlayer.bind(this);
-        this.fillSearchCriteria = this.fillSearchCriteria.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.fetchResults = this.fetchResults.bind(this);
+        this.populatePlayers = this.populatePlayers.bind(this);
     }
 
     async componentDidMount() {
         await this.getSeasons();
-        //this.getSteps();
-        this.fillSearchCriteria(this.props);
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.location.search !== this.props.location.search) {
-            this.fillSearchCriteria(nextProps);
-        }
-    }
-
-    fillSearchCriteria(props) {
-        const { season, teamId, stepId } = queryString.parse(props.location.search);
-        if (season && teamId && stepId) {
-            this.getSteps(parseInt(season, 10), parseInt(teamId, 10), parseInt(stepId, 10), () => {
-                this.setState({
-                    season: parseInt(season, 10),
-                    teamId: parseInt(teamId, 10),
-                    stepId: parseInt(stepId, 10)
-                }, () => this.fetchResults());
-            });
-        }   
     }
 
     async getSeasons() {
@@ -74,13 +51,14 @@ export default class Seach extends Component {
     }
 
     handleSeasonChange(evt) {
-        const season = evt.target.value;
-        const { teamId } = this.state;
-        if (season && teamId) {
-            this.getSteps(season, teamId);
+        var fn = (state) => {
+            const { season, teamId } = state;
+            if (season && teamId) {
+                this.getSteps(season, teamId);
+            }
         }
 
-        this.handleControlChange(evt);
+        this.handleControlChange(evt, fn);
     }
 
     handleTeamChange(evt) {
@@ -93,19 +71,32 @@ export default class Seach extends Component {
         this.handleControlChange(evt);
     }
 
-    handleControlChange(evt) {
-        let fieldName = evt.target.name;
-        let fieldVal = evt.target.value;
-        this.setState({ [fieldName]: fieldVal });
+    handleStepChange(evt) {
+        var fn = (state) => {
+            const { season, teamId, stepId } = state;
+            if (season && teamId && stepId) {
+                this.fetchResults();
+            }
+        }
+
+        this.handleControlChange(evt, fn);
     }
 
-    handleSubmit(evt) {
-        const { season, teamId, stepId } = this.state;
-        if (season > 0 && teamId > 0 && stepId > 0) {
-            this.props.history.push(this.props.location.pathname + '?season=' + season + '&teamId=' + teamId + '&stepId=' + stepId);
-        }
-        else {
-            alert('Escolha todos os critérios de pesquisa.');
+    handleControlChange(evt, fn) {
+        let fieldName = evt.target.name;
+        let fieldVal = evt.target.value;
+        this.setState({ [fieldName]: fieldVal }, fn ? () => fn(this.state) : null);
+    }
+
+    populatePlayers(season, teamId, stepId) {
+        if (season && teamId && stepId) {
+            this.getSteps(parseInt(season, 10), parseInt(teamId, 10), parseInt(stepId, 10), () => {
+                this.setState({
+                    season: parseInt(season, 10),
+                    teamId: parseInt(teamId, 10),
+                    stepId: parseInt(stepId, 10)
+                }, () => this.fetchResults());
+            });
         }
     }
 
@@ -178,29 +169,31 @@ export default class Seach extends Component {
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
                 <TeamSelect teams={this.state.teams} value={teamId} onChange={this.handleTeamChange.bind(this)} />
-                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
-                <Button bsStyle="primary" type="submit" onClick={this.handleSubmit}>Procurar</Button>
-                <h3>Jogadores</h3>
-                <Table columns={columns} data={this.state.data}/>
-                {this.state.data && this.state.data.length > 0 ?
-                    <Button bsStyle="primary" onClick={this.prepareExport.bind(this)}>Exportar</Button> : ''
-                }
-                {this.state.exportDataUrl ?
-                    <a href={this.state.exportDataUrl} download="export.csv" target="_blank" rel="noopener noreferrer">Download</a>
-                    : ''}
+                <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange.bind(this)} />
+                {season && teamId && stepId ?
+                    <Fragment>
+                        <h3>Jogadores</h3>
+                        <Table columns={columns} data={this.state.data}/>
+                        {this.state.data && this.state.data.length > 0 ?
+                            <Button bsStyle="primary" onClick={this.prepareExport.bind(this)}>Exportar</Button> : ''
+                        }
+                        {this.state.exportDataUrl ?
+                            <a href={this.state.exportDataUrl} download="export.csv" target="_blank" rel="noopener noreferrer">Download</a>
+                            : ''}
 
-                <h3>Equipa Técnica</h3>
-                    <div>
-                        <Table
-                            columns={[
-                                { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row) },
-                                { Header: 'Função', id: 'role', accessor: 'role.description' },
-                                { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.id_card_number' },
-                                { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
-                                { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
-                            ]}
-                            data={this.state.staff} />
-                    </div>
+                        <h3>Equipa Técnica</h3>
+                            <div>
+                                <Table
+                                    columns={[
+                                        { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row) },
+                                        { Header: 'Função', id: 'role', accessor: 'role.description' },
+                                        { Header: 'Cartão Cidadão', id: 'idCardNr', accessor: 'person.id_card_number' },
+                                        { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
+                                        { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
+                                    ]}
+                                    data={this.state.staff} />
+                            </div>
+                        </Fragment> : "" }
             </Form>);
     }
 }

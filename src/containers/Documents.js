@@ -5,7 +5,7 @@ export default class Documents extends Component {
     render() {
         const data = [
             { name: 'Ficha_Inscricao_Jogador.pdf', type: 'Ficha Individual de Jogador', download: 'https://drive.google.com/file/d/1ZiSONsY8Zr2o5wIQuSLbcplovY6DAH-Q/view?usp=sharing' },
-            { name: 'Regulamento_Desportivo_2022.pdf', type: 'Regulamento Desportivo 2023', download: 'https://drive.google.com/file/d/11Shg03w-2W7DxK663heO7nryndqr6Jy6/view?usp=sharing' },
+            { name: 'Regulamento_desportivo_2023.pdf', type: 'Regulamento Desportivo 2023', download: 'https://drive.google.com/file/d/11Shg03w-2W7DxK663heO7nryndqr6Jy6/view?usp=sharing' },
             { name: 'Regulamento_Organizacao.pdf', type: 'Regulamento da Organização', download: 'https://drive.google.com/file/d/0B6mGDIzH6fPwOEdwTnREMmVFbUttSjlvdlNDamNVOWUzSHBR/view?usp=sharing&resourcekey=0-D_JJwmynKutiIrKPQieC6A' }
             // { name: 'MapaPavilhao.pdf', type: 'Mapa de ocupação de pavilhão', download: 'https://drive.google.com/file/d/1giu3mqrjgrED9WaaKovQcVmxVrpjq9Kx/view?usp=sharing' }
         ];

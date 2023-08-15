@@ -53,6 +53,8 @@ export function mapFromStepApi(stepApi) {
         id: stepApi.StepId | stepApi.Id,
         description: stepApi.Description,
         gender: stepApi.Gender,
+        min_date: stepApi.MinDate,
+        max_date: stepApi.MaxDate,
         is_caretaker_required: stepApi.IsCaretakerRequired
     };
 }

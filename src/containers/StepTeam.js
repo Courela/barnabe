@@ -22,6 +22,7 @@ export default class StepTeam extends Component {
         this.playerActions = this.playerActions.bind(this);
         this.removePlayer = this.removePlayer.bind(this);
         this.handleNewPlayer = this.handleNewPlayer.bind(this);
+        this.handleImport = this.handleImport.bind(this);
         this.handleNewStaff = this.handleNewStaff.bind(this);
     }
     
@@ -111,6 +112,12 @@ export default class StepTeam extends Component {
         this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/player');
     };
 
+    handleImport(type) {
+        const season = this.props.match.params.year;
+        const { stepId } = this.props;
+        this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/import?role='+ type);
+    }
+
     handleNewStaff() {
         const season = this.props.match.params.year;
         const { stepId } = this.props;
@@ -120,7 +127,7 @@ export default class StepTeam extends Component {
 
     render() {
         const season = this.props.match.params.year;
-        const { stepId, isSeasonActive, isSignUpExpired } = this.props;
+        const { isSeasonActive, isSignUpExpired } = this.props;
 
         var staff_columns = [
             { Header: 'Nome', id: 'id', accessor: 'person.name', Cell: (row) => this.linkToPlayer(row.original) },
@@ -137,7 +144,7 @@ export default class StepTeam extends Component {
                 <div style={{ float: 'right' }}>
                     {isSeasonActive && !isSignUpExpired && this.state.stepName ?
                         <ButtonToolbar>
-                            <Button bsStyle="success" href={'/seasons/' + season + '/steps/' + stepId + '/import?role=players'}>Importar épocas anteriores</Button>
+                            <Button bsStyle="success" onClick={() => this.handleImport('players')}>Importar épocas anteriores</Button>
                             <Button bsStyle="primary" onClick={this.handleNewPlayer}>Adicionar Jogador</Button>
                         </ButtonToolbar> : ''}
                 </div>
@@ -151,7 +158,7 @@ export default class StepTeam extends Component {
                     <div style={{ float: 'right' }}>
                         {isSeasonActive && this.state.stepName ?
                             <ButtonToolbar>
-                                <Button bsStyle="success" href={'/seasons/' + season + '/steps/' + stepId + '/import?role=staff'}>Importar épocas anteriores</Button>
+                                <Button bsStyle="success" onClick={() => this.handleImport('staff')}>Importar épocas anteriores</Button>
                                 <Button bsStyle="primary" onClick={this.handleNewStaff}>Adicionar Elemento</Button>
                             </ButtonToolbar> : ''}
                     </div>

@@ -83,11 +83,11 @@ export default class StepTeam extends Component {
         const { stepId } = this.props;
 
         if (this.props.isSeasonActive && !this.props.isSignUpExpired) {
-            const editUrl = '/seasons/' + season + '/steps/' + stepId + '/players/' + player.id + '?edit=1';
+            const editFn = () => this.props.history.push('/seasons/' + season + '/steps/' + stepId + '/players/' + player.id + '?edit=1');
             const removeFn = () => this.removePlayer(player.id, player.person.name);
             return (
                 <Fragment>
-                    <Button bsStyle="link" bsSize="small" href={editUrl}>Editar</Button>
+                    <Button bsStyle="link" bsSize="small" onClick={editFn}>Editar</Button>
                     <Button bsStyle="link" bsSize="small" onClick={removeFn}>Remover</Button>
                 </Fragment>
             );

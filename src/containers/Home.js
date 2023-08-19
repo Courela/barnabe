@@ -30,7 +30,7 @@ e posteriormente digitalizada, sendo ambos carregados na página de inscrição 
 </ul>
 
 <p>Para mais informações sobre o torneio consulte o 
-    <a href="https://drive.google.com/file/d/1Uj-wNu0Gv4q9FGyd8EEhgQ2N6VpBUYC4/view?usp=sharing" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
+    <a href="https://drive.google.com/file/d/11Shg03w-2W7DxK663heO7nryndqr6Jy6/view?usp=sharing" target="_blank" rel="noopener noreferrer"> Regulamento Desportivo</a>.</p>
 <p>Qualquer problema ou questão relacionada com a página de inscrições, envie um mail para <a href="mailto:courela+tacabarnabe@gmail.com">courela+tacabarnabe@gmail.com</a>.</p>
 
 <p>Acompanhe-nos no Facebook e no Twitter.</p>

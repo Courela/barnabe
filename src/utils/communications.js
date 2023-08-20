@@ -352,7 +352,7 @@ export function getGameTemplate(season, homeTeamId, awayTeamId, stepId) {
 }
 
 export function getTeamTemplate(season, teamId, stepId) {
-    const url = clientSettings.API_URL + '/api/admin/templates/team?season=' + season +' &teamId=' + teamId + '&stepId=' + stepId;
+    const url = clientSettings.API_URL + '/api/admin/templates/team?season=' + season +'&teamId=' + teamId + '&stepId=' + stepId;
     return getRequest(url)
         .then(result => result.data)
         .catch(errors.handleError);

@@ -160,10 +160,16 @@ export default class Seach extends Component {
             { Header: "Nome", id: 'id', accessor: "person.name", Cell: (row) => this.linkToPlayer(row) },
             { Header: "Data Nascimento", id: "birthdate", accessor: "person.birthdate", Cell: (row) => dateFormat(row.original.person.birthdate) },
             { Header: "Cartão Cidadão", id: "idCardNr", accessor: "person.id_card_number" },
-            { Header: "Estrangeiro", id: "foreign", accessor: "person.voter_nr", Cell: (row) => isResident(row.original) },
-            { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
-            { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" }
+            { Header: "Estrangeiro", id: "foreign", accessor: "person.voter_nr", Cell: (row) => isResident(row.original) }
         ];
+
+        if (stepId != 3) {
+            columns.push({ Header: "CC Responsável", id: "caretakerIdCardNr", accessor: "caretaker.id_card_number" });
+        }
+
+        columns.push(
+            { Header: "Data inscrição", id: "createdAt", accessor: "CreatedAt" },
+            { Header: "Última alteração", id: "updatedAt", accessor: "LastUpdatedAt" });
 
         return (
             <Form inline>

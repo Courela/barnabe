@@ -13,9 +13,11 @@ import {
     mapPlayerFromApi,
     mapPlayerToApi,
     mapPhotoFromApi,
-    mapDocumentFromApi,
+    mapDocFromApi,
     mapMatchFromApi,
-    mapStandingFromApi
+    mapStandingFromApi,
+    mapDocumentFromApi,
+    mapDocToApi
 } from './mappings';
 
 const options = {
@@ -298,7 +300,7 @@ export function getDocument(season, teamId, stepId, playerId) {
     return getRequest(url)
         .then(r => {
             if (r.data) {
-                return mapDocumentFromApi(r.data);
+                return mapDocFromApi(r.data);
             } else {
                 return null;
             }
@@ -533,6 +535,33 @@ export async function saveUserDetails(username, password, email) {
             password: password,
             email: email
         };
+        const res = await postRequest(url, data);
+        return res.data;
+    } catch (err) {
+        console.error(err);
+        handleError(err);
+    }
+}
+
+export async function getDocuments() {
+    const url = clientSettings.API_URL + '/api/documents';
+    try {
+        const res = await getRequest(url);
+        return res.data ? res.data.map(d => mapDocumentFromApi(d)) : [];
+    } catch (err) {
+        console.error(err);
+        handleError(err);
+    }
+}
+
+export async function loadDocument(name, type, link) {
+    const url = clientSettings.API_URL + '/api/admin/documents';
+    try {
+        const data = mapDocToApi({
+            name: name,
+            type: type,
+            link: link
+        });
         const res = await postRequest(url, data);
         return res.data;
     } catch (err) {

@@ -12,7 +12,6 @@ import CaretakerForm from './CaretakerForm';
 import CommonForm from './CommonForm';
 import { FieldGroup } from '../components/Controls';
 import { getRoles, getTeamSteps, getStep, getPerson, createPlayer } from '../utils/communications';
-import { stringify } from 'query-string';
 
 export default class PlayerForm extends Component {
     constructor(props, context) {

@@ -139,7 +139,7 @@ export function mapPhotoFromApi(photoApi) {
     return decodeBase64(photoApi);
 }
 
-export function mapDocumentFromApi(docApi) {
+export function mapDocFromApi(docApi) {
     if (!docApi) {
         return null;
     }
@@ -176,6 +176,18 @@ export function mapStandingFromApi(standing) {
         goalsScored: standing.GoalsScored,
         goalsConceded: standing.GoalsConceded,
         avg: standing.Avg
+    };
+}
+
+export function mapDocumentFromApi(document) {
+    if (!document) {
+        return null;
+    }
+
+    return {
+        type: document.Name,
+        name: document.Filename,
+        link: document.Link,
     };
 }
 
@@ -234,6 +246,18 @@ export function mapMatchToApi(match) {
         AwayTeamId: match.awayTeamId,
         HomeTeamGoals: match.homeTeamGoals,
         AwayTeamGoals: match.awayTeamGoals
+    };
+}
+
+export function mapDocToApi(document) {
+    if (!document) {
+        return null;
+    }
+
+    return {
+        name: document.name,
+        type: document.type,
+        link: document.link
     };
 }
 

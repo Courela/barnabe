@@ -34,6 +34,7 @@ export default function AdminMenu(props) {
             </SubMenu>
             <SubMenu title="Utilitários">
                 <MenuItem key={"/admin"}>Estatísticas</MenuItem>
+                <MenuItem key={"/admin/documents"}>Carregar documento</MenuItem>
                 <MenuItem key={"/admin/db"}>Base de Dados</MenuItem>
                 <MenuItem key={"/admin/manage-persons"}>Gerir Pessoas</MenuItem>
             </SubMenu>

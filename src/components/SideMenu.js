@@ -99,7 +99,7 @@ export default class SideMenu extends Component {
             anonymousMenu;
 
         return (
-            <div style={{ width: 150 }}>
+            <div style={{ width: 200 }}>
                 {menu}
             </div>);
     }

@@ -25,6 +25,7 @@ import AddMatch from '../forms/admin/AddMatch';
 import Matches from '../forms/Matches';
 import Teams from '../containers/admin/Teams';
 import AddTeam from '../forms/admin/AddTeam';
+import LoadDocuments from '../forms/admin/LoadDocuments';
 
 export default function MainContent(properties) {
     const authenticatedRoutesArr = [{
@@ -140,6 +141,10 @@ export default function MainContent(properties) {
             path: '/admin/matches/list',
             exact: true,
             render: (props) => <Matches {...props} isAdmin={true} />,
+        },{
+            path: '/admin/documents',
+            exact: true,
+            render: (props) => <LoadDocuments {...props} />,
         });
     }
 

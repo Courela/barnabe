@@ -174,6 +174,7 @@ export function mapStandingFromApi(standing) {
         teamId: standing.TeamId,
         teamName: standing.TeamName,
         points: standing.Points,
+        played: standing.Played,
         goalsScored: standing.GoalsScored,
         goalsConceded: standing.GoalsConceded,
         avg: standing.Avg

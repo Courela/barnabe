@@ -102,6 +102,7 @@ function TableStandings(props) {
                         { Header: 'Pos', id: 'pos', accessor: 'position' },
                         { Header: 'Equipa', id: 'team', accessor: 'teamName' },
                         { Header: 'Pontos', id: 'points', accessor: 'points' },
+                        { Header: 'Jogos', id: 'played', accessor: 'played' },
                         { Header: "GM", id: "gs", accessor: "goalsScored" },
                         { Header: "GS", id: "gc", accessor: "goalsConceded" },
                         { Header: "Avg", id: "avg", accessor: "avg" },

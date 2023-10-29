@@ -126,6 +126,7 @@ function TableMatches(props) {
 
     if (matches && matches.length > 0) {
         var columns = [
+            { Header: 'Data', id: 'date', accessor: 'date' },
             { Header: 'Fase', id: 'phase', accessor: 'phase' },
             { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
             { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },

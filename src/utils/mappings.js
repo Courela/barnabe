@@ -153,6 +153,7 @@ export function mapMatchFromApi(match) {
 
     return {
         matchId: match.Id,
+        date: match.Date ? match.Date.substring(0, 10) : null,
         phase: match.PhaseName,
         homeTeamId: match.HomeTeamId,
         homeTeamName: match.HomeTeamName,

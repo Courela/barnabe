@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Alert, Button, Form } from 'react-bootstrap';
+import { Alert, Button, ControlLabel, Form, FormGroup } from 'react-bootstrap';
+import DatePicker from 'react-date-picker';
 import { SeasonSelect, StepSelect, TeamSelect, Select } from '../../components/Controls';
 import { FieldGroup } from '../../components/Controls';
 import { getSeasons, getSteps, addMatch, getTeams, getPhases } from '../../utils/communications';
@@ -18,7 +19,10 @@ export default class AddMatch extends Component {
             phases: [],
             season: 0,
             stepId: 0,
+            date: null,
             phase: '',
+            group: '',
+            matchday: '',
             homeTeamId: 0,
             homeTeamGoals: 0,
             awayTeamId: 0,
@@ -49,22 +53,48 @@ export default class AddMatch extends Component {
         this.setState({ [fieldName]: fieldVal });
     }
 
+    onChangeDate = date => 
+    {
+        this.setState({ date: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12) });
+    }
+
+    validateStep() {
+        if (!this.state.stepId || this.state.stepId <= 0) return 'error';
+        return null;
+    }
+
+    validatePhase() {
+        if (!this.state.phase || this.state.phase <= 0) return 'error';
+        return null;
+    }
+
+    validateTeam(stateProp) {
+        if (!this.state[stateProp] || this.state[stateProp] <= 0) return 'error';
+        return null;
+    }
+
     handleSubmit(evt) {
-        const { season, stepId, phase, homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = this.state;
-        addMatch(season, stepId, phase, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals)
-            .then(response => {
-                if (response) {
-                    this.setState({ isSuccess: true });
-                    this.setState({ isError: false });
-                } else {
-                    this.setState({ isSuccess: false });
+        const { season, stepId, date, phase, group, matchday, homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = this.state;
+        if (season && stepId && date && phase && homeTeamId && awayTeamId) {
+            addMatch(season, stepId, date, phase, group, matchday, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals)
+                .then(response => {
+                    if (response) {
+                        this.setState({ isSuccess: true });
+                        this.setState({ isError: false });
+                    } else {
+                        this.setState({ isSuccess: false });
+                        this.setState({ isError: true });
+                    }
+                })
+                .catch(err => {
+                    handleError(err);
                     this.setState({ isError: true });
-                }
-            })
-            .catch(err => {
-                handleError(err);
-                this.setState({ isError: true });
-            });
+                });
+        } else {
+            console.warn('Fields: ', season, stepId, date, phase, group, matchday, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals);
+            alert('Campos obrigatórios em falta!');
+        }
+
         if (evt) { evt.preventDefault(); }
     }
 
@@ -79,18 +109,48 @@ export default class AddMatch extends Component {
                         <strong>Jogo adicionado com sucesso.</strong>
                     </Alert> : this.state.isError ?
                     <Alert bsStyle="danger">
-                        <strong>Ocurreu um erro ao adicionar o jogo.</strong>
+                        <strong>Ocorreu um erro ao adicionar o jogo.</strong>
                     </Alert> : ''}
                 <Form>
                     <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleControlChange} />
-                    <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} />
+                    <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} validationState={this.validateStep()}/>
+                    <FormGroup controlId="formDate">
+                        <ControlLabel>Data</ControlLabel>
+                        <div>
+                            <DatePicker onChange={this.onChangeDate} value={this.state.date}
+                                required={true} locale="pt-PT"
+                                minDate={new Date('2023-09-22T00:00:00.000Z')}
+                                maxDate={new Date()}
+                                calendarClassName="date-picker-form-control" />
+                        </div>
+                    </FormGroup>
                     <Select controlId="selectPhase" name="phase" label="Fase" 
                         options={selectPhases} value={this.state.phase} 
-                        onChange={this.handleControlChange} /* validationState={props.validationState} */ />
+                        onChange={this.handleControlChange} validationState={this.validatePhase()} />
+                    {this.state.phase == 1 ?
+                        <FieldGroup
+                            id="formGroup"
+                            type="text"
+                            name="group"
+                            label="Grupo"
+                            placeholder="Grupo"
+                            onChange={this.handleControlChange}
+                            style={{ width: 200 }}
+                        /> : "" }
+                    <FieldGroup
+                        id="formMatchday"
+                        type="text"
+                        name="matchday"
+                        label="Jornada"
+                        placeholder="Jornada"
+                        onChange={this.handleControlChange}
+                        maxLength="2"
+                        style={{ width: 40 }}
+                    />
                     <div style={{display: 'flex'}}>
                         <TeamSelect controlId="selectHomeTeam" name="homeTeamId" label="Equipa Visitada"
                             teams={this.state.teams} value={homeTeamId} 
-                            onChange={this.handleControlChange} />
+                            onChange={this.handleControlChange} validationState={this.validateTeam('homeTeamId')} />
                         <div style={{width:"45px"}}>
                             <FieldGroup
                                 id="homeTeamGoals"
@@ -109,7 +169,7 @@ export default class AddMatch extends Component {
                     <div style={{display: 'flex'}}>
                         <TeamSelect controlId="selectAwayTeam" name="awayTeamId" label="Equipa Visitante"
                             teams={this.state.teams} value={awayTeamId} 
-                            onChange={this.handleControlChange} />
+                            onChange={this.handleControlChange} validationState={this.validateTeam('awayTeamId')} />
                         <div style={{width:"45px"}}>
                             <FieldGroup
                                 id="awayTeamGoals"

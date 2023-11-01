@@ -20,12 +20,18 @@ import {
     mapDocToApi
 } from './mappings';
 
+//axios.defaults.validateStatus = (status) => status >= 200 && status < 300;
+
 const options = {
     headers: {
         'Content-Type': 'application/json'
     },
-    timeout: clientSettings.PLAYER_REQUEST_TIMEOUT
+    timeout: clientSettings.PLAYER_REQUEST_TIMEOUT,
 };
+
+// var looseAxios = axios.create({
+//     validateStatus: (status) => status < 500
+// });
 
 export function getSeasons() {
     const url = clientSettings.API_URL + '/api/seasons';
@@ -492,11 +498,14 @@ export async function getMatches(season, stepId, phaseId) {
     }
 }
 
-export async function addMatch(season, stepId, phase, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals) {
+export async function addMatch(season, stepId, date, phase, group, matchday, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals) {
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/add-match';
     try {
         const data = {
+            date: date,
             phase: phase,
+            group: group,
+            matchday: matchday,
             homeTeamId: homeTeamId,
             homeTeamGoals: homeTeamGoals,
             awayTeamId: awayTeamId,
@@ -505,7 +514,7 @@ export async function addMatch(season, stepId, phase, homeTeamId, homeTeamGoals,
         const res = await postRequest(url, data);
         return res.data;
     } catch (err) {
-        return console.error(err);
+        handleError(err);
     }
 }
 

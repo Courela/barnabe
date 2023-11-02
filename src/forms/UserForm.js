@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { Button } from 'react-bootstrap';
 import { FieldGroup } from '../components/Controls';
 import { saveUserDetails } from '../utils/communications'
-import { handleError } from '../components/Errors';
+import handleError from '../components/Errors';
 
 export default class UserForm extends Component {
     constructor(props, context) {

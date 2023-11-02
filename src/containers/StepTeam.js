@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import PlayersTable from './PlayersTable';
 import Table from '../components/Table';
-import errors, { handleError } from '../components/Errors';
+import handleError from '../components/Errors';
 import { getPlayers, getStep, getStaff, removePlayer } from '../utils/communications';
 
 export default class StepTeam extends Component {
@@ -56,10 +56,10 @@ export default class StepTeam extends Component {
                 if (!this.state.stepName) {
                     getStep(this.props.stepId)
                         .then(step => this.setState({ stepName: step ? step.description : this.state.stepName }))
-                        .catch(errors.handleError);
+                        .catch(handleError);
                 }
             })
-            .catch(errors.handleError);
+            .catch(handleError);
     }
 
     getStaff() {
@@ -69,7 +69,7 @@ export default class StepTeam extends Component {
             .then(result => {
                 this.setState({ staff: result });
             })
-            .catch(errors.handleError);
+            .catch(handleError);
     }
 
     linkToPlayer(player) {

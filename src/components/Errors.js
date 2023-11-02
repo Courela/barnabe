@@ -1,10 +1,14 @@
-function handleError(err, errorMsgs) {
-    console.error(err);
-    let msg = 'Ocorreu um erro, tente outra vez mais tarde. ' +
-        'Se o erro persistir contacte o administrador.';
+import localization from "../localization";
+import { vsprintf } from "sprintf-js";
 
-    if (err.response.data && err.response.data.localizedError) {
-        msg = err.response.data.localizedError;
+localization.setLanguage('pt');
+
+export default function handleError(err, errorMsgs, placeholderValues) {
+    console.error(err);
+    let msg = null;
+
+    if (err.response.data && err.response.data.code) {
+        msg = vsprintf(localization[err.response.data.code], placeholderValues ? placeholderValues : err.response.data.ids);
     } else if (err && err.response && err.response.status) {
         switch (err.response.status) {
             case 400:
@@ -23,10 +27,10 @@ function handleError(err, errorMsgs) {
                 break;
         }
     }
+
+    if (!msg) {
+        msg = localization.ERR_000;
+    }
     alert(msg);
     return null;
-}
-
-module.exports = {
-    handleError
 }

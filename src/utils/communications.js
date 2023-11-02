@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment/moment';
 import { clientSettings } from '../clientSettings';
-import errors, { handleError } from '../components/Errors';
+import handleError from '../components/Errors';
 import { 
     mapFromUserApi, 
     mapFromSeasonApi, 
@@ -51,7 +51,7 @@ export function getSeasons() {
             }
             return result;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getRoles() {
@@ -72,7 +72,7 @@ export function getRoles() {
             }
             return steps;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getSteps() {
@@ -93,20 +93,20 @@ export function getSteps() {
             }
             return steps;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getActiveSeason() {
     return getSeasons()
         .then(res => res.find(s => s.is_active))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getSeason(season) {
     const url = clientSettings.API_URL + '/api/seasons/' + season;
     return getRequest(url)
         .then(r => mapFromSeasonApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getTeams(season) {
@@ -130,7 +130,7 @@ export function getTeams(season) {
             }
             return teams;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function createTeam(name, shortDescription) {
@@ -141,14 +141,14 @@ export function createTeam(name, shortDescription) {
     };
     return postRequest(url, data)
         .then(r => r.data)
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getTeam(teamId) {
     const url = clientSettings.API_URL + '/api/teams/' + teamId;
     return getRequest(url)
         .then(r => mapFromTeamApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function signSteps(season, teamId) {
@@ -169,7 +169,7 @@ export function signSteps(season, teamId) {
             }
             return steps;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getStep(stepId, season) {
@@ -180,14 +180,14 @@ export function getStep(stepId, season) {
     url += '/steps/' + stepId;
     return getRequest(url)
         .then(r => mapFromStepApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getTeamStep(teamStepId, teamId, season) {
     var url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + teamStepId;
     return getRequest(url)
         .then(r => mapFromTeamStepApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function createTeamStep(season, teamId, stepId) {
@@ -216,7 +216,7 @@ export function getTeamSteps(season, teamId) {
             }
             return steps;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getTeamsByStep(season, stepId) {
@@ -237,7 +237,7 @@ export function getTeamsByStep(season, stepId) {
             }
             return teams;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function removeTeamStep(season, teamId, stepId) {
@@ -263,7 +263,7 @@ export function getPlayers(season, teamId, stepId) {
             }
             return result;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getStaff(season, teamId, stepId) {
@@ -284,21 +284,21 @@ export function getStaff(season, teamId, stepId) {
             }
             return result;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getPlayer(season, teamId, stepId, playerId) {
     const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId;
     return getRequest(url)
         .then(r => mapPlayerFromApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getPhoto(season, teamId, stepId, playerId) {
     const url = clientSettings.API_URL + '/api/seasons/'+season+'/teams/'+teamId+'/steps/'+stepId+'/players/'+playerId+ '/photo';
     return getRequest(url)
         .then(r => mapPhotoFromApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getDocument(season, teamId, stepId, playerId) {
@@ -311,14 +311,14 @@ export function getDocument(season, teamId, stepId, playerId) {
                 return null;
             }
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getPerson(idCardNr, includeCaretaker) {
     const url = clientSettings.API_URL + '/api/persons?idCardNr=' + idCardNr + (includeCaretaker ? '&caretaker=true' : '');
     return getRequest(url)
         .then(r => mapPersonFromApi(r.data))
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function searchPersons(idCardNr){
@@ -344,7 +344,7 @@ export function copyPlayers(season, teamId, stepId, fromSeason, playerIds) {
     };
     return postRequest(url, data)
         .then(r => r.data)
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function exportPlayers(season, teamId, stepId) {
@@ -356,20 +356,20 @@ export function getGameTemplate(season, homeTeamId, awayTeamId, stepId) {
     const url = clientSettings.API_URL + '/api/admin/templates/game?season=' + season + ' &homeTeamId=' + homeTeamId + ' &awayTeamId=' + awayTeamId + '&stepId=' + stepId;
     return getRequest(url)
         .then(result => result.data)
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getTeamTemplate(season, teamId, stepId) {
     const url = clientSettings.API_URL + '/api/admin/templates/team?season=' + season +'&teamId=' + teamId + '&stepId=' + stepId;
     return getRequest(url)
         .then(result => result.data)
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function removePlayer(season, teamId, stepId, playerId) {
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/teams/' + teamId + '/steps/' + stepId + '/players/' + playerId
     return deleteRequest(url)
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getUsers() {
@@ -388,7 +388,7 @@ export function getUsers() {
             }
             return result;
         })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function createUser(username, password, teamId, email) {
@@ -401,7 +401,7 @@ export function createUser(username, password, teamId, email) {
     };
     return putRequest(url, data)
         .catch((err) => {
-            errors.handleError(err, { e409: 'Nome de utilizador já existe!'});
+            handleError(err, { e409: 'Nome de utilizador já existe!'});
         });
 }
 
@@ -416,7 +416,7 @@ export function login(username, password) {
 
 export function logout(username) {
     return postRequest(clientSettings.API_URL + '/api/logout', { user: username })
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export function getStatistics() {
@@ -500,28 +500,24 @@ export async function getMatches(season, stepId, phaseId) {
 
 export async function addMatch(season, stepId, date, phase, group, matchday, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals) {
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/add-match';
-    try {
-        const data = {
-            date: date,
-            phase: phase,
-            group: group,
-            matchday: matchday,
-            homeTeamId: homeTeamId,
-            homeTeamGoals: homeTeamGoals,
-            awayTeamId: awayTeamId,
-            awayTeamGoals: awayTeamGoals,
-        };
-        const res = await postRequest(url, data);
-        return res.data;
-    } catch (err) {
-        handleError(err);
-    }
+    const data = {
+        date: date,
+        phase: phase,
+        group: group,
+        matchday: matchday,
+        homeTeamId: homeTeamId,
+        homeTeamGoals: homeTeamGoals,
+        awayTeamId: awayTeamId,
+        awayTeamGoals: awayTeamGoals,
+    };
+    const res = await postRequest(url, data);
+    return res.data;
 }
 
 export async function removeMatch(season, stepId, matchId) {
     const url = clientSettings.API_URL + '/api/seasons/' + season + '/steps/' + stepId + '/matches/' + matchId
     return deleteRequest(url)
-        .catch(errors.handleError);
+        .catch(handleError);
 }
 
 export async function recoverPassword(email) {

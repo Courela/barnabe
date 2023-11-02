@@ -4,7 +4,7 @@ import DatePicker from 'react-date-picker';
 import { SeasonSelect, StepSelect, TeamSelect, Select } from '../../components/Controls';
 import { FieldGroup } from '../../components/Controls';
 import { getSeasons, getSteps, addMatch, getTeams, getPhases } from '../../utils/communications';
-import { handleError } from '../../components/Errors';
+import handleError from '../../components/Errors';
 
 export default class AddMatch extends Component {
     constructor(props) {
@@ -79,16 +79,16 @@ export default class AddMatch extends Component {
             addMatch(season, stepId, date, phase, group, matchday, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals)
                 .then(response => {
                     if (response) {
-                        this.setState({ isSuccess: true });
-                        this.setState({ isError: false });
+                        this.setState({ isSuccess: true, isError: false });
                     } else {
-                        this.setState({ isSuccess: false });
-                        this.setState({ isError: true });
+                        this.setState({ isSuccess: false, isError: true });
                     }
                 })
                 .catch(err => {
-                    handleError(err);
-                    this.setState({ isError: true });
+                    let step = this.state.steps.find(s => s.id == stepId);
+                    let team = this.state.teams.find(t => t.id == (err.response.data && err.response.data.ids ? err.response.data.ids[2] : 0));
+                    handleError(err, null, [ season, (step ? step.description : null), (team ? team.short_description : null) ]);
+                    this.setState({  isSuccess: false, isError: true });
                 });
         } else {
             console.warn('Fields: ', season, stepId, date, phase, group, matchday, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals);

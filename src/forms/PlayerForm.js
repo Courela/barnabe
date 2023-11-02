@@ -5,7 +5,7 @@ import {
 } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 import errors from '../components/Errors';
-import '../styles/PlayerForm.css'
+import '../styles/PlayerForm.css';
 import { validateNotEmpty, isValidEmail, isValidPhone, 
     isCaretakerRequired } from '../utils/validations';
 import CaretakerForm from './CaretakerForm';

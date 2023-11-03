@@ -12,16 +12,16 @@ export default function handleError(err, errorMsgs, placeholderValues) {
     } else if (err && err.response && err.response.status) {
         switch (err.response.status) {
             case 400:
-                msg = errorMsgs && errorMsgs.e400 ? errorMsgs.e400 : 'Campos obrigatórios em falta.'; 
+                msg = errorMsgs && errorMsgs.e400 ? errorMsgs.e400 : localization.ERR_400; 
                 break;
             case 404:
-                msg = errorMsgs && errorMsgs.e404 ? errorMsgs.e404 : 'Página não encontrada!'; 
+                msg = errorMsgs && errorMsgs.e404 ? errorMsgs.e404 : localization.ERR_404; 
                 break;
             case 409:
-                msg = errorMsgs && errorMsgs.e409 ? errorMsgs.e409 : 'Registo duplicado!'; 
+                msg = errorMsgs && errorMsgs.e409 ? errorMsgs.e409 : localization.ERR_409; 
                 break;
             case 413:
-                msg = errorMsgs && errorMsgs.e413 ? errorMsgs.e413 : 'Fotografia e/ou Ficha de Jogador demasiado grandes!'; 
+                msg = errorMsgs && errorMsgs.e413 ? errorMsgs.e413 : localization.ERR_413;
                 break;
             default:
                 break;

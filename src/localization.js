@@ -13,6 +13,14 @@ export default new LocalizedStrings({
         ERR_404: 'Page not found!',
         ERR_409: 'Duplicated entry!',
         ERR_413: 'Picture and/or Player\'s Form too large!',
+        
+        HDR_001: 'Date',
+        HDR_002: 'Phase',
+        HDR_003: 'Home Team',
+        HDR_004: 'Gols',
+        HDR_005: 'Away Team',
+        HDR_006: 'Group',
+        HDR_007: 'Matchday',
 
         LBL_001: 'Loading...',
         LBL_002: 'No data',
@@ -20,7 +28,10 @@ export default new LocalizedStrings({
         LBL_004: 'of',
         LBL_005: 'rows',
 
+        OPT_001: 'All',
+
         MSG_000: 'No match found.',
+        MSG_001: 'Are you sure you want to remove the match?',
     },
     pt:{
         BTN_001: 'Anterior',
@@ -34,6 +45,14 @@ export default new LocalizedStrings({
         ERR_404: 'Página não encontrada!',
         ERR_409: 'Registo duplicado!',
         ERR_413: 'Fotografia e/ou Ficha de Jogador demasiado grandes!',
+
+        HDR_001: 'Data',
+        HDR_002: 'Fase',
+        HDR_003: 'Equipa Visitada',
+        HDR_004: 'Golos',
+        HDR_005: 'Equipa Visitante',
+        HDR_006: 'Grupo',
+        HDR_007: 'Jornada',
         
         LBL_001: 'Carregando...',
         LBL_002: 'Sem dados',
@@ -41,6 +60,9 @@ export default new LocalizedStrings({
         LBL_004: 'de',
         LBL_005: 'linhas',
 
-        MSG_000: 'Nenhum jogo encontrado.'
+        OPT_001: 'Todos',
+
+        MSG_000: 'Nenhum jogo encontrado.',
+        MSG_001: 'Tem a certeza que quer remover o jogo?',
     }
 });

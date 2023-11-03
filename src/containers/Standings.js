@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import Table from '../components/Table';
-import { SeasonSelect, StepSelect, PhaseSelect } from '../components/Controls';
+import { SeasonSelect, StepSelect, PhaseSelect, Select } from '../components/Controls';
 import { getSeasons, getSteps, getStandings, getPhases } from '../utils/communications';
+import localization from '../localization';
+import { groupBy } from '../utils/common';
 
 export default class Standings extends Component {
     constructor(props) {
@@ -15,7 +17,8 @@ export default class Standings extends Component {
             standings: [],
             season: 0,
             stepId: 0,
-            phaseId: 0
+            phaseId: 0,
+            group: -1,
         };
 
         this.handleSeasonChange = this.handleSeasonChange.bind(this);
@@ -78,16 +81,32 @@ export default class Standings extends Component {
     }
 
     render() {
-        const { season, stepId, phaseId, standings } = this.state;
+        const { season, stepId, phaseId, standings, group } = this.state;
+        let filteredStanding = !group || group <= 0 ? standings : standings.filter(m => m.group == group);
 
         return (
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange.bind(this)} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
                 <PhaseSelect phases={this.state.phases} value={phaseId} onChange={this.handlePhaseChange} />
-                <TableStandings standings={standings} />
+                <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                    <GroupSelect standings={standings} group={this.state.group} onChange={this.handleControlChange} />
+                </div>
+                <TableStandings standings={filteredStanding} />
             </Form>
         );
+    }
+}
+
+function GroupSelect(props) {
+    let groupedByGroup = groupBy(props.standings, 'group');
+    let groups = Object.keys(groupedByGroup).map(g => { return { value: g === 'null' ? -1 : g, description: g === 'null' ? localization.OPT_001 : g }; });
+    if (groups && groups.length > 1) {
+        return <Select controlId="selectGroup" name="group" label="Grupo" 
+            options={groups} value={props.group}
+            onChange={props.onChange} />;
+    } else {
+        return '';
     }
 }
 
@@ -99,7 +118,7 @@ function TableStandings(props) {
             <div>
                 <Table
                     columns={[
-                        { Header: 'Pos', id: 'pos', accessor: 'position' },
+                        //{ Header: 'Pos', id: 'pos', accessor: 'position' },
                         { Header: 'Equipa', id: 'team', accessor: 'teamName' },
                         { Header: 'Pontos', id: 'points', accessor: 'points' },
                         { Header: 'Jogos', id: 'played', accessor: 'played' },

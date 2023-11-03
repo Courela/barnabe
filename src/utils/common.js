@@ -18,6 +18,14 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
     return blob;
 }
 
+function groupBy(xs, key) {
+  return xs.reduce(function(rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
+
 module.exports = {
-    b64toBlob
+    b64toBlob,
+    groupBy
 }

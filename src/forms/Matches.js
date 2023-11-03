@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import Table from '../components/Table';
-import { SeasonSelect, StepSelect, PhaseSelect } from '../components/Controls';
+import { SeasonSelect, StepSelect, PhaseSelect, Select } from '../components/Controls';
 import { getSeasons, getSteps, getPhases, getMatches, removeMatch } from '../utils/communications';
+import localization from '../localization';
+import { groupBy } from '../utils/common';
 
 export default class Matches extends Component {
     constructor(props) {
@@ -15,7 +17,8 @@ export default class Matches extends Component {
             matches: [],
             season: 0,
             stepId: 0,
-            phaseId: 0
+            phaseId: 0,
+            group: -1,
         }
 
         this.handleSeasonChange = this.handleSeasonChange.bind(this);
@@ -66,10 +69,10 @@ export default class Matches extends Component {
                 getMatches(season, stepId, phaseId)
                     .then(matches => {
                         if (matches && matches.length > 0) {
-                            this.setState({ matches: matches });
+                            this.setState({ matches: matches, group: -1 });
                         } else {
-                            alert('Nenhum jogo encontrado.');
-                            this.setState({ matches: [] });
+                            alert(localization.MSG_000);
+                            this.setState({ matches: [], group: -1 });
                         }
                     });
             } else {
@@ -86,21 +89,37 @@ export default class Matches extends Component {
     }
 
     render() {
-        const { season, stepId, phaseId, matches } = this.state;
-
+        const { season, stepId, phaseId, matches, group } = this.state;
+        let filteredMatches = !group || group <= 0 ? matches : matches.filter(m => m.group == group);
         return (
             <Form inline>
                 <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleSeasonChange} />
                 <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} />
                 <PhaseSelect phases={this.state.phases} value={phaseId} onChange={this.handlePhaseChange} />
-                <TableMatches year={season} step={stepId} phase={phaseId} matches={matches} isAdmin={this.props.isAdmin} />
+                <div style={{ paddingTop: 5, paddingBottom: 5 }}>
+                    <GroupSelect matches={matches} group={this.state.group} onChange={this.handleControlChange} />
+                </div>
+                <TableMatches year={season} step={stepId} phase={phaseId}
+                    matches={filteredMatches} isAdmin={this.props.isAdmin} defaultSorted={[{ id: "date", desc: false }]}/>
             </Form>
         );
     }
 }
 
+function GroupSelect(props) {
+    let groupedByGroup = groupBy(props.matches, 'group');
+    let groups = Object.keys(groupedByGroup).map(g => { return { value: g === 'null' ? -1 : g, description: g === 'null' ? localization.OPT_001 : g }; });
+    if (groups && groups.length > 1) {
+        return <Select controlId="selectGroup" name="group" label="Grupo" 
+            options={groups} value={props.group}
+            onChange={props.onChange} />;
+    } else {
+        return '';
+    }
+}
+
 function TableMatches(props) {
-    const { year, step, phase, matches, isAdmin } = props;
+    const { year, step, matches, isAdmin, defaultSorted } = props;
 
     var matchActions = (row) => {
         const { matchId } = row;
@@ -116,7 +135,7 @@ function TableMatches(props) {
     }
 
     var removeMatch = async (year, step, id) => {
-        if (window.confirm('Tem a certeza que quer remover o jogo?')) {
+        if (window.confirm(localization.MSG_001)) {
             await removeMatch(year, step, id);
 
             // var matches = await getMatches(year, step);
@@ -126,12 +145,14 @@ function TableMatches(props) {
 
     if (matches && matches.length > 0) {
         var columns = [
-            { Header: 'Data', id: 'date', accessor: 'date' },
-            { Header: 'Fase', id: 'phase', accessor: 'phase' },
-            { Header: 'Equipa Visitada', id: 'homeTeam', accessor: 'homeTeamName' },
-            { Header: 'Golos', id: 'homeTeamGoals', accessor: 'homeTeamGoals' },
-            { Header: "Equipa Visitante", id: "awayTeam", accessor: "awayTeamName" },
-            { Header: "Golos", id: "awayTeamGoals", accessor: "awayTeamGoals" }
+            { Header: localization.HDR_001, id: 'date', accessor: 'date' },
+            { Header: localization.HDR_002, id: 'phase', accessor: 'phase' },
+            { Header: localization.HDR_006, id: 'group', accessor: 'group' },
+            { Header: localization.HDR_007, id: 'matchday', accessor: 'matchday' },
+            { Header: localization.HDR_003, id: 'homeTeam', accessor: 'homeTeamName' },
+            { Header: localization.HDR_004, id: 'homeTeamGoals', accessor: 'homeTeamGoals', sortable: false },
+            { Header: localization.HDR_005, id: "awayTeam", accessor: "awayTeamName" },
+            { Header: localization.HDR_004, id: "awayTeamGoals", accessor: "awayTeamGoals", sortable: false }
         ];
 
         if (isAdmin) {
@@ -141,7 +162,8 @@ function TableMatches(props) {
             <div>
                 <Table
                     columns={columns}
-                    data={matches} />
+                    data={matches} 
+                    defaultSorted={defaultSorted} />
             </div>
         );
     }

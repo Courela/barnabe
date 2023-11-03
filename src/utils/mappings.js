@@ -155,6 +155,8 @@ export function mapMatchFromApi(match) {
         matchId: match.Id,
         date: match.Date ? match.Date.substring(0, 10) : null,
         phase: match.PhaseName,
+        group: match.Group,
+        matchday: match.Matchday,
         homeTeamId: match.HomeTeamId,
         homeTeamName: match.HomeTeamName,
         awayTeamId: match.AwayTeamId,
@@ -170,7 +172,8 @@ export function mapStandingFromApi(standing) {
     }
 
     return {
-        position: standing.Position,
+        group: standing.Group,
+        //position: standing.Position,
         teamId: standing.TeamId,
         teamName: standing.TeamName,
         points: standing.Points,

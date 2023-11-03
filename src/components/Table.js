@@ -7,6 +7,7 @@ import localization from '../localization';
 export default function Table(props) {
     return (<ReactTable
         columns={props.columns}
+        defaultSorted={props.defaultSorted ?? []}
         data={props.data ?? []}
         minRows="0"
         defaultPageSize={clientSettings.DEFAULT_TABLE_PAGE_SIZE}

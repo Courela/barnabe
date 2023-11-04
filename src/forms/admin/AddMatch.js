@@ -29,6 +29,8 @@ export default class AddMatch extends Component {
             awayTeamGoals: 0,
         };
 
+        this.handleStepChange = this.handleStepChange.bind(this);
+        this.handlePhaseChange = this.handlePhaseChange.bind(this);
         this.handleControlChange = this.handleControlChange.bind(this);
         this.getFilters = this.getFilters.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -45,6 +47,16 @@ export default class AddMatch extends Component {
         var steps = await getSteps();
         var phases = await getPhases();
         this.setState({ seasons: seasons, teams: teams, steps: steps, phases: phases, season: activeSeason.year });
+    }
+
+    handleStepChange(evt) {
+        this.setState({ group: '' });
+        this.handleControlChange(evt);
+    }
+
+    handlePhaseChange(evt) {
+        this.setState({ group: '' });
+        this.handleControlChange(evt);
     }
 
     handleControlChange(evt) {
@@ -113,7 +125,7 @@ export default class AddMatch extends Component {
                     </Alert> : ''}
                 <Form>
                     <SeasonSelect seasons={this.state.seasons} value={season} onChange={this.handleControlChange} />
-                    <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleControlChange} validationState={this.validateStep()}/>
+                    <StepSelect steps={this.state.steps} value={stepId} onChange={this.handleStepChange} validationState={this.validateStep()}/>
                     <FormGroup controlId="formDate">
                         <ControlLabel>Data</ControlLabel>
                         <div>
@@ -126,7 +138,7 @@ export default class AddMatch extends Component {
                     </FormGroup>
                     <Select controlId="selectPhase" name="phase" label="Fase" 
                         options={selectPhases} value={this.state.phase} 
-                        onChange={this.handleControlChange} validationState={this.validatePhase()} />
+                        onChange={this.handlePhaseChange} validationState={this.validatePhase()} />
                     {this.state.phase == 1 ?
                         <FieldGroup
                             id="formGroup"

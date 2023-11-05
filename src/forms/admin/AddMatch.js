@@ -98,7 +98,7 @@ export default class AddMatch extends Component {
                 })
                 .catch(err => {
                     let step = this.state.steps.find(s => s.id == stepId);
-                    let team = this.state.teams.find(t => t.id == (err.response.data && err.response.data.ids ? err.response.data.ids[2] : 0));
+                    let team = this.state.teams.find(t => t.id == (err.response && err.response.data && err.response.data.ids ? err.response.data.ids[2] : 0));
                     handleError(err, null, [ season, (step ? step.description : null), (team ? team.short_description : null) ]);
                     this.setState({  isSuccess: false, isError: true });
                 });
